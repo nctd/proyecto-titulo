@@ -25,7 +25,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
-                    <a href=".">
+                    <a href="/">
                         <img src="{% static 'img/logo1.svg' %}" width="110" height="32" alt="Logo"
                             class="navbar-brand-image">
                     </a>
@@ -35,7 +35,7 @@
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                             aria-label="Open user menu">
                             <span class="avatar avatar-sm"
-                                style="background-image: url(./static/avatars/000m.jpg)"></span>
+                                style="background-image: url(../static/img/logo1.svg)"></span>
                             <div class="d-none d-xl-block ps-2">
                                 <div>Usuario</div>
                                 <div class="mt-1 small text-muted">Tipo usuario</div>
@@ -56,7 +56,7 @@
                 <div class="navbar navbar-light">
                     <div class="container-xl">
                         <ul class="navbar-nav">
-                            <li class="nav-item">
+                            <li class="nav-item" id="nav-item-inicio">
                                 <a class="nav-link" href="/">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/home -->
@@ -74,9 +74,9 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown"
-                                    role="button" aria-expanded="false">
+                            <li class="nav-item dropdown" id='nav-item-planificacion'>
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button"
+                                    aria-expanded="false">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/calendar-time -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -102,15 +102,15 @@
                                             <a class="dropdown-item" href="{% url 'planificacion' %}">
                                                 Cargar planificaciones
                                             </a>
-                                            <a class="dropdown-item" href="./empty.html">
-                                                Accordion
+                                            <a class="dropdown-item" href="/">
+                                                Test
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./form-elements.html">
+                                <a class="nav-link" href="/">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/truck-delivery -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -129,7 +129,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./form-elements.html">
+                                <a class="nav-link" href="/">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/chart-dots -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -173,11 +173,11 @@
                                 <div class="dropdown-menu">
                                     <div class="dropdown-menu-columns">
                                         <div class="dropdown-menu-column">
-                                            <a class="dropdown-item" href="./empty.html">
-                                                Horizontal
+                                            <a class="dropdown-item" href="/">
+                                                Agendar
                                             </a>
-                                            <a class="dropdown-item" href="./empty.html">
-                                                Vertical
+                                            <a class="dropdown-item" href="/">
+                                                Buscar
                                             </a>
                                         </div>
 
@@ -185,7 +185,7 @@
                                 </div>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./docs/index.html">
+                                <a class="nav-link" href="/">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/clipboard-list -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -207,7 +207,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="./docs/index.html">
+                                <a class="nav-link" href="/">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/package -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -238,9 +238,10 @@
     </div>
 
     <!-- Libs JS -->
-    <script src="./static/libs/apexcharts/dist/apexcharts.min.js"></script>
+    <!-- GRAFICOS -->
+    <script src="{% static 'libs/apexcharts/dist/apexcharts.min.js' %}"></script>
     <!-- Tabler Core -->
-    <script src="./static/js/tabler.min.js"></script>
+    <script src="{% static 'js/tabler.min.js' %}"></script>
 
 
 </body>
