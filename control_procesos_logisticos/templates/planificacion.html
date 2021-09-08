@@ -24,12 +24,38 @@
                         <h3 class="card-title">Cargar planificaciones</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-label">Seleccionar archivos</div>
-                        <input type="file" class="form-control" multiple />
+                        <div class='row'>
+                            <div class='col-xl-8 mb-3'>
+                                <div class="form-label">Seleccionar archivos</div>
+                                <input type="file" class="form-control" multiple id="input-excel" />
+                            </div>
+                            <div class='col-xl-4 mb-3'>
+                                <div class="form-label">Fecha planificación</div>
+                                <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <rect x="4" y="5" width="16" height="16" rx="2" />
+                                            <line x1="16" y1="3" x2="16" y2="7" />
+                                            <line x1="8" y1="3" x2="8" y2="7" />
+                                            <line x1="4" y1="11" x2="20" y2="11" />
+                                            <line x1="11" y1="15" x2="12" y2="15" />
+                                            <line x1="12" y1="15" x2="12" y2="18" />
+                                        </svg>
+                                    </span>
+                                    <input class="form-control" placeholder="Fecha" id="datepicker-icon-prepend"
+                                        type='text' />
+                                </div>
+                            </div>
+
+                        </div>
 
                         <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
                             <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
-                                <a href="#" class="btn btn-primary w-100">
+                                <a class="btn btn-primary w-100" id='btn-cargar'>
                                     <!-- Download SVG icon from http://tabler-icons.io/i/file-upload -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -55,26 +81,9 @@
                     <div class="card-header">
                         <h3 class="card-title">Datos</h3>
                     </div>
-                    <div class="card-body border-bottom py-3">
-                        <div class="d-flex">
-                            <div class="text-muted">
-                                Mostrar
-                                <div class="mx-2 d-inline-block">
-                                    <input type="text" class="form-control form-control-sm" value="8" size="3"
-                                        aria-label="Invoices count">
-                                </div>
-                                resultados
-                            </div>
-                            <div class="ms-auto text-muted">
-                                Buscar:
-                                <div class="ms-2 d-inline-block">
-                                    <input type="text" class="form-control form-control-sm" aria-label="Search invoice">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table card-table table-vcenter text-nowrap datatable">
+
+                    <div class="table-responsive" id='excel_data'>
+                        <!-- <table class="table card-table table-vcenter text-nowrap datatable">
                             <thead>
                                 <tr>
                                     <th class="w-1">Orden de venta</th>
@@ -173,48 +182,49 @@
                                     </td>
                                 </tr>
                             </tbody>
-                        </table>
+                        </table> -->
                     </div>
-                    <div class="card-footer d-flex align-items-center">
-                        <p class="m-0 text-muted">Cantidad de resultados
-                        </p>
-                        <ul class="pagination m-0 ms-auto">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/chevron-left -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <polyline points="15 6 9 12 15 18" />
-                                    </svg>
-                                    Anterior
-                                </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><a class="page-link" href="#">5</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">
-                                    Siguiente
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/chevron-right -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <polyline points="9 6 15 12 9 18" />
-                                    </svg>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+
+                    <div id="wrapper"></div>
+
+
                 </div>
             </div>
         </div>
 
-
+    </div>
+</div>
+<div class="modal modal-blur fade" id="modal-danger" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-warning"></div>
+            <div class="modal-body text-center py-4">
+                <!-- Download SVG icon from http://tabler-icons.io/i/alert-triangle -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-warning icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path
+                        d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <h3>Alerta</h3>
+                <div class="text-muted">El archivo seleccionado no tiene datos para cargar</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+                        <!-- <div class="col"><a href="#" class="btn btn-white w-100" data-bs-dismiss="modal">
+                                Cancel
+                            </a></div> -->
+                        <div class="col"><a href="#" class="btn btn-warning w-100" data-bs-dismiss="modal">
+                                OK
+                            </a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -223,4 +233,115 @@
     const e = document.getElementById('nav-item-planificacion')
     e.classList.add('active')
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const picker = new Litepicker({
+            element: document.getElementById('datepicker-icon-prepend'),
+            autoRefresh: true,
+            format: 'DD/MM/YYYY',
+            lang: 'es-ES',
+
+        });
+    })
+</script>
+
+<script>
+    const excel = document.getElementById('input-excel')
+    const trigger = document.getElementById('btn-cargar')
+
+    excel.addEventListener('change', (e) => {
+        // if (excel.files.length == 0) {
+        //     alert('NO HAY')
+        // } else {
+        if (!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'].includes(event.target.files[0].type)) {
+            document.getElementById('excel_data').innerHTML = '<div class="alert alert-warning">Solo archivos de tipo .xlsx o .xls son permitidos</div>';
+
+            excel.value = '';
+
+            return false;
+        }
+
+        var reader = new FileReader()
+        reader.readAsArrayBuffer(event.target.files[0])
+        reader.onload = function (event) {
+            var data = new Uint8Array(reader.result)
+            var work_book = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy;@' })
+            var sheet_name = work_book.SheetNames
+            var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], { raw: false, header: 1 })
+            alert(sheet_data)
+            console.log(sheet_data)
+            trigger.addEventListener('click', (event) => {
+                if (sheet_data.length > 0) {
+                    new gridjs.Grid({
+                        search: true,
+                        pagination: {
+                            limit: 30
+                        },
+                        sort: true,
+                        // resizable: true,
+                        columns: sheet_data[0],
+                        data: sheet_data.slice(1),
+                        fixedHeader: true,
+                        // height: '300px',
+                        // autoWidth: true,
+                        style: {
+                            td: {
+                                'min-width': '200px'
+                            },
+                            container: {
+                                'padding': '8px'
+                            }
+                        },
+                        language: {
+                            'search': {
+                                'placeholder': '🔍 Buscar...'
+                            },
+                            'pagination': {
+                                'previous': 'Anterior',
+                                'next': 'Siguiente',
+                                'showing': 'Mostrando',
+                                'results': () => 'registros',
+                                'of': 'de',
+                                'to': 'hasta'
+                            },
+                            'loading': 'Cargando...',
+                            'noRecordsFound': 'No se encontraron registros',
+                            'error': 'Ha ocurrido un error al mostrar los resultados',
+                        },
+                    }).render(document.getElementById("wrapper"))
+                    // columns: ['Orden de venta',
+                    //     'Línea',
+                    //     'Llave de búsqueda',
+                    //     'Fecha reprogramación',
+                    //     'Cliente Final',
+                    //     'Tipo de pago',
+                    //     'Núm. Articulo',
+                    //     'Descripcion Articulo',
+                    //     'Tipo despacho',
+                    //     'Transporte',
+                    //     'Comuna',
+                    //     'Dirección',
+                    //     'Direccion',
+                    //     'Cantidad',
+                    //     'Valor',
+                    //     'Solicitud Material',
+                    //     'Agendamiento',
+                    //     'Packing-List',
+                    //     'Guía de despacho',
+                    //     'OT Transporte / Patente'
+                    // ],
+                } else {
+                    $('#modal-danger').modal('show');
+                }
+
+
+            })
+
+        }
+    }
+        // }
+    )
+</script>
+
 {% endblock %}
