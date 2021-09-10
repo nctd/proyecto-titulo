@@ -24,10 +24,13 @@
                         <h3 class="card-title">Cargar planificaciones</h3>
                     </div>
                     <div class="card-body">
+                        <!-- <form method="POST"> -->
+                        <!-- {% csrf_token %} -->
                         <div class='row'>
+
                             <div class='col-xl-8 mb-3'>
                                 <div class="form-label">Seleccionar archivos</div>
-                                <input type="file" class="form-control" multiple id="input-excel" />
+                                <input type="file" class="form-control" multiple id="input-excel" name="myfile" />
                             </div>
                             <div class='col-xl-4 mb-3'>
                                 <div class="form-label">Fecha planificación</div>
@@ -51,11 +54,12 @@
                                 </div>
                             </div>
 
+
                         </div>
 
                         <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
                             <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
-                                <a class="btn btn-primary w-100" id='btn-cargar'>
+                                <button class="btn btn-primary w-100" id='btn-cargar'>
                                     <!-- Download SVG icon from http://tabler-icons.io/i/file-upload -->
                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -68,9 +72,10 @@
                                         <polyline points="9 14 12 11 15 14" />
                                     </svg>
                                     Cargar datos
-                                </a>
+                                </button>
                             </div>
                         </div>
+                        <!-- </form> -->
                     </div>
                 </div>
 
@@ -81,109 +86,10 @@
                     <div class="card-header">
                         <h3 class="card-title">Datos</h3>
                     </div>
-
+                    <!-- 
                     <div class="table-responsive" id='excel_data'>
-                        <!-- <table class="table card-table table-vcenter text-nowrap datatable">
-                            <thead>
-                                <tr>
-                                    <th class="w-1">Orden de venta</th>
-                                    <th>Línea</th>
-                                    <th>Llave de búsqueda</th>
-                                    <th>Fecha reprogramación</th>
-                                    <th>Cliente Final</th>
-                                    <th>Tipo de pago</th>
-                                    <th>Núm. Articulo</th>
-                                    <th>Descripcion Articulo</th>
-                                    <th>Tipo despacho</th>
-                                    <th>Transporte</th>
-                                    <th>Comuna</th>
-                                    <th>Dirección</th>
-                                    <th>Direccion</th>
-                                    <th>Cantidad</th>
-                                    <th>Valor</th>
-                                    <th>Solicitud Material</th>
-                                    <th>Agendamiento</th>
-                                    <th>Packing-List</th>
-                                    <th>Guía de despacho</th>
-                                    <th>OT Transporte / Patente</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><span class="text-muted">001401</span></td>
-                                    <td><a href="invoice.html" class="text-reset" tabindex="-1">Design
-                                            Works</a></td>
-                                    <td>
-                                        Carlson Limited
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        87956621
-                                    </td>
-                                    <td>
-                                        15 Dec 2017
-                                    </td>
-                                    <td>
-                                        Paid
-                                    </td>
-                                    <td>$887</td>
-                                    <td class="text-end">
-                                        <span class="dropdown">
-                                            <button class="btn dropdown-toggle align-text-top"
-                                                data-bs-boundary="viewport" data-bs-toggle="dropdown">Actions</button>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <a class="dropdown-item" href="#">
-                                                    Action
-                                                </a>
-                                                <a class="dropdown-item" href="#">
-                                                    Another action
-                                                </a>
-                                            </div>
-                                        </span>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table> -->
-                    </div>
+
+                    </div> -->
 
                     <div id="wrapper"></div>
 
@@ -232,6 +138,7 @@
 <script>
     const e = document.getElementById('nav-item-planificacion')
     e.classList.add('active')
+
 </script>
 
 <script>
@@ -251,11 +158,17 @@
     const trigger = document.getElementById('btn-cargar')
 
     excel.addEventListener('change', (e) => {
+        $('#input-excel').find("input[type=file]").each(function (index, field) {
+            for (let i = 0; i < array.length; i++) {
+                alert('HOLA')
+
+            }
+        })
         // if (excel.files.length == 0) {
         //     alert('NO HAY')
         // } else {
         if (!['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'].includes(event.target.files[0].type)) {
-            document.getElementById('excel_data').innerHTML = '<div class="alert alert-warning">Solo archivos de tipo .xlsx o .xls son permitidos</div>';
+            document.getElementById('wrapper').innerHTML = '<div class="alert alert-warning">Solo archivos de tipo .xlsx o .xls son permitidos</div>';
 
             excel.value = '';
 
@@ -269,11 +182,10 @@
             var work_book = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy;@' })
             var sheet_name = work_book.SheetNames
             var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], { raw: false, header: 1 })
-            alert(sheet_data)
-            console.log(sheet_data)
+
             trigger.addEventListener('click', (event) => {
                 if (sheet_data.length > 0) {
-                    new gridjs.Grid({
+                    var grid = new gridjs.Grid({
                         search: true,
                         pagination: {
                             limit: 30
@@ -309,6 +221,11 @@
                             'noRecordsFound': 'No se encontraron registros',
                             'error': 'Ha ocurrido un error al mostrar los resultados',
                         },
+                        // server: {
+                        //     url: 'http://127.0.0.1:8000/',
+                        //     then: data => data.result.map(alert(data))
+
+                        // }
                     }).render(document.getElementById("wrapper"))
                     // columns: ['Orden de venta',
                     //     'Línea',
@@ -336,8 +253,8 @@
                 }
 
 
-            })
 
+            })
         }
     }
         // }

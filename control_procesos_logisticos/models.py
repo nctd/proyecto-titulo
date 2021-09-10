@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.deletion import PROTECT
+
 
 
 class OrdenVenta(models.Model):
@@ -17,3 +19,16 @@ class OrdenVenta(models.Model):
     class Meta:
         verbose_name = 'OrdenVenta'
         db_table = 'ORDEN_VENTA'
+        
+class Planificacion(models.Model):
+    llave_busqueda      = models.CharField(max_length=30)
+    fecha_planificacion = models.DateField()
+    orden_venta         = models.ForeignKey(OrdenVenta, on_delete=PROTECT)
+    
+    def __str__(self):
+        return self.llave_busqueda
+    
+    class Meta:
+        verbose_name = 'Planificacion'
+        db_table     = 'PLANIFICACION'
+        

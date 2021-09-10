@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container-xl">
+    <!-- Page title -->
+    <div class="page-header d-print-none">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Tracking
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="page-body">
+    <div class="container-xl">
+        <!-- Content here -->
+        <div class='row row-cards'>
+
+            <div class="col-12">
+                <div class="card">
+                    <div class='card-header'>
+                        <h3 class="card-title">Rastrear orden de venta</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
+                            <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
+                                <label class="form-label">Orden de venta</label>
+                                <input type="text" class="form-control" name="example-text-input"
+                                    placeholder="Ingrese el N° OV">
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
+                            <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
+                                <button class="btn btn-primary w-100" id='btn-cargar'>
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <circle cx="10" cy="10" r="7" />
+                                        <line x1="21" y1="21" x2="15" y2="15" />
+                                    </svg>
+                                    Buscar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card">
+                    <!-- Datos OV en Tracking< -->
+                    <div class="card-header">
+                        <h3 class="card-title">Datos OV en Tracking</h3>
+                    </div>
+
+                    <div class='card-body'>
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Orden de venta</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Cliente final</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Orden de compra cliente</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Tipo de venta</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">División / Canal de venta</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Datos despacho en Tracking -->
+                    <div class="card-header">
+                        <h3 class="card-title">Datos despacho en Tracking</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Tipo de despacho</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Transporte</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Guía de despacho</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">OT Transporte / Patente</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Cita</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Packing-List</label>
+                            <div class="col-6">
+                                <input type="text" class="form-control" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tracking por contenido de la OV -->
+
+                    <div class="card-header">
+                        <h3 class="card-title">Tracking por contenido de la OV</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="wrapper"></div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const e = document.getElementById('nav-item-tracking')
+                e.classList.add('active')
+
+            </script>
+
+            <script>
+                new gridjs.Grid({
+                    columns: ['Línea OV', 'Código Artículo', 'Descripción Artículo', 'Cantidad', 'OV No liberada', 'En picking', 'En embalaje', 'En reparto'],
+                    style: {
+                        th: {
+                            'width': '100%'
+                        },
+                        container: {
+                            'padding': '8px',
+                        }
+                    },
+                    data: [[]]
+                }).render(document.getElementById("wrapper"));
+            </script>
+            {% endblock %}
