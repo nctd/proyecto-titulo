@@ -24,33 +24,34 @@
                     <div class='card-header'>
                         <h3 class="card-title">Rastrear orden de venta</h3>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
-                            <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
-                                <label class="form-label">Orden de venta</label>
-                                <input type="text" class="form-control" name="example-text-input"
-                                    placeholder="Ingrese el N° OV">
+                    <form method='GET'>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
+                                <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
+                                    <label class="form-label">Orden de venta</label>
+                                    <input type="text" class="form-control" name="id_ov" placeholder="Ingrese el N° OV">
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
+                                <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
+                                    <button class="btn btn-primary w-100" id='btn-cargar' type="submit">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <circle cx="10" cy="10" r="7" />
+                                            <line x1="21" y1="21" x2="15" y2="15" />
+                                        </svg>
+                                        Buscar
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
-                            <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
-                                <button class="btn btn-primary w-100" id='btn-cargar'>
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/search -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                        <circle cx="10" cy="10" r="7" />
-                                        <line x1="21" y1="21" x2="15" y2="15" />
-                                    </svg>
-                                    Buscar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+                    </form>
                 </div>
             </div>
+            {{response}}
 
             <div class="col-12">
                 <div class="card">
@@ -63,7 +64,7 @@
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Orden de venta</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly value='{{orden_venta}}'>
 
                             </div>
                         </div>
@@ -71,28 +72,28 @@
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Cliente final</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly value='{{cliente}}'>
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Orden de compra cliente</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly value='{{orden_compra}}'>
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Tipo de venta</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly value='{{tipo_venta}}'>
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">División / Canal de venta</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly value='{{canal_venta}}'>
                             </div>
                         </div>
 
@@ -152,6 +153,7 @@
                         <h3 class="card-title">Tracking por contenido de la OV</h3>
                     </div>
                     <div class="card-body">
+
                         <div id="wrapper"></div>
                     </div>
                 </div>

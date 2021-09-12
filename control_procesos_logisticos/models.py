@@ -17,7 +17,6 @@ class Cliente(models.Model):
 class OrdenVenta(models.Model):
     orden_venta     = models.CharField(max_length=20,primary_key=True)
     cliente         = models.ForeignKey(Cliente,on_delete=PROTECT)
-    # cliente         = models.CharField(max_length=150)
     tipo_pago       = models.CharField(max_length=30,verbose_name='Tipo de pago')
     tipo_venta      = models.CharField(max_length=30,verbose_name='Tipo de venta')
     canal_venta     = models.CharField(max_length=20)

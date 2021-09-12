@@ -1,5 +1,8 @@
 from django.core.exceptions import RequestAborted
-from django.shortcuts import render
+from django.http import response
+from django.shortcuts import get_object_or_404, render
+from django.core.exceptions import ObjectDoesNotExist
+
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, LineaForm, OrdenVentaForm, PlanificacionForm
 
 from .models import Cliente, Linea, OrdenVenta, Planificacion
@@ -67,7 +70,8 @@ def planificacion(request):
                 'num_linea': row[2],
                 'cantidad': row[12],
                 'estado': row[14],
-                'orden_venta': id_ov.pk
+                'orden_venta': id_ov.pk,
+                'articulo': id_art.pk
             }
             
             linea = LineaForm(data=data_linea)
@@ -168,4 +172,28 @@ def planificacion(request):
     return render(request,'planificacion/planificacion.html',data)
 
 def tracking(request):
-    return render(request,'tracking/tracking.html')
+    if('id_ov' in request.GET):
+        try:
+            ov = OrdenVenta.objects.get(orden_venta=request.GET['id_ov'])
+
+            print(ov.cliente.nombre)
+            data = {
+                'orden_venta': ov,
+                'cliente' : ov.cliente.nombre,
+                'orden_compra': ov.orden_compra,
+                'tipo_venta': ov.tipo_venta,
+                'canal_venta': ov.canal_venta
+            }
+            data['response'] = 'OV ENCONTRADA'
+            return render(request,'tracking/tracking.html',data)
+        except ObjectDoesNotExist:
+            data = {
+                'response': 'No se encontro la OV'
+            }
+            return render(request,'tracking/tracking.html',data)
+    else:
+        return render(request,'tracking/tracking.html')
+
+
+
+    
