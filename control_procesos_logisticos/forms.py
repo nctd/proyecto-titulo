@@ -3,7 +3,7 @@ from django.core.exceptions import ValidationError
 # from import_export import widgets
 
 
-from .models import Linea, OrdenVenta, Planificacion
+from .models import Articulo, Cliente, Linea, OrdenVenta, Planificacion
 
 class OrdenVentaForm(forms.ModelForm):
     
@@ -37,3 +37,13 @@ class LineaForm(forms.ModelForm):
     class Meta:
         model = Linea
         fields = '__all__'
+        
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = Cliente
+        fields = '__all__'
+        
+class ArticuloForm(forms.ModelForm):
+    class Meta:
+        model = Articulo
+        fields = '__all__'        
