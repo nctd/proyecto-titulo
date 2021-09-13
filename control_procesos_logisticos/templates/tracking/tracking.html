@@ -34,7 +34,7 @@
                             </div>
                             <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
                                 <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
-                                    <button class="btn btn-primary w-100" id='btn-cargar' type="submit">
+                                    <button class="btn btn-primary w-100" id='btn-buscar' type="submit">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/search -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -52,7 +52,6 @@
                 </div>
             </div>
             {{response}}
-
             <div class="col-12">
                 <div class="card">
                     <!-- Datos OV en Tracking< -->
@@ -148,14 +147,105 @@
                     </div>
 
                     <!-- Tracking por contenido de la OV -->
+                    <div class="card">
 
-                    <div class="card-header">
-                        <h3 class="card-title">Tracking por contenido de la OV</h3>
-                    </div>
-                    <div class="card-body">
+                        <div class="card-header">
+                            <h3 class="card-title">Tracking por contenido de la OV</h3>
+                        </div>
 
-                        <div id="wrapper"></div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <div class="gridjs gridjs-container">
+                                    <table class="gridjs-table">
+                                        <thead class="gridjs-thead">
+                                            <tr class="gridjs-tr">
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">Línea OV</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">Código Artículo
+                                                </th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"
+                                                    style="width: 400px;">Descripción
+                                                    Artículo
+                                                </th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">Cantidad</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"
+                                                    style="width: 150px;">OV No liberada</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"
+                                                    style="width: 150px;">En picking</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"
+                                                    style="width: 150px;">En embalaje</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"
+                                                    style="width: 150px;">En reparto</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="gridjs-tbody" style="text-align: center;">
+                                            {% if lineas %}
+                                            {% for l in lineas %}
+                                            <tr class="gridjs-tr">
+                                                <td class="gridjs-td">{{l.num_linea}}</td>
+                                                <td class="gridjs-td">{{l.articulo.cod_articulo}}</td>
+                                                <td class="gridjs-td">{{l.articulo.descripcion}}
+                                                </td>
+                                                <td class="gridjs-td">{{l.cantidad}}</td>
+                                                {% if l.estado == "OV NO LIBERADA" %}
+                                                <td class="gridjs-td">
+                                                    <div class="avatar bg-red" style="height: 40px; width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td class="gridjs-td"></td>
+                                                <td class="gridjs-td"></td>
+                                                <td class="gridjs-td"></td>
+                                                {% elif l.estado == 'EN PICKING' %}
+                                                <td class="gridjs-td">
+                                                    <div class="avatar bg-green" style="height: 40px; width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td class="gridjs-td">
+                                                    <div class="avatar bg-yellow" style="height: 40px; width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td class="gridjs-td"></td>
+                                                <td class="gridjs-td"></td>
+                                                {% elif l.estado == "ENVIADA" %}
+                                                <td class="gridjs-td">
+                                                    <div class="avatar bg-green" style="height: 40px; width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td class="gridjs-td">
+                                                    <div class="avatar bg-green" style="height: 40px; width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td class="gridjs-td">
+                                                    <div class="avatar bg-yellow" style="height: 40px; width: 100px;">
+                                                    </div>
+                                                </td>
+                                                <td class="gridjs-td">
+                                                </td>
+                                                {% else %}
+                                                <td class="gridjs-td">
+                                                </td>
+                                                <td class="gridjs-td">
+                                                </td>
+                                                <td class="gridjs-td">
+                                                </td>
+                                                <td class="gridjs-td">
+                                                </td>
+                                                {% endif %}
+
+                                            </tr>
+                                            {% endfor %}
+
+                                            {% endif %}
+
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                            <!-- <div id="wrapper"></div> -->
+                        </div>
                     </div>
+
+
                 </div>
             </div>
 
@@ -165,18 +255,28 @@
 
             </script>
 
+
             <script>
-                new gridjs.Grid({
-                    columns: ['Línea OV', 'Código Artículo', 'Descripción Artículo', 'Cantidad', 'OV No liberada', 'En picking', 'En embalaje', 'En reparto'],
-                    style: {
-                        th: {
-                            'width': '100%'
-                        },
-                        container: {
-                            'padding': '8px',
-                        }
-                    },
-                    data: [[]]
-                }).render(document.getElementById("wrapper"));
+                // var trigger = document.getElementById('btn-buscar')
+
+
+                // new gridjs.Grid({
+                //     columns: ['Línea OV', 'Código Artículo', 'Descripción Artículo', 'Cantidad', 'OV No liberada', 'En picking', 'En embalaje', 'En reparto'],
+                //     style: {
+                //         th: {
+                //             'width': '100%'
+                //         },
+                //         container: {
+                //             'padding': '8px',
+                //         }
+                //     },
+                //     data: [[]]
+                //     // data: [["{{l.num_linea}}", "{{l.articulo.cod_articulo}}", "{{l.articulo.descripcion}}", "{{l.cantidad}}"]]
+                //     // data: () => obtenerLineas().map(linea => [linea.linea, linea.articulo, linea.descripcion, linea.cantidad])
+
+
+                // }).render(document.getElementById("wrapper"));
             </script>
+
+
             {% endblock %}

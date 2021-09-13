@@ -173,22 +173,33 @@ def planificacion(request):
 
 def tracking(request):
     if('id_ov' in request.GET):
+        lineas_ov =[]
         try:
             ov = OrdenVenta.objects.get(orden_venta=request.GET['id_ov'])
 
-            print(ov.cliente.nombre)
+            lineas = Linea.objects.filter(orden_venta=ov.orden_venta)
+            # print(linea)
+            # for obj in linea:
+            #     test = Linea(obj)
+            #     lineas_ov.append(test)
+            #     print(lineas_ov)
+                
+            
             data = {
                 'orden_venta': ov,
                 'cliente' : ov.cliente.nombre,
                 'orden_compra': ov.orden_compra,
                 'tipo_venta': ov.tipo_venta,
-                'canal_venta': ov.canal_venta
+                'canal_venta': ov.canal_venta,
+                'lineas': lineas
             }
+            
             data['response'] = 'OV ENCONTRADA'
             return render(request,'tracking/tracking.html',data)
         except ObjectDoesNotExist:
             data = {
                 'response': 'No se encontro la OV'
+                
             }
             return render(request,'tracking/tracking.html',data)
     else:
