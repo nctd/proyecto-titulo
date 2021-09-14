@@ -1,6 +1,8 @@
 from typing import Optional
 from django.db import models
+from django.db.models.base import Model
 from django.db.models.deletion import PROTECT
+
 
 class Cliente(models.Model):
     nombre = models.CharField(max_length=50,blank=True,default='')
@@ -51,15 +53,40 @@ class Articulo(models.Model):
     class Meta:
         verbose_name = 'Articulo'
         db_table = 'ARTICULO'
+
+class Transporte(models.Model):
+    ot = models.CharField(max_length=20,blank=True,default='')
+    empresa = models.CharField(max_length=30,blank=True,default='')
+    eliminado = models.BooleanField(default=False)
+    
+    class Meta:
+        verbose_name = 'Transporte'
+        db_table     = 'TRANSPORTE'
+
         
+class Despacho(models.Model):
+    direccion = models.CharField(max_length=50,blank=True,default='')
+    comuna = models.CharField(max_length=40,blank=True,default='')
+    tipo_despacho = models.CharField(max_length=30,blank=True,default='')
+    guia_despacho = models.CharField(max_length=30,blank=True,default='')
+    transporte = models.ForeignKey(Transporte, on_delete=PROTECT)
+    eliminado = models.BooleanField(default=False)
+    
+    class Meta:
+        verbose_name = 'Despacho'
+        db_table     = 'DESPACHO'
+    
+
+
+
 class Linea(models.Model):
     num_linea   = models.IntegerField()
     cantidad    = models.IntegerField()
     estado      = models.CharField(max_length=40)
     orden_venta = models.ForeignKey(OrdenVenta, on_delete=PROTECT)
     articulo    = models.ForeignKey(Articulo, on_delete=PROTECT)
+    despacho    = models.ForeignKey(Despacho,on_delete=PROTECT)
     
     class Meta:
         verbose_name = 'Linea'
         db_table     = 'LINEA'
-        

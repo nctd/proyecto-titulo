@@ -114,14 +114,15 @@
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Transporte</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly
+                                    value="{{despacho.transporte.empresa}}">
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Guía de despacho</label>
                             <div class="col-6">
-                                <input type="text" class="form-control" readonly>
+                                <input type="text" class="form-control" readonly value="{{despacho.guia_despacho}}">
                             </div>
                         </div>
 
@@ -254,29 +255,14 @@
                 e.classList.add('active')
 
             </script>
-
-
+            {% if messages %}
+            {% for m in messages %}
             <script>
-                // var trigger = document.getElementById('btn-buscar')
 
+                alert("{{m}}")
 
-                // new gridjs.Grid({
-                //     columns: ['Línea OV', 'Código Artículo', 'Descripción Artículo', 'Cantidad', 'OV No liberada', 'En picking', 'En embalaje', 'En reparto'],
-                //     style: {
-                //         th: {
-                //             'width': '100%'
-                //         },
-                //         container: {
-                //             'padding': '8px',
-                //         }
-                //     },
-                //     data: [[]]
-                //     // data: [["{{l.num_linea}}", "{{l.articulo.cod_articulo}}", "{{l.articulo.descripcion}}", "{{l.cantidad}}"]]
-                //     // data: () => obtenerLineas().map(linea => [linea.linea, linea.articulo, linea.descripcion, linea.cantidad])
-
-
-                // }).render(document.getElementById("wrapper"));
             </script>
-
+            {% endfor %}
+            {% endif %}
 
             {% endblock %}
