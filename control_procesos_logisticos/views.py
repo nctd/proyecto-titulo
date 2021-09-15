@@ -2,9 +2,9 @@ from django.http import response
 from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
 
-from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, LineaForm, OrdenVentaForm, PlanificacionForm, TransporteForm
+from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
 
-from .models import Cliente, Despacho, Linea, OrdenVenta, Planificacion,Transporte
+from .models import Cliente, Despacho, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
 from django.contrib import messages
 import pandas as pd
 
@@ -110,9 +110,17 @@ def planificacion(request):
             if linea.is_valid():
                 linea.save()
         
+            data_temporal = {
+                'num_linea':row[2],
+                'orden_venta': id_ov.pk,
+            }
+            
+            temporal = TemporalLineaForm(data=data_temporal)
+            if temporal.is_valid():
+                temporal.save()
         
             data_pl = {
-                'llave_busqueda': row[3],
+                # 'llave_busqueda': row[3],
                 'fecha_planificacion':request.POST['fecha_planificacion'],
                 'orden_venta': id_ov.pk
             }
@@ -138,7 +146,7 @@ def tracking(request):
             for l in lineas.values():
                 desp = l['despacho_id']
             
-            despacho = Despacho.objects.get(id=desp)
+            despacho = Despacho.objects.get(id_despacho=desp)
         
             
             data = {

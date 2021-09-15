@@ -1,9 +1,10 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import fields
 # from import_export import widgets
 
 
-from .models import Articulo, Cliente, Despacho, Linea, OrdenVenta, Planificacion, Transporte
+from .models import Articulo, Cliente, Despacho, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea
 
 class OrdenVentaForm(forms.ModelForm):
     
@@ -57,3 +58,8 @@ class ArticuloForm(forms.ModelForm):
     class Meta:
         model = Articulo
         fields = '__all__'        
+        
+class TemporalLineaForm(forms.ModelForm):
+    class Meta:
+        model = TemporalLinea
+        fields = '__all__'

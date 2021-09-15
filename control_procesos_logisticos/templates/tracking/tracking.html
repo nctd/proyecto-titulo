@@ -187,7 +187,8 @@
                                                 <td class="gridjs-td">{{l.articulo.descripcion}}
                                                 </td>
                                                 <td class="gridjs-td">{{l.cantidad}}</td>
-                                                {% if l.estado == "OV NO LIBERADA" %}
+
+                                                {% if l.estado == "OV NO LIBERADA" or l.estado == '-' %}
                                                 <td class="gridjs-td">
                                                     <div class="avatar bg-red" style="height: 40px; width: 100px;">
                                                     </div>
