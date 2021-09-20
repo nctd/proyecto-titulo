@@ -30,8 +30,8 @@ class PlanificacionForm(forms.ModelForm):
                     'class':'form-control',
                     'type': 'text',
                     'id':'datepicker-icon-prepend',
-                    'placeholder': 'Fecha'
-                })
+                    'placeholder': 'Fecha',
+                },)
         }
         
 class DespachoForm(forms.ModelForm):

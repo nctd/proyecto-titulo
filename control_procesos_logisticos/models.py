@@ -7,11 +7,11 @@ from datetime import date, datetime
 
 class Cliente(models.Model):
     id_cliente = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=50,blank=True,default='')
-    direccion = models.CharField(max_length=50,blank=True,default='')
+    nombre = models.CharField(max_length=70,blank=True,default='')
+    direccion = models.CharField(max_length=120,blank=True,default='')
     telefono = models.CharField(max_length=50,blank=True,default='')
     nom_contacto = models.CharField(max_length=50,blank=True,default='')
-    correo_contacto = models.CharField(max_length=50,blank=True,default='')
+    correo_contacto = models.CharField(max_length=60,blank=True,default='')
     
     class Meta:
         verbose_name = 'Cliente'
@@ -19,7 +19,7 @@ class Cliente(models.Model):
         
 
 class OrdenVenta(models.Model):
-    orden_venta     = models.CharField(max_length=20,primary_key=True)
+    orden_venta     = models.CharField(max_length=25,primary_key=True)
     cliente         = models.ForeignKey(Cliente,on_delete=PROTECT)
     tipo_pago       = models.CharField(max_length=30,verbose_name='Tipo de pago')
     tipo_venta      = models.CharField(max_length=30,verbose_name='Tipo de venta')
@@ -49,7 +49,7 @@ class Planificacion(models.Model):
         
 class Articulo(models.Model):
     cod_articulo = models.CharField(max_length=30,primary_key=True)
-    descripcion = models.CharField(max_length=50,blank=True,default='')
+    descripcion = models.CharField(max_length=120,blank=True,default='')
     
     class Meta:
         verbose_name = 'Articulo'

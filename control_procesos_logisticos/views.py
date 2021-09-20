@@ -17,6 +17,7 @@ def planificacion(request):
         'form': PlanificacionForm,
         'response': '',
     }
+    
     if request.method == 'POST':
         try:
             df = pd.read_excel(request.FILES['myfile'])
@@ -42,7 +43,7 @@ def planificacion(request):
                     if cli.is_valid():
                         id_cli = cli.save()
                 
-                
+                    
                     data_ov = {
                         'orden_venta':row[1],
                         'cliente':id_cli.pk,
@@ -117,18 +118,21 @@ def planificacion(request):
                     temporal = TemporalLineaForm(data=data_temporal)
                     if temporal.is_valid():
                         temporal.save()
-                
-                    data_pl = {
-                        'llave_busqueda': row[3],
-                        'fecha_planificacion':request.POST['fecha_planificacion'],
-                        'orden_venta': id_ov.pk
-                    }
                     
-                    pl = PlanificacionForm(data=data_pl)
-                    if pl.is_valid():
-                        pl.save()
+                # ov_exists = OrdenVenta.objects.filter(id=orden_venta)
+                
+                data_pl = {
+                    'llave_busqueda': row[3],
+                    'fecha_planificacion':request.POST['fecha_planificacion'],
+                    'orden_venta': id_ov.pk
+                }
+                    
+                pl = PlanificacionForm(data=data_pl)
+                if pl.is_valid():
+                    pl.save()
                         
-                    data['guardado'] = True
+                data['guardado'] = True
+                    
         except ObjectDoesNotExist:
             data = {
                 'error': True
