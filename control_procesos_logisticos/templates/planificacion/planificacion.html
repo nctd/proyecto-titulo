@@ -332,7 +332,6 @@
 
             return false;
         }
-        alert('test')
         var reader = new FileReader()
         reader.readAsArrayBuffer(event.target.files[0])
         reader.onload = function (event) {
@@ -406,15 +405,16 @@
         const limpiar = document.getElementById('btn-limpiar')
         const content = document.getElementById("wrapper")
 
-        // content.innerHTML = ''
+        content.innerHTML = ''
 
-        alert('aaa123')
         const excel = document.getElementById('input-excel')
-        alert(excel.value)
+
         excel.value = ''
+        excel.type = ''
+        excel.type = 'file'
         document.getElementById('btn-guardar').disabled = true
         document.getElementById('btn-limpiar').disabled = true
-
+        location.reload()
 
     }
 </script>

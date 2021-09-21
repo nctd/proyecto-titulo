@@ -196,4 +196,5 @@ def tracking(request):
 
 
 
-    
+def indicadores(request):
+    return render(request,'indicadores/indicadores.html')
