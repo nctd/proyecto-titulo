@@ -14,15 +14,81 @@
     </div>
 </div>
 
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-deck row-cards">
+            <div class="card-header">
+                <h3 class="card-title">Estado de carga por tareas</h3>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body p-2 text-center">
+                        <div class="text-end text-green">
+                            <span class="text-green d-inline-flex align-items-center lh-1" style="font-size: 19px;">
+                                17%
+
+                            </span>
+                        </div>
+                        <div class="h1 m-0">43</div>
+                        <div class="text-muted mb-3">Lineas no liberadas</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body p-2 text-center">
+                        <div class="text-end text-green">
+                            <span class="text-green d-inline-flex align-items-center lh-1" style="font-size: 19px;">
+                                6%
+
+                            </span>
+                        </div>
+                        <div class="h1 m-0">33</div>
+                        <div class="text-muted mb-3">Lineas en picking</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="card">
+                    <div class="card-body p-2 text-center">
+                        <div class="text-end text-green">
+                            <span class="text-green d-inline-flex align-items-center lh-1" style="font-size: 19px;">
+                                8%
+
+                            </span>
+                        </div>
+                        <div class="h1 m-0">38</div>
+                        <div class="text-muted mb-3">Lineas en embalaje</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+
+                <div class="card">
+                    <div class="card-body p-2 text-center">
+                        <div class="text-end text-green">
+                            <span class="text-green d-inline-flex align-items-center lh-1" style="font-size: 19px;">
+                                36%
+
+                            </span>
+                        </div>
+                        <div class="h1 m-0">53</div>
+                        <div class="text-muted mb-3">Lineas en reparto</div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
 
 
 
 
 
+    <script>
+        const e = document.getElementById('nav-item-indicadores')
+        e.classList.add('active')
 
-<script>
-    const e = document.getElementById('nav-item-indicadores')
-    e.classList.add('active')
-
-</script>
-{% endblock %}
+    </script>
+    {% endblock %}
