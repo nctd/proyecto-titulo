@@ -28,122 +28,122 @@ def planificacion(request):
             #     # exists = OrdenVenta.objects.filter(orden_venta=row[0]).exists()
             #     # if exists:
             #     #     data['response'] += row[0] +', '
+            
             fecha_pl = datetime.strptime(request.POST['fecha_planificacion'], "%d/%m/%Y").date()
-
-        
+            
+            pl_exists = Planificacion.objects.filter(fecha_planificacion=fecha_pl).exists()
+            if pl_exists:
+                data['existe'] = 'Ya hay una planificacion para esta fecha'
+                return render(request,'planificacion/planificacion.html',data)
+            
             for row in df.itertuples():
-                
-                pl_exists = Planificacion.objects.filter(fecha_planificacion=fecha_pl).exists()
-                ov_exists = OrdenVenta.objects.filter(orden_venta=row[1]).exists()
-                if pl_exists and ov_exists:
-                    data['existe'] = 'Ya hay una planificacion para esta fecha'
-                    return render(request,'planificacion/planificacion.html',data)
+                # ov_exists = OrdenVenta.objects.filter(orden_venta=row[1]).exists()
+
+                cli_exists = Cliente.objects.filter(nombre=row[5]).exists()
+                if cli_exists:
+                    pass
                 else:
-                    cli_exists = Cliente.objects.filter(nombre=row[5]).exists()
-                    if cli_exists:
-                        pass
-                    else:
-                        data_cli = {
-                            'nombre': row[5],
-                            'direccion': row[11],
-                            'correo_contacto': row[17]
-                        }
-                    
-                        cli = ClienteForm(data=data_cli)
-                        if cli.is_valid():
-                            id_cli = cli.save()
-                    
-                        
-                        data_ov = {
-                            'orden_venta':row[1],
-                            'cliente':id_cli.pk,
-                            'tipo_pago':row[6],
-                            'tipo_venta':row[16],
-                            'canal_venta':row[19],
-                            'orden_compra':row[20]
-                        }
-                        
-                        ov = OrdenVentaForm(data=data_ov)
-                        if ov.is_valid():
-                            id_ov = ov.save()
-
-
-                    data_art = {
-                        'cod_articulo': row[7],
-                        'descripcion': row[8]
+                    data_cli = {
+                        'nombre': row[5],
+                        'direccion': row[11],
+                        'correo_contacto': row[17]
                     }
-                    
-                    articulo = ArticuloForm(data=data_art)
-                    if articulo.is_valid():
-                        id_art = articulo.save()
-                        
-                        
-                    tsp_exists = Transporte.objects.filter(empresa=row[9]).exists()
                 
-                    if tsp_exists:
-                        pass
-                    else: 
-                        data_transporte = {
-                            'empresa': row[9],
-                        }
-                                
-                        transporte = TransporteForm(data=data_transporte)
-                        if transporte.is_valid():
-                            id_tsp = transporte.save()
-                        # desp_exists = Despacho.objects.filter(direccion=row[11]).exists()
+                    cli = ClienteForm(data=data_cli)
+                    if cli.is_valid():
+                        id_cli = cli.save()
+                
                     
-                        # if desp_exists:
-                        #     pass
-                        # else:
-                        data_despacho = {
-                            'direccion': row[11],
-                            'guia_despacho': row[15],
-                            'transporte': id_tsp.pk
-                        }
-
-                        despacho = DespachoForm(data=data_despacho)
-                        if despacho.is_valid():
-                            id_desp = despacho.save()
-                            
-
-
-                        data_linea = {
-                            'num_linea': row[2],
-                            'cantidad': row[12],
-                            'estado': row[14],
-                            'orden_venta': id_ov.pk,
-                            'articulo': id_art.pk,
-                            'despacho': id_desp.pk
-                        }            
-                    
-                        linea = LineaForm(data=data_linea)
-                        if linea.is_valid():
-                            linea.save()
-                        
-                        data_temporal = {
-                            'num_linea':row[2],
-                            'orden_venta': id_ov.pk,
-                        }
-                        
-                        temporal = TemporalLineaForm(data=data_temporal)
-                        if temporal.is_valid():
-                            temporal.save()
-                        
-                    # pl_exists = Planificacion.objects.filter(orden_venta=id_ov.pk).exists()
-                    # fecha_pl = Planificacion.objects.filter(fecha_planificacion=request.POST['fecha_planificacion']).exists()
-                    # if pl_exists 
-                    
-                    data_pl = {
-                        'llave_busqueda': row[3],
-                        'fecha_planificacion':request.POST['fecha_planificacion'],
-                        'orden_venta': id_ov.pk
+                    data_ov = {
+                        'orden_venta':row[1],
+                        'cliente':id_cli.pk,
+                        'tipo_pago':row[6],
+                        'tipo_venta':row[16],
+                        'canal_venta':row[19],
+                        'orden_compra':row[20]
                     }
-                        
-                    pl = PlanificacionForm(data=data_pl)
-                    if pl.is_valid():
-                        pl.save()
+                    
+                    ov = OrdenVentaForm(data=data_ov)
+                    if ov.is_valid():
+                        id_ov = ov.save()
+
+
+                data_art = {
+                    'cod_articulo': row[7],
+                    'descripcion': row[8]
+                }
+                
+                articulo = ArticuloForm(data=data_art)
+                if articulo.is_valid():
+                    id_art = articulo.save()
+                    
+                    
+                tsp_exists = Transporte.objects.filter(empresa=row[9]).exists()
+            
+                if tsp_exists:
+                    pass
+                else: 
+                    data_transporte = {
+                        'empresa': row[9],
+                    }
                             
-                    data['guardado'] = True
+                    transporte = TransporteForm(data=data_transporte)
+                    if transporte.is_valid():
+                        id_tsp = transporte.save()
+                    # desp_exists = Despacho.objects.filter(direccion=row[11]).exists()
+                
+                    # if desp_exists:
+                    #     pass
+                    # else:
+                    data_despacho = {
+                        'direccion': row[11],
+                        'guia_despacho': row[15],
+                        'transporte': id_tsp.pk
+                    }
+
+                    despacho = DespachoForm(data=data_despacho)
+                    if despacho.is_valid():
+                        id_desp = despacho.save()
+                        
+
+
+                    data_linea = {
+                        'num_linea': row[2],
+                        'cantidad': row[12],
+                        'estado': row[14],
+                        'orden_venta': id_ov.pk,
+                        'articulo': id_art.pk,
+                        'despacho': id_desp.pk
+                    }            
+                
+                    linea = LineaForm(data=data_linea)
+                    if linea.is_valid():
+                        linea.save()
+                    
+                    data_temporal = {
+                        'num_linea':row[2],
+                        'orden_venta': id_ov.pk,
+                    }
+                    
+                    temporal = TemporalLineaForm(data=data_temporal)
+                    if temporal.is_valid():
+                        temporal.save()
+                    
+                # pl_exists = Planificacion.objects.filter(orden_venta=id_ov.pk).exists()
+                # fecha_pl = Planificacion.objects.filter(fecha_planificacion=request.POST['fecha_planificacion']).exists()
+                # if pl_exists 
+                
+                data_pl = {
+                    'llave_busqueda': row[3],
+                    'fecha_planificacion':request.POST['fecha_planificacion'],
+                    'orden_venta': id_ov.pk
+                }
+                    
+                pl = PlanificacionForm(data=data_pl)
+                if pl.is_valid():
+                    pl.save()
+                        
+                data['guardado'] = True
                     
         except ObjectDoesNotExist:
             data = {
