@@ -342,25 +342,19 @@ def indicadores(request):
     lineas = Linea.objects.all()
     sum_lineas = Linea.objects.filter().count()
     
-    ln_no_liberada = 0
-    ln_picking = 0
-    ln_embalaje = 0
-    ln_reparto = 0
+    ln_no_liberada = Linea.objects.filter(estado='NO LIBERADA').count()
+    ln_picking = Linea.objects.filter(estado='EN PICKING').count()
+    ln_embalaje = Linea.objects.filter(estado='ENVIADA').count()
+    ln_reparto = Linea.objects.filter(estado='REPARTO').count()
     
-    data_embalaje = {
-        
-    }
+    data_embalaje = Linea.objects.filter(estado='ENVIADA')
+    list_embalaje = []
+    count = 1 
     
-    for lin in lineas:
-        if lin.estado == 'NO LIBERADA':
-            ln_no_liberada +=1
-        if lin.estado == 'EN PICKING':
-            ln_picking +=1
-        if lin.estado == 'ENVIADA':
-            ln_embalaje +=1
-        if lin.estado == 'REPARTO':
-            ln_reparto +=1
-        
+    for linea in data_embalaje:
+        list_embalaje.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+        count +=1
+
     prc_no_liberada = int(ln_no_liberada * 100 / sum_lineas)
     prc_picking = int(ln_picking * 100 / sum_lineas)
     prc_embalaje = int(ln_embalaje * 100 / sum_lineas)
@@ -377,6 +371,7 @@ def indicadores(request):
         'prc_picking': prc_picking,
         'prc_embalaje': prc_embalaje,
         'prc_reparto': prc_reparto,
+        'list_embalaje':list_embalaje
     }
-    print(lineas)
+    print(data_embalaje)
     return render(request,'indicadores/indicadores.html',data)

@@ -521,10 +521,47 @@
 
                     <div class="tab-pane" id="estado-carga">
                         {{sum_lineas}}
-                        {{lineas}}
+                        <!-- {{lineas}} -->
+
                         <div class="row row-deck row-cards">
                             <div class="card-header">
                                 <h3 class="card-title">Estado de carga por tareas</h3>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card">
+                                    <div class="card-body p-2 text-center" data-bs-toggle="tooltip" data-bs-html="true"
+                                        data-bs-placement="right"
+                                        title="{% for emb in list_embalaje %}<p class='test'>{{emb}}</p> {% endfor %}"
+                                        data-container='body'>
+                                        <div class="text-end text-green">
+                                            <span class="text-green d-inline-flex align-items-center lh-1"
+                                                style="font-size: 19px;">
+                                                {{prc_no_liberada}}%
+
+                                            </span>
+                                        </div>
+                                        <div class="h1 m-0">{{ln_no_liberada}}</div>
+                                        <div class="text-muted mb-3">Líneas no liberadas</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="card" id='test_tooltip'>
+                                    <div class="card-body p-2 text-center" data-bs-toggle="tooltip" data-bs-html="true"
+                                        data-bs-placement="right"
+                                        title="{% for emb in list_embalaje %} {{emb}} <br></br> {% endfor %}"
+                                        data-container='body'>
+                                        <div class="text-end text-green">
+                                            <span class="text-green d-inline-flex align-items-center lh-1"
+                                                style="font-size: 19px;">
+                                                {{prc_picking}}%
+
+                                            </span>
+                                        </div>
+                                        <div class="h1 m-0">{{ln_picking}}</div>
+                                        <div class="text-muted mb-3">Líneas en picking</div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <div class="card">
@@ -535,42 +572,12 @@
                                         <div class="text-end text-green">
                                             <span class="text-green d-inline-flex align-items-center lh-1"
                                                 style="font-size: 19px;">
-                                                {{prc_no_liberada}}%
-
-                                            </span>
-                                        </div>
-                                        <div class="h1 m-0">{{ln_no_liberada}}</div>
-                                        <div class="text-muted mb-3">Lineas no liberadas</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="card">
-                                    <div class="card-body p-2 text-center">
-                                        <div class="text-end text-green">
-                                            <span class="text-green d-inline-flex align-items-center lh-1"
-                                                style="font-size: 19px;">
-                                                {{prc_picking}}%
-
-                                            </span>
-                                        </div>
-                                        <div class="h1 m-0">{{ln_picking}}</div>
-                                        <div class="text-muted mb-3">Lineas en picking</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-3">
-                                <div class="card">
-                                    <div class="card-body p-2 text-center">
-                                        <div class="text-end text-green">
-                                            <span class="text-green d-inline-flex align-items-center lh-1"
-                                                style="font-size: 19px;">
                                                 {{prc_embalaje}}%
 
                                             </span>
                                         </div>
                                         <div class="h1 m-0">{{ln_embalaje}}</div>
-                                        <div class="text-muted mb-3">Lineas en embalaje</div>
+                                        <div class="text-muted mb-3">Líneas en embalaje</div>
                                     </div>
                                 </div>
                             </div>
@@ -586,7 +593,7 @@
                                             </span>
                                         </div>
                                         <div class="h1 m-0">{{ln_reparto}}</div>
-                                        <div class="text-muted mb-3">Lineas en reparto</div>
+                                        <div class="text-muted mb-3">Líneas en reparto</div>
                                     </div>
                                 </div>
                             </div>
@@ -922,6 +929,8 @@
                 }
             })
         </script>
+
+
 
         <script>
             const e = document.getElementById('nav-item-indicadores')
