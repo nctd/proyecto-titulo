@@ -448,6 +448,17 @@ def indicadores(request):
         prc_embalaje = int(data_embalaje.count() * 100 / sum_lineas)
         prc_reparto = int(data_reparto.count() * 100 / sum_lineas)
         
+        lineas_exitosas = 0
+        cant_stock_exitosas = 0
+        for linea in lineas:
+            if linea.despacho.guia_despacho != None and '-' not in linea.despacho.guia_despacho and 'GD' in linea.despacho.guia_despacho:
+                lineas_exitosas +=1
+                if linea.tipo_venta == '1STOCK':
+                    cant_stock_exitosas+=1
+                    
+        
+        prc_exitosas = int(lineas_exitosas * 100 / sum_lineas)
+        prc_exitosas_stock = int(cant_stock_exitosas * 100 / cant_stock)
         data = {
             'lineas': lineas.values(),
             'ln_no_liberada': data_no_liberada.count(),
@@ -486,7 +497,11 @@ def indicadores(request):
             'cant_os':cant_proyect,
             'prc_os':prc_os,
             'val_os': val_os,
-            'prc_valor_os': prc_valor_os
+            'prc_valor_os': prc_valor_os,
+            'lineas_exitosas':lineas_exitosas,
+            'prc_exitosas':prc_exitosas,
+            'cant_stock_exitosas':cant_stock_exitosas,
+            'prc_exitosas_stock': prc_exitosas_stock
 
         }
 
