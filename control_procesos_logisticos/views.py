@@ -157,7 +157,6 @@ def planificacion(request):
                             'orden_venta':row[1],
                             'cliente':id_cli.pk,
                             'tipo_pago':row[6],
-                            'tipo_venta':row[16],
                             'canal_venta':row[19],
                             'orden_compra':row[20]
                         }
@@ -176,7 +175,6 @@ def planificacion(request):
                         'orden_venta':row[1],
                         'cliente':cli.pk,
                         'tipo_pago':row[6],
-                        'tipo_venta':row[16],
                         'canal_venta':row[19],
                         'orden_compra':row[20]
                     }
@@ -244,6 +242,8 @@ def planificacion(request):
                     'num_linea': row[2],
                     'cantidad': row[12],
                     'estado': row[14],
+                    'tipo_venta':row[16],
+                    'valor': row[13],
                     'orden_venta': id_ov.pk,
                     'articulo': id_art.pk,
                     'despacho': id_desp.pk
@@ -304,8 +304,10 @@ def tracking(request):
 
             lineas = Linea.objects.filter(orden_venta=ov.orden_venta)
             
-            for l in lineas.values():
-                desp = l['despacho_id']
+            list_tipo_venta = []
+            for l in lineas:
+                desp = l.despacho_id
+                list_tipo_venta.append(str(l.tipo_venta))
             
             despacho = Despacho.objects.get(id_despacho=desp)
         
@@ -314,7 +316,7 @@ def tracking(request):
                 'orden_venta': ov,
                 'cliente' : ov.cliente.nombre,
                 'orden_compra': ov.orden_compra,
-                'tipo_venta': ov.tipo_venta,
+                'tipo_venta': list_tipo_venta,
                 'canal_venta': ov.canal_venta,
                 'despacho': despacho,
                 'lineas': lineas
@@ -340,38 +342,68 @@ def tracking(request):
 
 def indicadores(request):
     lineas = Linea.objects.all()
-    sum_lineas = Linea.objects.filter().count()
-    
-    ln_no_liberada = Linea.objects.filter(estado='NO LIBERADA').count()
-    ln_picking = Linea.objects.filter(estado='EN PICKING').count()
-    ln_embalaje = Linea.objects.filter(estado='ENVIADA').count()
-    ln_reparto = Linea.objects.filter(estado='REPARTO').count()
-    
-    data_embalaje = Linea.objects.filter(estado='ENVIADA')
-    list_embalaje = []
-    count = 1 
-    
-    for linea in data_embalaje:
-        list_embalaje.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
-        count +=1
+    if lineas.count() > 0:
 
-    prc_no_liberada = int(ln_no_liberada * 100 / sum_lineas)
-    prc_picking = int(ln_picking * 100 / sum_lineas)
-    prc_embalaje = int(ln_embalaje * 100 / sum_lineas)
-    prc_reparto = int(ln_reparto * 100 / sum_lineas)
-    
-    data = {
-        'lineas': lineas.values(),
-        'ln_no_liberada': ln_no_liberada,
-        'ln_picking': ln_picking,
-        'ln_embalaje': ln_embalaje,
-        'ln_reparto': ln_reparto,
-        'sum_lineas': sum_lineas,
-        'prc_no_liberada': prc_no_liberada,
-        'prc_picking': prc_picking,
-        'prc_embalaje': prc_embalaje,
-        'prc_reparto': prc_reparto,
-        'list_embalaje':list_embalaje
-    }
-    print(data_embalaje)
-    return render(request,'indicadores/indicadores.html',data)
+        sum_lineas = Linea.objects.filter().count()
+        
+        cant_stock = lineas.filter(tipo_venta='1STOCK').count()
+        prc_stock =  int(cant_stock * 100 / sum_lineas)
+        
+        data_no_liberada = Linea.objects.filter(estado='NO LIBERADA')
+        data_picking = Linea.objects.filter(estado='EN PICKING')
+        data_embalaje = Linea.objects.filter(estado='ENVIADA')
+        data_reparto = Linea.objects.filter(estado='REPARTO')
+        
+        list_no_liberada = []
+        list_picking = []
+        list_embalaje = []
+        list_reparto = []
+        count = 1 
+        
+        for linea in data_no_liberada:
+            list_no_liberada.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+            count +=1
+        count = 1
+        
+        for linea in data_picking:
+            list_picking.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+            count +=1
+        count = 1
+        
+        for linea in data_embalaje:
+            list_embalaje.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+            count +=1
+        count = 1
+        
+        for linea in data_reparto:
+            list_reparto.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+            count +=1
+
+
+        prc_no_liberada = int(data_no_liberada.count() * 100 / sum_lineas)
+        prc_picking = int(data_picking.count() * 100 / sum_lineas)
+        prc_embalaje = int(data_embalaje.count() * 100 / sum_lineas)
+        prc_reparto = int(data_reparto.count() * 100 / sum_lineas)
+        
+        data = {
+            'lineas': lineas.values(),
+            'ln_no_liberada': data_no_liberada.count(),
+            'ln_picking': data_picking.count(),
+            'ln_embalaje': data_embalaje.count(),
+            'ln_reparto': data_reparto.count(),
+            'sum_lineas': sum_lineas,
+            'prc_no_liberada': prc_no_liberada,
+            'prc_picking': prc_picking,
+            'prc_embalaje': prc_embalaje,
+            'prc_reparto': prc_reparto,
+            'list_no_liberada':list_no_liberada,
+            'list_picking':list_picking,
+            'list_embalaje':list_embalaje,
+            'list_reparto':list_reparto,
+            'cant_stock':cant_stock,
+            'prc_stock':prc_stock
+
+        }
+
+        return render(request,'indicadores/indicadores.html',data)
+    return render(request,'indicadores/indicadores.html')

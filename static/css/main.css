@@ -1,10 +1,12 @@
 .tooltip-inner {
   min-width: 500px !important;
+  text-align: start;
+  padding: 3px 0.5rem;
 }
 
 .progress {
   height: 1.5rem !important;
 }
-.test {
-  line-height: 20px;
+.tooltip-text {
+  line-height: 10px;
 }

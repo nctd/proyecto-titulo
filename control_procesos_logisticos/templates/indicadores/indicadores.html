@@ -270,6 +270,7 @@
                             <div class="card-header">
                                 <h3 class="card-title">Lineas a despachar según tipo de venta</h3>
                             </div>
+
                             <div class="col-sm-6 col-lg-6">
                                 <div class="card bg-lime-lt">
                                     <div class="card-body p-2">
@@ -323,10 +324,12 @@
                                                         </p>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">1534</p>
+                                                        <p class="float-lg-end" style="font-size: 1rem;">{{cant_stock}}
+                                                        </p>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">72%
+                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
+                                                            {{prc_stock}}%
                                                         </p>
                                                     </div>
                                                 </div>
@@ -520,8 +523,6 @@
                     </div>
 
                     <div class="tab-pane" id="estado-carga">
-                        {{sum_lineas}}
-                        <!-- {{lineas}} -->
 
                         <div class="row row-deck row-cards">
                             <div class="card-header">
@@ -531,7 +532,7 @@
                                 <div class="card">
                                     <div class="card-body p-2 text-center" data-bs-toggle="tooltip" data-bs-html="true"
                                         data-bs-placement="right"
-                                        title="{% for emb in list_embalaje %}<p class='test'>{{emb}}</p> {% endfor %}"
+                                        title="{% for lib in list_no_liberada %}<p class='tooltip-text'>{{lib}}</p> {% endfor %}"
                                         data-container='body'>
                                         <div class="text-end text-green">
                                             <span class="text-green d-inline-flex align-items-center lh-1"
@@ -546,10 +547,10 @@
                                 </div>
                             </div>
                             <div class="col-sm-6 col-lg-3">
-                                <div class="card" id='test_tooltip'>
+                                <div class="card">
                                     <div class="card-body p-2 text-center" data-bs-toggle="tooltip" data-bs-html="true"
                                         data-bs-placement="right"
-                                        title="{% for emb in list_embalaje %} {{emb}} <br></br> {% endfor %}"
+                                        title="{% for pick in list_picking %}<p class='tooltip-text'>{{pick}}</p> {% endfor %}"
                                         data-container='body'>
                                         <div class="text-end text-green">
                                             <span class="text-green d-inline-flex align-items-center lh-1"
@@ -565,9 +566,9 @@
                             </div>
                             <div class="col-sm-6 col-lg-3">
                                 <div class="card">
-                                    <div class="card-body p-2 text-center" data-bs-toggle="tooltip"
+                                    <div class="card-body p-2 text-center" data-bs-toggle="tooltip" data-bs-html="true"
                                         data-bs-placement="right"
-                                        title="1) OV03497 - Linea 1 - KIT, SHAFT SLEEVE,2812C000SFWS - 30 2) OV03497 - Linea 1 - KIT, SHAFT SLEEVE,2812C000SFWS - 30"
+                                        title="{% for emb in list_embalaje %}<p class='tooltip-text'>{{emb}}</p> {% endfor %}"
                                         data-container='body'>
                                         <div class="text-end text-green">
                                             <span class="text-green d-inline-flex align-items-center lh-1"
@@ -584,7 +585,10 @@
                             <div class="col-sm-6 col-lg-3">
 
                                 <div class="card">
-                                    <div class="card-body p-2 text-center">
+                                    <div class="card-body p-2 text-center" data-bs-toggle="tooltip" data-bs-html="true"
+                                        data-bs-placement="right"
+                                        title="{% for rep in list_reparto %}<p class='tooltip-text'>{{rep}}</p> {% endfor %}"
+                                        data-container='body'>
                                         <div class="text-end text-green">
                                             <span class="text-green d-inline-flex align-items-center lh-1"
                                                 style="font-size: 19px;">
