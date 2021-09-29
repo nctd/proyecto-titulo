@@ -448,17 +448,54 @@ def indicadores(request):
         prc_embalaje = int(data_embalaje.count() * 100 / sum_lineas)
         prc_reparto = int(data_reparto.count() * 100 / sum_lineas)
         
-        lineas_exitosas = 0
-        cant_stock_exitosas = 0
+        lineas_exitosas       = 0
+        cant_exitosas_stock_r = 0
+        cant_exitosas_stock   = 0
+        cant_exitosas_calzado = 0
+        cant_exitosas_liquid  = 0
+        cant_exitosas_proyect  = 0
+        cant_exitosas_os  = 0
+        
         for linea in lineas:
             if linea.despacho.guia_despacho != None and '-' not in linea.despacho.guia_despacho and 'GD' in linea.despacho.guia_despacho:
                 lineas_exitosas +=1
+                if linea.tipo_venta == '1STOCK_R':
+                    cant_exitosas_stock_r += 1
                 if linea.tipo_venta == '1STOCK':
-                    cant_stock_exitosas+=1
-                    
+                    cant_exitosas_stock += 1
+                if linea.tipo_venta == '2CALZADO':
+                    cant_exitosas_calzado += 1
+                if linea.tipo_venta == '2LIQUID':
+                    cant_exitosas_liquid += 1
+                if linea.tipo_venta == '2PROYECT':
+                    cant_exitosas_proyect += 1
+                if linea.tipo_venta == 'OS':
+                    cant_exitosas_os += 1
         
-        prc_exitosas = int(lineas_exitosas * 100 / sum_lineas)
-        prc_exitosas_stock = int(cant_stock_exitosas * 100 / cant_stock)
+        prc_exitosas         = 0
+        prc_exitosas_stock_r = 0
+        prc_exitosas_stock   = 0
+        prc_exitosas_calzado = 0
+        prc_exitosas_liquid  = 0
+        prc_exitosas_proyect = 0
+        prc_exitosas_os      = 0
+        
+        if lineas_exitosas > 0:
+            prc_exitosas = int(lineas_exitosas * 100 / sum_lineas)
+        if cant_exitosas_stock_r > 0:
+            prc_exitosas_stock_r = int(cant_exitosas_stock_r * 100 / cant_stock_r)
+        if cant_exitosas_stock > 0:
+            prc_exitosas_stock = int(cant_exitosas_stock * 100 / cant_stock)
+        if cant_exitosas_calzado > 0:
+            prc_exitosas_calzado = int(cant_exitosas_calzado * 100 / cant_calzado)
+        if cant_exitosas_liquid > 0:
+            prc_exitosas_liquid = int(cant_exitosas_liquid * 100 / cant_liquida)
+        if cant_exitosas_proyect > 0:
+            prc_exitosas_proyect = int(cant_exitosas_proyect * 100 / cant_proyect)
+        if cant_exitosas_os > 0:
+            prc_exitosas_os = int(cant_exitosas_os * 100 / cant_os)
+            
+
         data = {
             'lineas': lineas.values(),
             'ln_no_liberada': data_no_liberada.count(),
@@ -500,8 +537,18 @@ def indicadores(request):
             'prc_valor_os': prc_valor_os,
             'lineas_exitosas':lineas_exitosas,
             'prc_exitosas':prc_exitosas,
-            'cant_stock_exitosas':cant_stock_exitosas,
-            'prc_exitosas_stock': prc_exitosas_stock
+            'cant_exitosas_stock':cant_exitosas_stock,
+            'prc_exitosas_stock': prc_exitosas_stock,
+            'cant_exitosas_stock_r':cant_exitosas_stock_r,
+            'prc_exitosas_stock_r': prc_exitosas_stock_r,
+            'cant_exitosas_calzado' : cant_exitosas_calzado,
+            'prc_exitosas_calzado' : prc_exitosas_calzado,
+            'cant_exitosas_liquid' : cant_exitosas_liquid,
+            'prc_exitosas_liquid' : prc_exitosas_liquid,
+            'cant_exitosas_proyect' : cant_exitosas_proyect,
+            'prc_exitosas_proyect' : prc_exitosas_proyect,
+            'cant_exitosas_os' : cant_exitosas_os,
+            'prc_exitosas_os' : prc_exitosas_os
 
         }
 

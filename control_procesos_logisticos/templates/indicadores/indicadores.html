@@ -890,8 +890,8 @@
                         '<div class="col-6 col-sm-6">' +
                         '<label class="form-label col-form-label">Total de líneas planificadas</label>' +
                         '<div class="progress">' +
-                        '<div class="progress-bar" style="width: {{prc_exitosas}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
-                        '<span>{{lineas_exitosas}}/{{sum_lineas}} ({{prc_exitosas}}%)</span>' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                        '<span class="text-dark text-h3">{{lineas_exitosas}}/{{sum_lineas}} ({{prc_exitosas}}%)</span>' +
                         '</div >' +
                         '</div >' +
 
@@ -902,12 +902,12 @@
                         '<div class="col-6 col-sm-3">' +
                         '<label class="form-label col-form-label">1STOCK_R</label>' +
                         '<div class="progress">' +
-                        '{% if cant_stock_r > 1 %}' +
-                        '<div class="progress-bar" style="width: 100%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                        '<span>{{cant_stock_r}}</span>' +
+                        '{% if cant_exitosas_stock_r >= 1 %}' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas_stock_r}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_stock_r}}/{{cant_stock_r}} ({{prc_exitosas_stock_r}}%)</span>' +
                         '{% else %}' +
-                        '<div class="progress-bar" style="width:0%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                        '<span class="visually-hidden">0%</span>' +
+                        '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_stock_r}}/{{cant_stock_r}} ({{prc_exitosas_stock_r}}%)</span>' +
                         '{% endif %}' +
                         '</div>' +
                         '</div>' +
@@ -915,26 +915,41 @@
                         '<div class="col-6 col-sm-3">' +
                         '<label class="form-label col-form-label">1STOCK</label>' +
                         '<div class="progress">' +
-                        '<div class="progress-bar" style="width: {{prc_exitosas_stock}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
-                        '{% if cant_stock > 1 %}<span>{{cant_stock_exitosas}}/{{cant_stock}} ({{prc_exitosas_stock}}%)</span> {% else %} <span class="visually-hidden">0%</span> {% endif %}' +
+                        '{% if cant_exitosas_stock >= 1 %}' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas_stock}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_stock}}/{{cant_stock}} ({{prc_exitosas_stock}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_stock}}/{{cant_stock}} ({{prc_exitosas_stock}}%)</span>' +
+                        '{% endif %}' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
                         '<div class="form-group mb-4 row">' +
                         '<div class="col-6 col-sm-3">' +
-                        '<label class="form-label col-form-label"> 2CALZADO</label>' +
+                        '<label class="form-label col-form-label">2CALZADO</label>' +
                         '<div class="progress">' +
-                        '<div class="progress-bar" style="width: 38%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
-                        '<span class="visually-hidden">38%</span>' +
+                        '{% if cant_exitosas_calzado >= 1 %}' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas_calzado}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_calzado}}/{{cant_calzado}} ({{prc_exitosas_calzado}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_calzado}}/{{cant_calzado}} ({{prc_exitosas_calzado}}%)</span>' +
+                        '{% endif %}' +
                         '</div>' +
                         '</div>' +
                         '</div >' +
                         '<div class="col-6 col-sm-3">' +
                         '<label class="form-label col-form-label"> 2LIQUID</label>' +
                         '<div class="progress">' +
-                        '<div class="progress-bar" style="width: 38%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
-                        '<span class="visually-hidden">38%</span>' +
+                        '{% if cant_exitosas_liquid >= 1 %}' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas_liquid}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_liquid}}/{{cant_liquida}} ({{prc_exitosas_liquid}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_liquid}}/{{cant_liquida}} ({{prc_exitosas_liquid}}%)</span>' +
+                        '{% endif %}' +
                         '</div>' +
                         '</div>' +
                         '</div >' +
@@ -942,18 +957,28 @@
                         '</div>' +
                         '<div class="form-group mb-4 row">' +
                         '<div class="col-6 col-sm-3">' +
-                        '<label class="form-label col-form-label">2PROYECTO</label>' +
+                        '<label class="form-label col-form-label">2PROYECT</label>' +
                         '<div class="progress">' +
-                        '<div class="progress-bar" style="width: 38%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
-                        '<span class="visually-hidden">38%</span>' +
+                        '{% if cant_exitosas_proyect >= 1 %}' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas_proyect}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_proyect}}/{{cant_proyect}} ({{prc_exitosas_proyect}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_proyect}}/{{cant_proyect}} ({{prc_exitosas_proyect}}%)</span>' +
+                        '{% endif %}' +
                         '</div>' +
                         '</div>' +
                         '</div>' +
                         '<div class="col-6 col-sm-3">' +
                         '<label class="form-label col-form-label">OS</label>' +
                         '<div class="progress">' +
-                        '<div class="progress-bar" style="width: 38%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
-                        '<span class="visually-hidden">38%</span>' +
+                        '{% if cant_exitosas_os >= 1 %}' +
+                        '<div class="progress-bar bg-teal" style="width: {{prc_exitosas_os}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_os}}/{{cant_os}} ({{prc_exitosas_os}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
+                        '<span class="text-dark text-h3">{{cant_exitosas_os}}/{{cant_os}} ({{prc_exitosas_os}}%)</span>' +
+                        '{% endif %}' +
                         '</div>' +
                         '</div>' +
                         '</div >' +
