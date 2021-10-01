@@ -352,15 +352,19 @@ def indicadores(request):
         sum_lineas = Linea.objects.filter().count()
         
         # 1STOCK_R
+        
         cant_stock_r = lineas.filter(tipo_venta='1STOCK_R').count()
         prc_stock_r =  int(cant_stock_r * 100 / sum_lineas)
         val_stock_r = 0
         
         for stock_r in lineas.filter(tipo_venta='1STOCK_R'):
             val_stock_r += stock_r.valor
-            
-        prc_valor_stock_r = int(val_stock_r * 100 / valor_total)
         
+        if val_stock_r > 0:    
+            prc_valor_stock_r = int(val_stock_r * 100 / valor_total)
+        else:
+            prc_valor_stock_r = 0
+            
         # 1STOCK
         cant_stock = lineas.filter(tipo_venta='1STOCK').count()
         prc_stock =  int(cant_stock * 100 / sum_lineas)
@@ -369,8 +373,11 @@ def indicadores(request):
         for stock in lineas.filter(tipo_venta='1STOCK'):
             val_stock += stock.valor
             
-        prc_valor_stock = int(val_stock * 100 / valor_total)
-        
+        if val_stock > 0 :
+            prc_valor_stock = int(val_stock * 100 / valor_total)
+        else:
+            prc_valor_stock = 0
+            
         # 2CALZADO
         cant_calzado = lineas.filter(tipo_venta='2CALZADO').count()
         prc_calzado =  int(cant_calzado * 100 / sum_lineas)
@@ -378,9 +385,12 @@ def indicadores(request):
         
         for calzado in lineas.filter(tipo_venta='2CALZADO'):
             val_calzado += calzado.valor
+
+        if val_calzado > 0:
+            prc_valor_calzado = int(val_calzado * 100 / valor_total)
+        else:
+            prc_valor_calzado = 0
             
-        prc_valor_calzado = int(val_calzado * 100 / valor_total)
-        
         # 2LIQUIDA
         cant_liquida = lineas.filter(tipo_venta='2LIQUIDA').count()
         prc_liquida =  int(cant_liquida * 100 / sum_lineas)
@@ -388,8 +398,11 @@ def indicadores(request):
         
         for liquida in lineas.filter(tipo_venta='2LIQUIDA'):
             val_liquida += liquida.valor
-            
-        prc_valor_liquida = int(val_liquida * 100 / valor_total)
+        
+        if val_liquida > 0:
+            prc_valor_liquida = int(val_liquida * 100 / valor_total)
+        else:
+            prc_valor_liquida = 0
         
         # 2PROYECT
         cant_proyect = lineas.filter(tipo_venta='2PROYECT').count()
@@ -399,7 +412,10 @@ def indicadores(request):
         for proyect in lineas.filter(tipo_venta='2PROYECT'):
             val_proyect += proyect.valor
             
-        prc_valor_proyect = int(val_proyect * 100 / valor_total)
+        if val_proyect > 0:
+            prc_valor_proyect = int(val_proyect * 100 / valor_total)
+        else:
+            prc_valor_proyect = 0
         
         # OS
         cant_os = lineas.filter(tipo_venta='OS').count()
@@ -409,8 +425,10 @@ def indicadores(request):
         for os in lineas.filter(tipo_venta='OS'):
             val_os += os.valor
             
-        prc_valor_os = int(val_os * 100 / valor_total)
-
+        if val_os > 0:
+            prc_valor_os = int(val_os * 100 / valor_total)
+        else:
+            prc_valor_os = 0
         
         data_no_liberada = Linea.objects.filter(estado='NO LIBERADA')
         data_picking = Linea.objects.filter(estado='EN PICKING')
