@@ -639,22 +639,34 @@
                                 <div class="col-4 mb-3">
                                     <label class="form-label">Filtrar por:</label>
                                     <select type="text" class="form-select" id="select-progreso" value="">
+                                        <option value="" disabled selected>Seleccionar tipo</option>
                                         <option value="1">Tipo de despacho</option>
                                         <option value="2">Tipo de venta</option>
                                     </select>
                                 </div>
                                 <div id='progreso-container'>
 
-                                    <div class="form-group mb-4">
+                                    <!-- <div class="form-group mb-4">
                                         <div class="col-6 col-sm-6">
                                             <label class="form-label col-form-label">Total de líneas
                                                 planificadas</label>
                                             <div class="progress">
+                                                {% if sum_lineas > 0 %}
                                                 <div class="progress-bar" style="width: {{prc_exitosas}}%"
                                                     role="progressbar" aria-valuenow="38" aria-valuemin="0"
                                                     aria-valuemax="100">
-                                                    <span>{{lineas_exitosas}}/{{sum_lineas}} ({{prc_exitosas}}%)</span>
+                                                    <span class="text-dark text-h3">{{lineas_exitosas}}/{{sum_lineas}}
+                                                        ({{prc_exitosas}}%)</span>
                                                 </div>
+
+                                                {% else %}
+                                                <div class="progress-bar"
+                                                    style="width:100%;background-color: #e6e8e9"" role=" progressbar"
+                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
+                                                    <span class="text-dark text-h3">0/0 (0%)</span>
+                                                </div>
+                                                {% endif %}
+
                                             </div>
 
                                         </div>
@@ -711,7 +723,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
 
 
@@ -828,8 +840,13 @@
                         '<div class="col-6 col-sm-6">' +
                         '<label class="form-label col-form-label">Total de líneas planificadas</label>' +
                         '<div class="progress">' +
+                        '{% if sum_lineas > 0 %}' +
                         '<div class="progress-bar" style="width: {{prc_exitosas}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
                         '<span>{{lineas_exitosas}}/{{sum_lineas}} ({{prc_exitosas}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%;background-color: #e6e8e9"" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                        '<span class="text-dark text-h3">0/0 (0%)</span>' +
+                        '{% endif %}' +
                         '</div >' +
                         '</div >' +
 
@@ -890,8 +907,13 @@
                         '<div class="col-6 col-sm-6">' +
                         '<label class="form-label col-form-label">Total de líneas planificadas</label>' +
                         '<div class="progress">' +
+                        '{% if sum_lineas > 0 %}' +
                         '<div class="progress-bar bg-teal" style="width: {{prc_exitosas}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
                         '<span class="text-dark text-h3">{{lineas_exitosas}}/{{sum_lineas}} ({{prc_exitosas}}%)</span>' +
+                        '{% else %}' +
+                        '<div class="progress-bar" style="width:100%;background-color: #e6e8e9"" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                        '<span class="text-dark text-h3">0/0 (0%)</span>' +
+                        '{% endif %}' +
                         '</div >' +
                         '</div >' +
 
