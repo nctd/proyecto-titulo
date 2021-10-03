@@ -2,7 +2,7 @@ from django.http import response
 from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
 
-from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
+from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
 
 from .models import Articulo, Cliente, Despacho, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
 from django.contrib import messages
@@ -513,7 +513,31 @@ def indicadores(request):
         if cant_exitosas_os > 0:
             prc_exitosas_os = int(cant_exitosas_os * 100 / cant_os)
             
-
+        if request.method == 'POST':
+            try:
+                data_stock = {
+                    'tipo_venta': '1STOCK',
+                    'cantidad_despacho': cant_stock,
+                    'exitos': cant_exitosas_stock,
+                    'estado_final': prc_exitosas_stock
+                }
+                print(data_stock)
+                prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
+                
+                if prog_tipo_venta.is_valid():
+                    prog_tipo_venta.save()
+                else:
+                    data = {
+                        'error': True,
+                        'detalles': 'Error al guardar el progreso'
+                    }
+                    return render(request,'indicadores/indicadores.html',data)
+                
+            except ObjectDoesNotExist:
+                data = {
+                    'error': True
+                }
+                
         data = {
             'lineas': lineas.values(),
             'ln_no_liberada': data_no_liberada.count(),
@@ -569,6 +593,7 @@ def indicadores(request):
             'prc_exitosas_os' : prc_exitosas_os
 
         }
-
+            
         return render(request,'indicadores/indicadores.html',data)
+    
     return render(request,'indicadores/indicadores.html')

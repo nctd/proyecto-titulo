@@ -4,7 +4,7 @@ from django.db.models import fields
 # from import_export import widgets
 
 
-from .models import Articulo, Cliente, Despacho, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea
+from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea
 
 class OrdenVentaForm(forms.ModelForm):
     
@@ -62,4 +62,9 @@ class ArticuloForm(forms.ModelForm):
 class TemporalLineaForm(forms.ModelForm):
     class Meta:
         model = TemporalLinea
+        fields = '__all__'
+        
+class IndicadorTipoVentaForm(forms.ModelForm):
+    class Meta:
+        model = IndicadorTipoVenta
         fields = '__all__'

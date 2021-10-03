@@ -204,7 +204,7 @@ class IndicadorTipoVenta(models.Model):
     cantidad_despacho = models.IntegerField()
     exitos = models.IntegerField()
     estado_final = models.IntegerField()
-    fecha = models.DateField()
+    fecha = models.DateField(auto_now=True)
     activo = models.BooleanField(default=False)
     
     class Meta:
