@@ -24,7 +24,8 @@ class OrdenVenta(models.Model):
     tipo_pago       = models.CharField(max_length=30,verbose_name='Tipo de pago')
     canal_venta     = models.CharField(max_length=20)
     orden_compra    = models.CharField(max_length=50)
-
+    tipo_venta      = models.CharField(max_length=30,verbose_name='Tipo de venta')
+    
     def __str__(self):
         return self.orden_venta
     
@@ -86,7 +87,6 @@ class Linea(models.Model):
     num_linea   = models.IntegerField()
     cantidad    = models.IntegerField()
     estado      = models.CharField(max_length=40)
-    tipo_venta  = models.CharField(max_length=30,verbose_name='Tipo de venta')
     valor       = models.IntegerField()
     orden_venta = models.ForeignKey(OrdenVenta, on_delete=PROTECT)
     articulo    = models.ForeignKey(Articulo, on_delete=PROTECT)

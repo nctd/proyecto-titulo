@@ -767,9 +767,10 @@
                                             <option value="2">Últimos 30 días</option>
                                         </select>
                                     </div>
-                                    <div id='reportes-container'>
+                                    <div id='reportes-container' class="col-lg-6 mt-3">
                                         <div class="card" id="reportes-card" style="display: none;">
                                             <div class="card-body">
+                                                <h3 class="card-title">Cumplimiento 1STOCK</h3>
                                                 <div id="chart-demo-line" class="chart-lg"></div>
                                             </div>
                                         </div>
@@ -1102,9 +1103,12 @@
 
 <script>
     $('#select-reporte').on('change', function (e) {
+        var a = '{{cumplimiento_1stock|tojson}}'
+
+        alert(a)
         const content = document.getElementById("reportes-card")
         content.style.display = "flex"
-        if (this.value == 1) {
+        if (this.value == 2) {
             const content = document.getElementById("chart-demo-line")
             content.innerHTML = ''
 
@@ -1131,7 +1135,7 @@
                 },
                 series: [{
                     name: "Session Duration",
-                    data: [117, 92, 94, 98, 75, 110, 69, 80, 109, 113, 115, 95]
+                    data: [1]
                 }, {
                     name: "Page Views",
                     data: [59, 80, 61, 66, 70, 84, 87, 64, 94, 56, 55, 67]

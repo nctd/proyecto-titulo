@@ -1,10 +1,11 @@
 from django.http import response
 from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
+from pandas.io import json
 
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
 
-from .models import Articulo, Cliente, Despacho, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
+from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
 from django.contrib import messages
 from datetime import datetime
 import pandas as pd
@@ -158,7 +159,8 @@ def planificacion(request):
                             'cliente':id_cli.pk,
                             'tipo_pago':row[6],
                             'canal_venta':row[19],
-                            'orden_compra':row[20]
+                            'orden_compra':row[20],
+                            'tipo_venta':row[16],
                         }
                     else:
                         data = {
@@ -176,7 +178,8 @@ def planificacion(request):
                         'cliente':cli.pk,
                         'tipo_pago':row[6],
                         'canal_venta':row[19],
-                        'orden_compra':row[20]
+                        'orden_compra':row[20],
+                        'tipo_venta':row[16],
                     }
                     
                 ov = OrdenVentaForm(data=data_ov)
@@ -242,7 +245,6 @@ def planificacion(request):
                     'num_linea': row[2],
                     'cantidad': row[12],
                     'estado': row[14],
-                    'tipo_venta':row[16],
                     'valor': row[13],
                     'orden_venta': id_ov.pk,
                     'articulo': id_art.pk,
@@ -304,10 +306,10 @@ def tracking(request):
 
             lineas = Linea.objects.filter(orden_venta=ov.orden_venta)
             
-            list_tipo_venta = []
+            # list_tipo_venta = []
             for l in lineas:
                 desp = l.despacho_id
-                list_tipo_venta.append(str(l.tipo_venta))
+                # list_tipo_venta.append(str(l.tipo_venta))
             
             despacho = Despacho.objects.get(id_despacho=desp)
         
@@ -316,7 +318,7 @@ def tracking(request):
                 'orden_venta': ov,
                 'cliente' : ov.cliente.nombre,
                 'orden_compra': ov.orden_compra,
-                'tipo_venta': list_tipo_venta,
+                'tipo_venta': ov.tipo_venta,
                 'canal_venta': ov.canal_venta,
                 'despacho': despacho,
                 'lineas': lineas
@@ -342,6 +344,7 @@ def tracking(request):
 
 def indicadores(request):
     lineas = Linea.objects.all()
+    
     if lineas.count() > 0:
         
         valor_total = 0
@@ -353,11 +356,12 @@ def indicadores(request):
         
         # 1STOCK_R
         
-        cant_stock_r = lineas.filter(tipo_venta='1STOCK_R').count()
+        cant_stock_r = lineas.filter(orden_venta__tipo_venta='1STOCK_R').count()
+        print(cant_stock_r)
         prc_stock_r =  int(cant_stock_r * 100 / sum_lineas)
         val_stock_r = 0
         
-        for stock_r in lineas.filter(tipo_venta='1STOCK_R'):
+        for stock_r in lineas.filter(orden_venta__tipo_venta='1STOCK_R'):
             val_stock_r += stock_r.valor
         
         if val_stock_r > 0:    
@@ -366,11 +370,11 @@ def indicadores(request):
             prc_valor_stock_r = 0
             
         # 1STOCK
-        cant_stock = lineas.filter(tipo_venta='1STOCK').count()
+        cant_stock = lineas.filter(orden_venta__tipo_venta='1STOCK').count()
         prc_stock =  int(cant_stock * 100 / sum_lineas)
         val_stock = 0
         
-        for stock in lineas.filter(tipo_venta='1STOCK'):
+        for stock in lineas.filter(orden_venta__tipo_venta='1STOCK'):
             val_stock += stock.valor
             
         if val_stock > 0 :
@@ -379,11 +383,11 @@ def indicadores(request):
             prc_valor_stock = 0
             
         # 2CALZADO
-        cant_calzado = lineas.filter(tipo_venta='2CALZADO').count()
+        cant_calzado = lineas.filter(orden_venta__tipo_venta='2CALZADO').count()
         prc_calzado =  int(cant_calzado * 100 / sum_lineas)
         val_calzado = 0
         
-        for calzado in lineas.filter(tipo_venta='2CALZADO'):
+        for calzado in lineas.filter(orden_venta__tipo_venta='2CALZADO'):
             val_calzado += calzado.valor
 
         if val_calzado > 0:
@@ -392,11 +396,11 @@ def indicadores(request):
             prc_valor_calzado = 0
             
         # 2LIQUIDA
-        cant_liquida = lineas.filter(tipo_venta='2LIQUIDA').count()
+        cant_liquida = lineas.filter(orden_venta__tipo_venta='2LIQUIDA').count()
         prc_liquida =  int(cant_liquida * 100 / sum_lineas)
         val_liquida = 0
         
-        for liquida in lineas.filter(tipo_venta='2LIQUIDA'):
+        for liquida in lineas.filter(orden_venta__tipo_venta='2LIQUIDA'):
             val_liquida += liquida.valor
         
         if val_liquida > 0:
@@ -405,11 +409,11 @@ def indicadores(request):
             prc_valor_liquida = 0
         
         # 2PROYECT
-        cant_proyect = lineas.filter(tipo_venta='2PROYECT').count()
+        cant_proyect = lineas.filter(orden_venta__tipo_venta='2PROYECT').count()
         prc_proyect =  int(cant_proyect * 100 / sum_lineas)
         val_proyect = 0
         
-        for proyect in lineas.filter(tipo_venta='2PROYECT'):
+        for proyect in lineas.filter(orden_venta__tipo_venta='2PROYECT'):
             val_proyect += proyect.valor
             
         if val_proyect > 0:
@@ -418,11 +422,11 @@ def indicadores(request):
             prc_valor_proyect = 0
         
         # OS
-        cant_os = lineas.filter(tipo_venta='OS').count()
+        cant_os = lineas.filter(orden_venta__tipo_venta='OS').count()
         prc_os =  int(cant_os * 100 / sum_lineas)
         val_os = 0
         
-        for os in lineas.filter(tipo_venta='OS'):
+        for os in lineas.filter(orden_venta__tipo_venta='OS'):
             val_os += os.valor
             
         if val_os > 0:
@@ -477,17 +481,17 @@ def indicadores(request):
         for linea in lineas:
             if linea.despacho.guia_despacho != None and '-' not in linea.despacho.guia_despacho and 'GD' in linea.despacho.guia_despacho:
                 lineas_exitosas +=1
-                if linea.tipo_venta == '1STOCK_R':
+                if linea.orden_venta.tipo_venta == '1STOCK_R':
                     cant_exitosas_stock_r += 1
-                if linea.tipo_venta == '1STOCK':
+                if linea.orden_venta.tipo_venta == '1STOCK':
                     cant_exitosas_stock += 1
-                if linea.tipo_venta == '2CALZADO':
+                if linea.orden_venta.tipo_venta == '2CALZADO':
                     cant_exitosas_calzado += 1
-                if linea.tipo_venta == '2LIQUID':
+                if linea.orden_venta.tipo_venta == '2LIQUID':
                     cant_exitosas_liquid += 1
-                if linea.tipo_venta == '2PROYECT':
+                if linea.orden_venta.tipo_venta == '2PROYECT':
                     cant_exitosas_proyect += 1
-                if linea.tipo_venta == 'OS':
+                if linea.orden_venta.tipo_venta == 'OS':
                     cant_exitosas_os += 1
         
         prc_exitosas         = 0
@@ -538,6 +542,12 @@ def indicadores(request):
                     'error': True
                 }
                 
+        cumplimiento_1stock = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK')
+        list_cumpl_1stock = []
+        for valor in cumplimiento_1stock:
+            list_cumpl_1stock.append(valor.estado_final)
+            
+        print(list_cumpl_1stock)
         data = {
             'lineas': lineas.values(),
             'ln_no_liberada': data_no_liberada.count(),
@@ -590,10 +600,11 @@ def indicadores(request):
             'cant_exitosas_proyect' : cant_exitosas_proyect,
             'prc_exitosas_proyect' : prc_exitosas_proyect,
             'cant_exitosas_os' : cant_exitosas_os,
-            'prc_exitosas_os' : prc_exitosas_os
+            'prc_exitosas_os' : prc_exitosas_os,
+            'cumplimiento_1stock': list_cumpl_1stock
 
         }
-            
+
         return render(request,'indicadores/indicadores.html',data)
     
     return render(request,'indicadores/indicadores.html')
