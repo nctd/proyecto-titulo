@@ -7,7 +7,7 @@ from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, Despach
 
 from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
 from django.contrib import messages
-from datetime import datetime
+from datetime import date,datetime
 import pandas as pd
 
 # Create your views here.
@@ -38,102 +38,6 @@ def planificacion(request):
                 return render(request,'planificacion/planificacion.html',data)
             
             for row in df.itertuples():
-
-                # cli_exists = Cliente.objects.filter(nombre=row[5]).exists()
-                # if cli_exists:
-                #     pass
-                # else:
-                #     data_cli = {
-                #         'nombre': row[5],
-                #         'direccion': row[11],
-                #         'correo_contacto': row[17]
-                #     }
-                
-                #     cli = ClienteForm(data=data_cli)
-                #     if cli.is_valid():
-                #         id_cli = cli.save()
-                
-                    
-                #     data_ov = {
-                #         'orden_venta':row[1],
-                #         'cliente':id_cli.pk,
-                #         'tipo_pago':row[6],
-                #         'tipo_venta':row[16],
-                #         'canal_venta':row[19],
-                #         'orden_compra':row[20]
-                #     }
-                    
-                #     ov = OrdenVentaForm(data=data_ov)
-                #     if ov.is_valid():
-                #         id_ov = ov.save()
-
-
-                # data_art = {
-                #     'cod_articulo': row[7],
-                #     'descripcion': row[8]
-                # }
-                
-                # articulo = ArticuloForm(data=data_art)
-                # if articulo.is_valid():
-                #     id_art = articulo.save()
-                    
-                    
-                # tsp_exists = Transporte.objects.filter(empresa=row[9]).exists()
-            
-                # if tsp_exists:
-                #     pass
-                # else: 
-                #     data_transporte = {
-                #         'empresa': row[9],
-                #     }
-                            
-                #     transporte = TransporteForm(data=data_transporte)
-                #     if transporte.is_valid():
-                #         id_tsp = transporte.save()
-
-                #     data_despacho = {
-                #         'direccion': row[11],
-                #         'guia_despacho': row[15],
-                #         'transporte': id_tsp.pk
-                #     }
-
-                #     despacho = DespachoForm(data=data_despacho)
-                #     if despacho.is_valid():
-                #         id_desp = despacho.save()
-                        
-
-
-                #     data_linea = {
-                #         'num_linea': row[2],
-                #         'cantidad': row[12],
-                #         'estado': row[14],
-                #         'orden_venta': id_ov.pk,
-                #         'articulo': id_art.pk,
-                #         'despacho': id_desp.pk
-                #     }            
-                
-                #     linea = LineaForm(data=data_linea)
-                #     if linea.is_valid():
-                #         linea.save()
-                    
-                #     data_temporal = {
-                #         'num_linea':row[2],
-                #         'orden_venta': id_ov.pk,
-                #     }
-                    
-                #     temporal = TemporalLineaForm(data=data_temporal)
-                #     if temporal.is_valid():
-                #         temporal.save()
-                
-                # data_pl = {
-                #     'llave_busqueda': row[3],
-                #     'fecha_planificacion':request.POST['fecha_planificacion'],
-                #     'orden_venta': id_ov.pk
-                # }
-                    
-                # pl = PlanificacionForm(data=data_pl)
-                # if pl.is_valid():
-                #     pl.save()
                 data_cli = {
                     'nombre': row[5],
                     'direccion': row[11],
@@ -161,6 +65,7 @@ def planificacion(request):
                             'canal_venta':row[19],
                             'orden_compra':row[20],
                             'tipo_venta':row[16],
+                            'tipo_despacho':row[21],
                         }
                     else:
                         data = {
@@ -180,6 +85,7 @@ def planificacion(request):
                         'canal_venta':row[19],
                         'orden_compra':row[20],
                         'tipo_venta':row[16],
+                        'tipo_despacho':row[21],
                     }
                     
                 ov = OrdenVentaForm(data=data_ov)
@@ -319,9 +225,10 @@ def tracking(request):
                 'cliente' : ov.cliente.nombre,
                 'orden_compra': ov.orden_compra,
                 'tipo_venta': ov.tipo_venta,
+                'tipo_despacho': ov.tipo_despacho,
                 'canal_venta': ov.canal_venta,
                 'despacho': despacho,
-                'lineas': lineas
+                'lineas': lineas,
             }
             
             data['response'] = 'OV ENCONTRADA'
@@ -354,10 +261,23 @@ def indicadores(request):
 
         sum_lineas = Linea.objects.filter().count()
         
-        # 1STOCK_R
+        # Tipo de despacho
+        cant_desp_directo = lineas.filter(orden_venta__tipo_despacho='DESPACHO DIRECTO').count()
+        prc_desp_directo =  int(cant_desp_directo * 100 / sum_lineas)
+        val_desp_directo = 0
+        
+        for stock_r in lineas.filter(orden_venta__tipo_despacho='DESPACHO DIRECTO'):
+            val_desp_directo += stock_r.valor
+        
+        if val_desp_directo > 0:    
+            prc_valor_desp_directo = int(val_desp_directo * 100 / valor_total)
+        else:
+            prc_valor_desp_directo = 0
+            
+        
+        # 1STOCK_R - Tipo de venta
         
         cant_stock_r = lineas.filter(orden_venta__tipo_venta='1STOCK_R').count()
-        print(cant_stock_r)
         prc_stock_r =  int(cant_stock_r * 100 / sum_lineas)
         val_stock_r = 0
         
@@ -368,7 +288,7 @@ def indicadores(request):
             prc_valor_stock_r = int(val_stock_r * 100 / valor_total)
         else:
             prc_valor_stock_r = 0
-            
+        
         # 1STOCK
         cant_stock = lineas.filter(orden_venta__tipo_venta='1STOCK').count()
         prc_stock =  int(cant_stock * 100 / sum_lineas)
@@ -519,33 +439,73 @@ def indicadores(request):
             
         if request.method == 'POST':
             try:
-                data_stock = {
-                    'tipo_venta': '1STOCK',
-                    'cantidad_despacho': cant_stock,
-                    'exitos': cant_exitosas_stock,
-                    'estado_final': prc_exitosas_stock
-                }
-                print(data_stock)
-                prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
-                
-                if prog_tipo_venta.is_valid():
-                    prog_tipo_venta.save()
-                else:
-                    data = {
-                        'error': True,
-                        'detalles': 'Error al guardar el progreso'
+                stock_r_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK_R')
+                if not stock_r_exists:
+                    print('NO EXISTE')
+                    data_stock = {
+                        'tipo_venta': '1STOCK_R',
+                        'cantidad_despacho': cant_stock_r,
+                        'exitos': cant_exitosas_stock_r,
+                        'estado_final': prc_exitosas_stock_r
                     }
-                    return render(request,'indicadores/indicadores.html',data)
+                    
+                    prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
+                    
+                    if prog_tipo_venta.is_valid():
+                        prog_tipo_venta.save()
+                    else:
+                        data = {
+                            'error': True,
+                            'detalles': 'Error al guardar el progreso'
+                        }
+                        return render(request,'indicadores/indicadores.html',data)
+                else:
+                    print('EXISTE')
                 
+                stock_1_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK')
+                
+                if not stock_1_exists:
+                    data_stock = {
+                        'tipo_venta': '1STOCK',
+                        'cantidad_despacho': cant_stock,
+                        'exitos': cant_exitosas_stock,
+                        'estado_final': prc_exitosas_stock
+                    }
+                    
+                    prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
+                    
+                    if prog_tipo_venta.is_valid():
+                        prog_tipo_venta.save()
+                    else:
+                        data = {
+                            'error': True,
+                            'detalles': 'Error al guardar el progreso'
+                        }
+                        return render(request,'indicadores/indicadores.html',data)
+                else:
+                    print('EXISTE')
+
             except ObjectDoesNotExist:
                 data = {
                     'error': True
                 }
                 
+            
+        cumplimiento_1stock_r = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK_R')
+        list_cumpl_1stock_r = []
+        if cumplimiento_1stock_r:
+            for valor in cumplimiento_1stock_r:
+                list_cumpl_1stock_r.append(valor.estado_final)
+        else:
+            list_cumpl_1stock_r = [0]   
+                
         cumplimiento_1stock = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK')
         list_cumpl_1stock = []
-        for valor in cumplimiento_1stock:
-            list_cumpl_1stock.append(valor.estado_final)
+        if cumplimiento_1stock:
+            for valor in cumplimiento_1stock:
+                list_cumpl_1stock.append(valor.estado_final)
+        else:
+            list_cumpl_1stock = [0]
             
         print(list_cumpl_1stock)
         data = {
@@ -563,6 +523,12 @@ def indicadores(request):
             'list_picking':list_picking,
             'list_embalaje':list_embalaje,
             'list_reparto':list_reparto,
+            # Tipo de despacho
+            'cant_desp_directo':cant_desp_directo,
+            'prc_desp_directo':prc_desp_directo,
+            'val_desp_directo': val_desp_directo,
+            'prc_valor_desp_directo': prc_valor_desp_directo,
+            # Tipo de venta
             'cant_stock':cant_stock,
             'prc_stock':prc_stock,
             'val_stock': val_stock,
@@ -601,7 +567,8 @@ def indicadores(request):
             'prc_exitosas_proyect' : prc_exitosas_proyect,
             'cant_exitosas_os' : cant_exitosas_os,
             'prc_exitosas_os' : prc_exitosas_os,
-            'cumplimiento_1stock': list_cumpl_1stock
+            'cumplimiento_1stock_r': json.dumps(list_cumpl_1stock_r),
+            'cumplimiento_1stock': json.dumps(list_cumpl_1stock)
 
         }
 

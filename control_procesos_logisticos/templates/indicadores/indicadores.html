@@ -69,10 +69,12 @@
                                                         </p>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">1534</p>
+                                                        <p class="float-lg-end" style="font-size: 1rem;">
+                                                            {{cant_desp_directo}}</p>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">72%
+                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
+                                                            {{prc_desp_directo}}%
                                                         </p>
                                                     </div>
                                                 </div>
@@ -84,10 +86,12 @@
                                                         </p>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">$37.243.459</p>
+                                                        <p class="float-lg-end" style="font-size: 1rem;">
+                                                            ${{val_desp_directo}}</p>
                                                     </div>
                                                     <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">34%
+                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
+                                                            {{prc_valor_desp_directo}}%
                                                         </p>
                                                     </div>
                                                 </div>
@@ -767,10 +771,10 @@
                                             <option value="2">Últimos 30 días</option>
                                         </select>
                                     </div>
-                                    <div id='reportes-container' class="col-lg-6 mt-3">
+                                    <div id='reportes-container' class="col-lg-12 mt-3">
                                         <div class="card" id="reportes-card" style="display: none;">
                                             <div class="card-body">
-                                                <h3 class="card-title">Cumplimiento 1STOCK</h3>
+                                                <h3 class="card-title">Cumplimiento por tipo de venta</h3>
                                                 <div id="chart-demo-line" class="chart-lg"></div>
                                             </div>
                                         </div>
@@ -1103,9 +1107,9 @@
 
 <script>
     $('#select-reporte').on('change', function (e) {
-        var a = '{{cumplimiento_1stock|tojson}}'
+        var stock_1_r = JSON.parse('{{cumplimiento_1stock_r}}');
+        var stock_1 = JSON.parse('{{cumplimiento_1stock}}');
 
-        alert(a)
         const content = document.getElementById("reportes-card")
         content.style.display = "flex"
         if (this.value == 2) {
@@ -1134,14 +1138,11 @@
                     curve: "straight",
                 },
                 series: [{
-                    name: "Session Duration",
-                    data: [1]
+                    name: "1STOCK_R",
+                    data: stock_1_r
                 }, {
-                    name: "Page Views",
-                    data: [59, 80, 61, 66, 70, 84, 87, 64, 94, 56, 55, 67]
-                }, {
-                    name: "Total Visits",
-                    data: [53, 51, 52, 41, 46, 60, 45, 43, 30, 50, 58, 59]
+                    name: "1STOCK",
+                    data: stock_1
                 }],
                 grid: {
                     padding: {

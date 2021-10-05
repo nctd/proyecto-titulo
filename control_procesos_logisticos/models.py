@@ -25,6 +25,7 @@ class OrdenVenta(models.Model):
     canal_venta     = models.CharField(max_length=20)
     orden_compra    = models.CharField(max_length=50)
     tipo_venta      = models.CharField(max_length=30,verbose_name='Tipo de venta')
+    tipo_despacho   = models.CharField(max_length=50,blank=True,default='',verbose_name='Tipo de venta')
     
     def __str__(self):
         return self.orden_venta
@@ -70,7 +71,7 @@ class Despacho(models.Model):
     id_despacho    = models.AutoField(primary_key=True)
     direccion     = models.CharField(max_length=100,blank=True,default='')
     comuna        = models.CharField(max_length=80,blank=True,default='')
-    tipo_despacho = models.CharField(max_length=50,blank=True,default='')
+    # tipo_despacho = models.CharField(max_length=50,blank=True,default='')
     guia_despacho = models.CharField(max_length=50,blank=True,default=None)
     transporte    = models.ForeignKey(Transporte, on_delete=PROTECT)
     activo        = models.BooleanField(default=False)
