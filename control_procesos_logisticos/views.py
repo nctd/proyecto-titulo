@@ -1,18 +1,45 @@
 from django.http import response
 from django.shortcuts import get_object_or_404, render
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import connection
+from django.contrib import messages
+
 from pandas.io import json
 
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
 
 from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
-from django.contrib import messages
 from datetime import date,datetime
 import pandas as pd
+import cx_Oracle
 
+
+def getLineaTipoVenta(tipo_venta):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    cant_lineas = cursor.var(cx_Oracle.NUMBER)
+    valor = cursor.var(cx_Oracle.NUMBER)
+    porc_linea = cursor.var(cx_Oracle.NUMBER)
+    porc_valor = cursor.var(cx_Oracle.NUMBER)
+    
+    cursor.callproc('SP_DATOS_REPORTE', [tipo_venta,cant_lineas,valor,porc_linea,porc_valor])
+    cursor.close()
+    
+    datos_linea = {
+        'cant_lineas' : int(cant_lineas.getvalue()) ,
+        'valor' : int(valor.getvalue()) ,
+        'porc_linea' : int(porc_linea.getvalue()) ,
+        'porc_valor' : int(porc_valor.getvalue()) ,
+    }
+    
+    return datos_linea
+    
 # Create your views here.
 def home(request):
-    return render(request,'index.html')
+    data = {
+        'linea': getLineaTipoVenta('1STOCK')
+    }
+    return render(request,'index.html',data)
 
 def planificacion(request):
     data = {
@@ -553,6 +580,7 @@ def indicadores(request):
             'prc_os':prc_os,
             'val_os': val_os,
             'prc_valor_os': prc_valor_os,
+            # Progreso diario
             'lineas_exitosas':lineas_exitosas,
             'prc_exitosas':prc_exitosas,
             'cant_exitosas_stock':cant_exitosas_stock,
@@ -575,3 +603,5 @@ def indicadores(request):
         return render(request,'indicadores/indicadores.html',data)
     
     return render(request,'indicadores/indicadores.html')
+
+
