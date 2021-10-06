@@ -19,20 +19,106 @@ def getLineaTipoVenta(tipo_venta):
     cursor = django_cursor.connection.cursor()
     cant_lineas = cursor.var(cx_Oracle.NUMBER)
     valor = cursor.var(cx_Oracle.NUMBER)
-    porc_linea = cursor.var(cx_Oracle.NUMBER)
+    porc_lineas = cursor.var(cx_Oracle.NUMBER)
     porc_valor = cursor.var(cx_Oracle.NUMBER)
     
-    cursor.callproc('SP_DATOS_REPORTE', [tipo_venta,cant_lineas,valor,porc_linea,porc_valor])
+    cursor.callproc('SP_DATOS_REPORTE_VENTA', [tipo_venta,cant_lineas,valor,porc_lineas,porc_valor])
     cursor.close()
     
     datos_linea = {
-        'cant_lineas' : int(cant_lineas.getvalue()) ,
-        'valor' : int(valor.getvalue()) ,
-        'porc_linea' : int(porc_linea.getvalue()) ,
-        'porc_valor' : int(porc_valor.getvalue()) ,
+        'cant_lineas' : int(cant_lineas.getvalue()),
+        'valor' : int(valor.getvalue()),
+        'porc_lineas' : int(porc_lineas.getvalue()),
+        'porc_valor' : int(porc_valor.getvalue()),
     }
-    
     return datos_linea
+
+def getLineaTipoDespacho(tipo_despacho):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    cant_lineas = cursor.var(cx_Oracle.NUMBER)
+    valor = cursor.var(cx_Oracle.NUMBER)
+    porc_lineas = cursor.var(cx_Oracle.NUMBER)
+    porc_valor = cursor.var(cx_Oracle.NUMBER)
+    
+    cursor.callproc('SP_DATOS_REPORTE_DESPACHO', [tipo_despacho,cant_lineas,valor,porc_lineas,porc_valor])
+    cursor.close()
+    
+    datos_linea = {
+        'cant_lineas' : int(cant_lineas.getvalue()),
+        'valor' : int(valor.getvalue()),
+        'porc_lineas' : int(porc_lineas.getvalue()),
+        'porc_valor' : int(porc_valor.getvalue()),
+    }
+    return datos_linea
+
+def getEstadoCargaTarea(estado):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    cant_lineas = cursor.var(cx_Oracle.NUMBER)
+    porc_lineas = cursor.var(cx_Oracle.NUMBER)
+    
+    cursor.callproc('SP_ESTADO_CARGA', [estado,cant_lineas,porc_lineas])
+    cursor.close()
+    
+    datos_linea = {
+        'cant_lineas' : int(cant_lineas.getvalue()),
+        'porc_lineas' : int(porc_lineas.getvalue()),
+    }
+    return datos_linea
+
+def getTotalProgresoDiario():
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    cant_lineas = cursor.var(cx_Oracle.NUMBER)
+    cant_exito_lineas = cursor.var(cx_Oracle.NUMBER)
+    porc_exito_lineas = cursor.var(cx_Oracle.NUMBER)
+    
+    cursor.callproc('SP_OBTENER_TOTAL_PROGRESO', [cant_lineas,cant_exito_lineas,porc_exito_lineas])
+    cursor.close()
+    
+    datos_linea = {
+        'cant_lineas' : int(cant_lineas.getvalue()),
+        'cant_exito_lineas' : int(cant_exito_lineas.getvalue()),
+        'porc_exito_lineas' : int(porc_exito_lineas.getvalue()),
+    }
+    return datos_linea
+
+def getProgresoDiarioTipoDespacho(tipo_despacho):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    cant_lineas = cursor.var(cx_Oracle.NUMBER)
+    cant_exito_lineas = cursor.var(cx_Oracle.NUMBER)
+    porc_exito_lineas = cursor.var(cx_Oracle.NUMBER)
+    
+    cursor.callproc('SP_OBTENER_PROGRESO_DIARIO_DESPACHO', [tipo_despacho,cant_lineas,cant_exito_lineas,porc_exito_lineas])
+    cursor.close()
+    
+    datos_linea = {
+        'cant_lineas' : int(cant_lineas.getvalue()),
+        'cant_exito_lineas' : int(cant_exito_lineas.getvalue()),
+        'porc_exito_lineas' : int(porc_exito_lineas.getvalue()),
+    }
+    return datos_linea
+
+def getProgresoDiarioTipoVenta(tipo_venta):
+    django_cursor = connection.cursor()
+    cursor = django_cursor.connection.cursor()
+    cant_lineas = cursor.var(cx_Oracle.NUMBER)
+    cant_exito_lineas = cursor.var(cx_Oracle.NUMBER)
+    porc_exito_lineas = cursor.var(cx_Oracle.NUMBER)
+    
+    cursor.callproc('SP_OBTENER_PROGRESO_DIARIO_VENTA', [tipo_venta,cant_lineas,cant_exito_lineas,porc_exito_lineas])
+    cursor.close()
+    
+    datos_linea = {
+        'cant_lineas' : int(cant_lineas.getvalue()),
+        'cant_exito_lineas' : int(cant_exito_lineas.getvalue()),
+        'porc_exito_lineas' : int(porc_exito_lineas.getvalue()),
+    }
+    return datos_linea
+
+
     
 # Create your views here.
 def home(request):
@@ -281,105 +367,38 @@ def indicadores(request):
     
     if lineas.count() > 0:
         
-        valor_total = 0
+        # Lineas a despachar segun tipo de despacho
+        # Despacho directo
+        datos_despacho_directo = getLineaTipoDespacho('DESPACHO DIRECTO')
+        # Traspaso entre sucursales
+        datos_despacho_traspaso = getLineaTipoDespacho('TRASPASO ENTRE SUCURSALES')
+        # Embalaje
+        datos_despacho_embalaje = getLineaTipoDespacho('EMBALAJE')
+        # Exportaciones
+        datos_despacho_exportaciones = getLineaTipoDespacho('EXPORTACIONES')
+        # Retira cliente
+        datos_despacho_retira = getLineaTipoDespacho('RETIRA CLIENTE')        
         
-        for lin in lineas:
-            valor_total+= lin.valor
-
-        sum_lineas = Linea.objects.filter().count()
-        
-        # Tipo de despacho
-        cant_desp_directo = lineas.filter(orden_venta__tipo_despacho='DESPACHO DIRECTO').count()
-        prc_desp_directo =  int(cant_desp_directo * 100 / sum_lineas)
-        val_desp_directo = 0
-        
-        for stock_r in lineas.filter(orden_venta__tipo_despacho='DESPACHO DIRECTO'):
-            val_desp_directo += stock_r.valor
-        
-        if val_desp_directo > 0:    
-            prc_valor_desp_directo = int(val_desp_directo * 100 / valor_total)
-        else:
-            prc_valor_desp_directo = 0
-            
-        
-        # 1STOCK_R - Tipo de venta
-        
-        cant_stock_r = lineas.filter(orden_venta__tipo_venta='1STOCK_R').count()
-        prc_stock_r =  int(cant_stock_r * 100 / sum_lineas)
-        val_stock_r = 0
-        
-        for stock_r in lineas.filter(orden_venta__tipo_venta='1STOCK_R'):
-            val_stock_r += stock_r.valor
-        
-        if val_stock_r > 0:    
-            prc_valor_stock_r = int(val_stock_r * 100 / valor_total)
-        else:
-            prc_valor_stock_r = 0
-        
+        # Lineas a despachar segun tipo de venta
+        # 1STOCK_R
+        datos_stock_r = getLineaTipoVenta('1STOCK_R')
         # 1STOCK
-        cant_stock = lineas.filter(orden_venta__tipo_venta='1STOCK').count()
-        prc_stock =  int(cant_stock * 100 / sum_lineas)
-        val_stock = 0
-        
-        for stock in lineas.filter(orden_venta__tipo_venta='1STOCK'):
-            val_stock += stock.valor
-            
-        if val_stock > 0 :
-            prc_valor_stock = int(val_stock * 100 / valor_total)
-        else:
-            prc_valor_stock = 0
-            
+        datos_stock =  getLineaTipoVenta('1STOCK')
         # 2CALZADO
-        cant_calzado = lineas.filter(orden_venta__tipo_venta='2CALZADO').count()
-        prc_calzado =  int(cant_calzado * 100 / sum_lineas)
-        val_calzado = 0
-        
-        for calzado in lineas.filter(orden_venta__tipo_venta='2CALZADO'):
-            val_calzado += calzado.valor
-
-        if val_calzado > 0:
-            prc_valor_calzado = int(val_calzado * 100 / valor_total)
-        else:
-            prc_valor_calzado = 0
-            
+        datos_calzado =  getLineaTipoVenta('2CALZADO')       
         # 2LIQUIDA
-        cant_liquida = lineas.filter(orden_venta__tipo_venta='2LIQUIDA').count()
-        prc_liquida =  int(cant_liquida * 100 / sum_lineas)
-        val_liquida = 0
-        
-        for liquida in lineas.filter(orden_venta__tipo_venta='2LIQUIDA'):
-            val_liquida += liquida.valor
-        
-        if val_liquida > 0:
-            prc_valor_liquida = int(val_liquida * 100 / valor_total)
-        else:
-            prc_valor_liquida = 0
-        
+        datos_liquida =  getLineaTipoVenta('2LIQUIDA')
         # 2PROYECT
-        cant_proyect = lineas.filter(orden_venta__tipo_venta='2PROYECT').count()
-        prc_proyect =  int(cant_proyect * 100 / sum_lineas)
-        val_proyect = 0
-        
-        for proyect in lineas.filter(orden_venta__tipo_venta='2PROYECT'):
-            val_proyect += proyect.valor
-            
-        if val_proyect > 0:
-            prc_valor_proyect = int(val_proyect * 100 / valor_total)
-        else:
-            prc_valor_proyect = 0
-        
+        datos_proyect = getLineaTipoVenta('2PROYECT')
         # OS
-        cant_os = lineas.filter(orden_venta__tipo_venta='OS').count()
-        prc_os =  int(cant_os * 100 / sum_lineas)
-        val_os = 0
-        
-        for os in lineas.filter(orden_venta__tipo_venta='OS'):
-            val_os += os.valor
-            
-        if val_os > 0:
-            prc_valor_os = int(val_os * 100 / valor_total)
-        else:
-            prc_valor_os = 0
+        datos_os = getLineaTipoVenta('OS')
+
+
+        # Estado de carga por tarea
+        datos_no_liberada = getEstadoCargaTarea('NO LIBERADA')
+        datos_picking = getEstadoCargaTarea('EN PICKING')
+        datos_embalaje = getEstadoCargaTarea('ENVIADA')
+        datos_reparto = getEstadoCargaTarea('REPARTO')
         
         data_no_liberada = Linea.objects.filter(estado='NO LIBERADA')
         data_picking = Linea.objects.filter(estado='EN PICKING')
@@ -411,111 +430,86 @@ def indicadores(request):
             list_reparto.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
             count +=1
 
-
-        prc_no_liberada = int(data_no_liberada.count() * 100 / sum_lineas)
-        prc_picking = int(data_picking.count() * 100 / sum_lineas)
-        prc_embalaje = int(data_embalaje.count() * 100 / sum_lineas)
-        prc_reparto = int(data_reparto.count() * 100 / sum_lineas)
+        # Progreso diario de despachos - Total
+        progreso_total = getTotalProgresoDiario()
+        # Progreso diario de despachos - Tipo de despacho
+        # DESPACHO DIRECTO
+        progreso_despacho_directo = getProgresoDiarioTipoDespacho('DESPACHO DIRECTO')
+        # TRASPASO ENTRE SUCURSALES
+        progreso_despacho_traspaso = getProgresoDiarioTipoDespacho('TRASPASO ENTRE SUCURSALES')
+        # EMBALAJE
+        progreso_despacho_embalaje = getProgresoDiarioTipoDespacho('EMBALAJE')
+        # EXPORTACIONES
+        progreso_despacho_exportaciones = getProgresoDiarioTipoDespacho('EXPORTACIONES')
+        # RETIRA CLIENTE
+        progreso_despacho_retira = getProgresoDiarioTipoDespacho('RETIRA CLIENTE')
+        # Progreso diario de despachos - Tipo de venta
+        # 1STOCK_R
+        progreso_stock_r = getProgresoDiarioTipoVenta('1STOCK_R')
+        # 1STOCK
+        progreso_stock =  getProgresoDiarioTipoVenta('1STOCK')
+        # 2CALZADO
+        progreso_calzado =  getProgresoDiarioTipoVenta('2CALZADO')       
+        # 2LIQUIDA
+        progreso_liquida =  getProgresoDiarioTipoVenta('2LIQUIDA')
+        # 2PROYECT
+        progreso_proyect = getProgresoDiarioTipoVenta('2PROYECT')
+        # OS
+        progreso_os = getProgresoDiarioTipoVenta('OS')
         
-        lineas_exitosas       = 0
-        cant_exitosas_stock_r = 0
-        cant_exitosas_stock   = 0
-        cant_exitosas_calzado = 0
-        cant_exitosas_liquid  = 0
-        cant_exitosas_proyect  = 0
-        cant_exitosas_os  = 0
-        
-        for linea in lineas:
-            if linea.despacho.guia_despacho != None and '-' not in linea.despacho.guia_despacho and 'GD' in linea.despacho.guia_despacho:
-                lineas_exitosas +=1
-                if linea.orden_venta.tipo_venta == '1STOCK_R':
-                    cant_exitosas_stock_r += 1
-                if linea.orden_venta.tipo_venta == '1STOCK':
-                    cant_exitosas_stock += 1
-                if linea.orden_venta.tipo_venta == '2CALZADO':
-                    cant_exitosas_calzado += 1
-                if linea.orden_venta.tipo_venta == '2LIQUID':
-                    cant_exitosas_liquid += 1
-                if linea.orden_venta.tipo_venta == '2PROYECT':
-                    cant_exitosas_proyect += 1
-                if linea.orden_venta.tipo_venta == 'OS':
-                    cant_exitosas_os += 1
-        
-        prc_exitosas         = 0
-        prc_exitosas_stock_r = 0
-        prc_exitosas_stock   = 0
-        prc_exitosas_calzado = 0
-        prc_exitosas_liquid  = 0
-        prc_exitosas_proyect = 0
-        prc_exitosas_os      = 0
-        
-        if lineas_exitosas > 0:
-            prc_exitosas = int(lineas_exitosas * 100 / sum_lineas)
-        if cant_exitosas_stock_r > 0:
-            prc_exitosas_stock_r = int(cant_exitosas_stock_r * 100 / cant_stock_r)
-        if cant_exitosas_stock > 0:
-            prc_exitosas_stock = int(cant_exitosas_stock * 100 / cant_stock)
-        if cant_exitosas_calzado > 0:
-            prc_exitosas_calzado = int(cant_exitosas_calzado * 100 / cant_calzado)
-        if cant_exitosas_liquid > 0:
-            prc_exitosas_liquid = int(cant_exitosas_liquid * 100 / cant_liquida)
-        if cant_exitosas_proyect > 0:
-            prc_exitosas_proyect = int(cant_exitosas_proyect * 100 / cant_proyect)
-        if cant_exitosas_os > 0:
-            prc_exitosas_os = int(cant_exitosas_os * 100 / cant_os)
             
-        if request.method == 'POST':
-            try:
-                stock_r_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK_R')
-                if not stock_r_exists:
-                    print('NO EXISTE')
-                    data_stock = {
-                        'tipo_venta': '1STOCK_R',
-                        'cantidad_despacho': cant_stock_r,
-                        'exitos': cant_exitosas_stock_r,
-                        'estado_final': prc_exitosas_stock_r
-                    }
+        # if request.method == 'POST':
+        #     try:
+        #         stock_r_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK_R')
+        #         if not stock_r_exists:
+        #             print('NO EXISTE')
+        #             data_stock = {
+        #                 'tipo_venta': '1STOCK_R',
+        #                 'cantidad_despacho': cant_stock_r,
+        #                 'exitos': cant_exitosas_stock_r,
+        #                 'estado_final': prc_exitosas_stock_r
+        #             }
                     
-                    prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
+        #             prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
                     
-                    if prog_tipo_venta.is_valid():
-                        prog_tipo_venta.save()
-                    else:
-                        data = {
-                            'error': True,
-                            'detalles': 'Error al guardar el progreso'
-                        }
-                        return render(request,'indicadores/indicadores.html',data)
-                else:
-                    print('EXISTE')
+        #             if prog_tipo_venta.is_valid():
+        #                 prog_tipo_venta.save()
+        #             else:
+        #                 data = {
+        #                     'error': True,
+        #                     'detalles': 'Error al guardar el progreso'
+        #                 }
+        #                 return render(request,'indicadores/indicadores.html',data)
+        #         else:
+        #             print('EXISTE')
                 
-                stock_1_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK')
+        #         stock_1_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK')
                 
-                if not stock_1_exists:
-                    data_stock = {
-                        'tipo_venta': '1STOCK',
-                        'cantidad_despacho': cant_stock,
-                        'exitos': cant_exitosas_stock,
-                        'estado_final': prc_exitosas_stock
-                    }
+        #         if not stock_1_exists:
+        #             data_stock = {
+        #                 'tipo_venta': '1STOCK',
+        #                 # 'cantidad_despacho': cant_stock,
+        #                 'exitos': cant_exitosas_stock,
+        #                 'estado_final': prc_exitosas_stock
+        #             }
                     
-                    prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
+        #             prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
                     
-                    if prog_tipo_venta.is_valid():
-                        prog_tipo_venta.save()
-                    else:
-                        data = {
-                            'error': True,
-                            'detalles': 'Error al guardar el progreso'
-                        }
-                        return render(request,'indicadores/indicadores.html',data)
-                else:
-                    print('EXISTE')
+        #             if prog_tipo_venta.is_valid():
+        #                 prog_tipo_venta.save()
+        #             else:
+        #                 data = {
+        #                     'error': True,
+        #                     'detalles': 'Error al guardar el progreso'
+        #                 }
+        #                 return render(request,'indicadores/indicadores.html',data)
+        #         else:
+        #             print('EXISTE')
 
-            except ObjectDoesNotExist:
-                data = {
-                    'error': True
-                }
+        #     except ObjectDoesNotExist:
+        #         data = {
+        #             'error': True
+        #         }
                 
             
         cumplimiento_1stock_r = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK_R')
@@ -534,67 +528,49 @@ def indicadores(request):
         else:
             list_cumpl_1stock = [0]
             
-        print(list_cumpl_1stock)
         data = {
-            'lineas': lineas.values(),
-            'ln_no_liberada': data_no_liberada.count(),
-            'ln_picking': data_picking.count(),
-            'ln_embalaje': data_embalaje.count(),
-            'ln_reparto': data_reparto.count(),
-            'sum_lineas': sum_lineas,
-            'prc_no_liberada': prc_no_liberada,
-            'prc_picking': prc_picking,
-            'prc_embalaje': prc_embalaje,
-            'prc_reparto': prc_reparto,
+            # Estado de carga por tarea
+            'datos_no_liberada' : datos_no_liberada,
+            'datos_picking' : datos_picking,
+            'datos_embalaje' : datos_embalaje,
+            'datos_reparto' : datos_reparto,
             'list_no_liberada':list_no_liberada,
             'list_picking':list_picking,
             'list_embalaje':list_embalaje,
             'list_reparto':list_reparto,
+            
             # Tipo de despacho
-            'cant_desp_directo':cant_desp_directo,
-            'prc_desp_directo':prc_desp_directo,
-            'val_desp_directo': val_desp_directo,
-            'prc_valor_desp_directo': prc_valor_desp_directo,
+            'datos_despacho_directo' : datos_despacho_directo,
+            'datos_despacho_traspaso' : datos_despacho_traspaso,
+            'datos_despacho_embalaje' : datos_despacho_embalaje,
+            'datos_despacho_exportaciones' : datos_despacho_exportaciones,
+            'datos_despacho_retira' : datos_despacho_retira,
+            
             # Tipo de venta
-            'cant_stock':cant_stock,
-            'prc_stock':prc_stock,
-            'val_stock': val_stock,
-            'prc_valor_stock': prc_valor_stock,
-            'cant_stock_r':cant_stock_r,
-            'prc_stock_r':prc_stock_r,
-            'val_stock_r': val_stock_r,
-            'prc_valor_stock_r': prc_valor_stock_r,
-            'cant_calzado':cant_calzado,
-            'prc_calzado':prc_calzado,
-            'val_calzado': val_calzado,
-            'prc_valor_calzado': prc_valor_calzado,
-            'cant_liquida':cant_liquida,
-            'prc_liquida':prc_liquida,
-            'val_liquida': val_liquida,
-            'prc_valor_liquida': prc_valor_liquida,
-            'cant_proyect':cant_proyect,
-            'prc_proyect':prc_proyect,
-            'val_proyect': val_proyect,
-            'prc_valor_proyect': prc_valor_proyect,
-            'cant_os':cant_proyect,
-            'prc_os':prc_os,
-            'val_os': val_os,
-            'prc_valor_os': prc_valor_os,
-            # Progreso diario
-            'lineas_exitosas':lineas_exitosas,
-            'prc_exitosas':prc_exitosas,
-            'cant_exitosas_stock':cant_exitosas_stock,
-            'prc_exitosas_stock': prc_exitosas_stock,
-            'cant_exitosas_stock_r':cant_exitosas_stock_r,
-            'prc_exitosas_stock_r': prc_exitosas_stock_r,
-            'cant_exitosas_calzado' : cant_exitosas_calzado,
-            'prc_exitosas_calzado' : prc_exitosas_calzado,
-            'cant_exitosas_liquid' : cant_exitosas_liquid,
-            'prc_exitosas_liquid' : prc_exitosas_liquid,
-            'cant_exitosas_proyect' : cant_exitosas_proyect,
-            'prc_exitosas_proyect' : prc_exitosas_proyect,
-            'cant_exitosas_os' : cant_exitosas_os,
-            'prc_exitosas_os' : prc_exitosas_os,
+            'datos_stock' : datos_stock,
+            'datos_stock_r' : datos_stock_r,
+            'datos_calzado' : datos_calzado,
+            'datos_liquida' : datos_liquida,
+            'datos_proyect' : datos_proyect,
+            'datos_os' : datos_os,
+
+            # Progreso diario - Tipo de despacho
+            'progreso_despacho_directo' : progreso_despacho_directo,
+            'progreso_despacho_traspaso' : progreso_despacho_traspaso,
+            'progreso_despacho_embalaje' : progreso_despacho_embalaje,
+            'progreso_despacho_exportaciones' : progreso_despacho_exportaciones,
+            'progreso_despacho_retira' : progreso_despacho_retira,
+            
+            # Progreso diario - Tipo de venta
+            'progreso_total' : progreso_total,
+            'progreso_stock_r' : progreso_stock_r,
+            'progreso_stock' : progreso_stock,
+            'progreso_calzado' : progreso_calzado,
+            'progreso_liquida' : progreso_liquida,
+            'progreso_proyect' : progreso_proyect,
+            'progreso_os' : progreso_os,
+            
+            # Reportes graficos
             'cumplimiento_1stock_r': json.dumps(list_cumpl_1stock_r),
             'cumplimiento_1stock': json.dumps(list_cumpl_1stock)
 
