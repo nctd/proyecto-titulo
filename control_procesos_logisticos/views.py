@@ -122,10 +122,7 @@ def getProgresoDiarioTipoVenta(tipo_venta):
     
 # Create your views here.
 def home(request):
-    data = {
-        'linea': getLineaTipoVenta('1STOCK')
-    }
-    return render(request,'index.html',data)
+    return render(request,'index.html')
 
 def planificacion(request):
     data = {
@@ -510,16 +507,22 @@ def indicadores(request):
         #         data = {
         #             'error': True
         #         }
-                
+        reportes_tipo_venta =  IndicadorTipoVenta.objects.all().order_by('fecha').values_list('fecha',flat=True).distinct()
+        list_fecha_tipo_venta = []
+        if reportes_tipo_venta:
+            for fecha in reportes_tipo_venta:
+                list_fecha_tipo_venta.append(fecha)
+        else:
+            list_fecha_tipo_venta = [0]
             
-        cumplimiento_1stock_r = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK_R')
+        cumplimiento_1stock_r = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK_R').order_by('fecha')
         list_cumpl_1stock_r = []
         if cumplimiento_1stock_r:
             for valor in cumplimiento_1stock_r:
                 list_cumpl_1stock_r.append(valor.estado_final)
         else:
-            list_cumpl_1stock_r = [0]   
-                
+            list_cumpl_1stock_r = [0]
+
         cumplimiento_1stock = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK')
         list_cumpl_1stock = []
         if cumplimiento_1stock:
@@ -527,7 +530,7 @@ def indicadores(request):
                 list_cumpl_1stock.append(valor.estado_final)
         else:
             list_cumpl_1stock = [0]
-            
+
         data = {
             # Estado de carga por tarea
             'datos_no_liberada' : datos_no_liberada,
@@ -570,7 +573,8 @@ def indicadores(request):
             'progreso_proyect' : progreso_proyect,
             'progreso_os' : progreso_os,
             
-            # Reportes graficos
+            # Reportes graficos - Tipo venta
+            'fechas_tipo_venta' : json.dumps(list_fecha_tipo_venta),
             'cumplimiento_1stock_r': json.dumps(list_cumpl_1stock_r),
             'cumplimiento_1stock': json.dumps(list_cumpl_1stock)
 
