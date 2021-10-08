@@ -530,6 +530,38 @@ def indicadores(request):
                 list_cumpl_1stock.append(valor.estado_final)
         else:
             list_cumpl_1stock = [0]
+            
+        cumplimiento_calzado = IndicadorTipoVenta.objects.filter(tipo_venta='2CALZADO')
+        list_cumpl_calzado = []
+        if cumplimiento_calzado:
+            for valor in cumplimiento_calzado:
+                list_cumpl_calzado.append(valor.estado_final)
+        else:
+            list_cumpl_calzado = [0]
+            
+        cumplimiento_liquid = IndicadorTipoVenta.objects.filter(tipo_venta='2LIQUID')
+        list_cumpl_liquid = []
+        if cumplimiento_liquid:
+            for valor in cumplimiento_liquid:
+                list_cumpl_liquid.append(valor.estado_final)
+        else:
+            list_cumpl_liquid = [0]
+            
+        cumplimiento_proyect = IndicadorTipoVenta.objects.filter(tipo_venta='2PROYECT')
+        list_cumpl_proyect = []
+        if cumplimiento_proyect:
+            for valor in cumplimiento_proyect:
+                list_cumpl_proyect.append(valor.estado_final)
+        else:
+            list_cumpl_proyect = [0]
+            
+        cumplimiento_os = IndicadorTipoVenta.objects.filter(tipo_venta='OS')
+        list_cumpl_os = []
+        if cumplimiento_os:
+            for valor in cumplimiento_os:
+                list_cumpl_os.append(valor.estado_final)
+        else:
+            list_cumpl_os = [0]
 
         data = {
             # Estado de carga por tarea
@@ -576,7 +608,11 @@ def indicadores(request):
             # Reportes graficos - Tipo venta
             'fechas_tipo_venta' : json.dumps(list_fecha_tipo_venta),
             'cumplimiento_1stock_r': json.dumps(list_cumpl_1stock_r),
-            'cumplimiento_1stock': json.dumps(list_cumpl_1stock)
+            'cumplimiento_1stock': json.dumps(list_cumpl_1stock),
+            'cumplimiento_calzado': json.dumps(list_cumpl_calzado),
+            'cumplimiento_liquid': json.dumps(list_cumpl_liquid),
+            'cumplimiento_proyect': json.dumps(list_cumpl_proyect),
+            'cumplimiento_os': json.dumps(list_cumpl_os),
 
         }
 

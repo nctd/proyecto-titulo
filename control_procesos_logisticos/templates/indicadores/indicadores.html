@@ -1103,7 +1103,7 @@
                 '</div>' +
                 '</div >' +
                 '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">2LIQUIDA</label>' +
+                '<label class="form-label col-form-label">2LIQUID</label>' +
                 '<div class="progress">' +
                 '{% if progreso_liquida.cant_exito_lineas >= 1 %}' +
                 '<div class="progress-bar bg-teal" style="width: {{progreso_liquida.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
@@ -1154,9 +1154,13 @@
     $('#select-reporte').on('change', function (e) {
         var stock_1_r = JSON.parse('{{cumplimiento_1stock_r}}');
         var stock_1 = JSON.parse('{{cumplimiento_1stock}}');
+        var os = JSON.parse('{{cumplimiento_os}}')
+        var calzado = JSON.parse('{{cumplimiento_calzado}}')
+        var liquid = JSON.parse('{{cumplimiento_liquid}}')
+        var proyect = JSON.parse('{{cumplimiento_proyect}}')
         var fechas_tipo_venta = JSON.parse('{{fechas_tipo_venta}}')
-        alert(typeof (fechas_tipo_venta))
-        alert(fechas_tipo_venta)
+        // alert(typeof (fechas_tipo_venta))
+        // alert(fechas_tipo_venta)
         // alert(stock_1_r)
         // alert(stock_1)
         const content = document.getElementById("reportes-card")
@@ -1192,6 +1196,23 @@
                 }, {
                     name: "1STOCK",
                     data: stock_1
+                },
+                {
+                    name: "2CALZADO",
+                    data: calzado
+
+                },
+                {
+                    name: "2LIQUID",
+                    data: liquid
+                },
+                {
+                    name: "2PROYECT",
+                    data: proyect
+                },
+                {
+                    name: "OS",
+                    data: os
                 }],
                 grid: {
                     padding: {
@@ -1217,7 +1238,7 @@
                     },
                 },
                 labels: fechas_tipo_venta,
-                colors: ["#fab005", "#5eba00", "#206bc4"],
+                colors: ["#fab005", "#5eba00", "#206bc4", "#fa054f", "#fa3505", "#6a6a6a"],
                 legend: {
                     show: true,
                     position: 'bottom',
