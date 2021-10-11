@@ -678,84 +678,6 @@
                                 </div>
                                 <div id='progreso-container'>
 
-                                    <!-- <div class="form-group mb-4">
-                                        <div class="col-6 col-sm-6">
-                                            <label class="form-label col-form-label">Total de líneas
-                                                planificadas</label>
-                                            <div class="progress">
-                                                {% if sum_lineas > 0 %}
-                                                <div class="progress-bar" style="width: {{prc_exitosas}}%"
-                                                    role="progressbar" aria-valuenow="38" aria-valuemin="0"
-                                                    aria-valuemax="100">
-                                                    <span class="text-dark text-h3">{{lineas_exitosas}}/{{sum_lineas}}
-                                                        ({{prc_exitosas}}%)</span>
-                                                </div>
-
-                                                {% else %}
-                                                <div class="progress-bar"
-                                                    style="width:100%;background-color: #e6e8e9"" role=" progressbar"
-                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="text-dark text-h3">0/0 (0%)</span>
-                                                </div>
-                                                {% endif %}
-
-                                            </div>
-
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group mb-4 row">
-                                        <div class="col-6 col-sm-3">
-                                            <label class="form-label col-form-label">Despachos directos</label>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: 38%" role="progressbar"
-                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="visually-hidden">38%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-sm-3">
-                                            <label class="form-label col-form-label">Traspaso entre sucursales</label>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: 25%" role="progressbar"
-                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="visually-hidden">25%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group mb-4 row">
-                                        <div class="col-6 col-sm-3">
-                                            <label class="form-label col-form-label">Embalaje</label>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: 38%" role="progressbar"
-                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="visually-hidden">38%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-6 col-sm-3">
-                                            <label class="form-label col-form-label">Exportaciones</label>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: 38%" role="progressbar"
-                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="visually-hidden">38%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group mb-4 row">
-                                        <div class="col-6 col-sm-3">
-                                            <label class="form-label col-form-label">Retira cliente</label>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: 55%" role="progressbar"
-                                                    aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">
-                                                    <span class="visually-hidden">55%</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div> -->
                                 </div>
 
 
@@ -771,49 +693,74 @@
                             <div class="card-header">
                                 <h3 class="card-title">Reportes gráficos</h3>
                             </div>
-                            <div class="col-12 p-3">
-                                <div class='row'>
+                            <form method='GET'>
+                                <div class="col-12 p-3">
+                                    <div class='row'>
+                                        <div class='col-xl-4 mb-3'>
+                                            <label class="form-label">Filtrar por:</label>
+                                            <select type="text" class="form-select" id="select-tipo-reporte"
+                                                id="select-reporte" value="">
+                                                <option value="" disabled selected>Seleccionar tipo</option>
+                                                <option value="tipo_despacho">Tipo de despacho</option>
+                                                <option value="tipo_venta">Tipo de venta</option>
+                                            </select>
+                                        </div>
+                                        <div class='col-xl-4 mb-3'>
+                                            <label class="form-label">Horizonte de tiempo:</label>
+                                            <select type="text" class="form-select" id="select-horizonte" value=""
+                                                name="select-horizonte">
+                                                <option value="" disabled selected>Seleccionar rango</option>
+                                                <option value="semanal">Últimos 7 días</option>
+                                                <option value="quincenal">Últimos 15 días</option>
+                                                <option value="mensual">Últimos 30 días</option>
+                                            </select>
+                                        </div>
 
-                                    <div class='col-xl-4 mb-3'>
-                                        <label class="form-label">Filtrar por:</label>
-                                        <select type="text" class="form-select" id="select-reporte" value="">
-                                            <option value="" disabled selected>Seleccionar tipo</option>
-                                            <option value="1">Tipo de despacho</option>
-                                            <option value="2">Tipo de venta</option>
-                                        </select>
                                     </div>
-                                    <div class='col-xl-4 mb-3 offset-md-3'>
-                                        <label class="form-label">Horizonte de tiempo:</label>
-                                        <select type="text" class="form-select" id="select-horizonte" value="">
-                                            <option value="" disabled selected>Seleccionar rango</option>
-                                            <option value="1">Últimos 7 días</option>
-                                            <option value="2">Últimos 15 días</option>
-                                            <option value="3">Últimos 30 días</option>
-                                        </select>
-                                    </div>
-                                    <div id='reportes-container' class="col-lg-12 mt-3">
-                                        <div class="card" id="reportes-card" style="display: none;">
-                                            <div class="card-body">
-                                                <h3 class="card-title">Cumplimiento por tipo de venta</h3>
-                                                <div id="chart-demo-line" class="chart-lg"></div>
-                                            </div>
+                                    <div class="row mb-3">
+                                        <div class="col-xl-4 mb-3">
+                                            <button class="btn btn-primary w-100" id='btn-generar-reporte'
+                                                type="button">
+                                                <!-- Download SVG icon from http://tabler-icons.io/i/chart-infographic -->
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24"
+                                                    height="24" viewBox="0 0 24 24" stroke-width="2"
+                                                    stroke="currentColor" fill="none" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                    <circle cx="7" cy="7" r="4" />
+                                                    <path d="M7 3v4h4" />
+                                                    <line x1="9" y1="17" x2="9" y2="21" />
+                                                    <line x1="17" y1="14" x2="17" y2="21" />
+                                                    <line x1="13" y1="13" x2="13" y2="21" />
+                                                    <line x1="21" y1="12" x2="21" y2="21" />
+                                                </svg>
+                                                Generar reporte
+                                            </button>
                                         </div>
                                     </div>
-
-
-
+                            </form>
+                            <div id='reportes-container' class="col-lg-12 mt-3">
+                                <div class="card" id="reportes-card" style="display: none;">
+                                    <div class="card-body">
+                                        <h3 class="card-title">Cumplimiento por tipo de venta</h3>
+                                        <div id="chart-demo-line" class="chart-lg"></div>
+                                    </div>
                                 </div>
                             </div>
+
+
+
                         </div>
-
                     </div>
+
                 </div>
-
-
-
             </div>
+
+
+
         </div>
     </div>
+</div>
 </div>
 
 <div class="modal modal-blur fade" id="modal-error-indicadores" tabindex="-1" role="dialog" aria-hidden="true">
@@ -833,6 +780,38 @@
                 </svg>
                 <h3>Alerta</h3>
                 <div class="text-muted">Error al guardar la planificación</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+
+                        <div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                OK
+                            </a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-blur fade" id="modal-error-reporte" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path
+                        d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <h3>Alerta</h3>
+                <div class="text-muted">Seleccione los filtros</div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
@@ -920,12 +899,14 @@
         }
 
         // document.getElementById('select-reporte').value = "";
-        // const content = document.getElementById("reportes-card")
-        // content.style.display = "none"
+
 
 
     })
     $("#tab-reportes").on('click', function (e) {
+        const content = document.getElementById("reportes-card")
+        content.style.display = "none"
+
         const tab = document.getElementById('tab-reportes')
         tab.classList.add('card-active')
 
@@ -948,7 +929,6 @@
 
 <script>
     $('#select-progreso').on('change', function (e) {
-        // alert(this.value);
         const container = document.getElementById("progreso-container")
         if (this.value == 1) {
             container.innerHTML = '<div class="form-group mb-4">' +
@@ -1151,130 +1131,145 @@
 </script>
 
 <script>
-    $('#select-reporte').on('change', function (e) {
-        var stock_1_r = JSON.parse('{{cumplimiento_1stock_r}}');
-        var stock_1 = JSON.parse('{{cumplimiento_1stock}}');
-        var os = JSON.parse('{{cumplimiento_os}}')
-        var calzado = JSON.parse('{{cumplimiento_calzado}}')
-        var liquid = JSON.parse('{{cumplimiento_liquid}}')
-        var proyect = JSON.parse('{{cumplimiento_proyect}}')
-        var fechas_tipo_venta = JSON.parse('{{fechas_tipo_venta}}')
-        // alert(typeof (fechas_tipo_venta))
-        // alert(fechas_tipo_venta)
-        // alert(stock_1_r)
-        // alert(stock_1)
-        const content = document.getElementById("reportes-card")
-        content.style.display = "flex"
-        if (this.value == 2) {
-            const content = document.getElementById("chart-demo-line")
-            content.innerHTML = ''
-
-            window.ApexCharts && (new ApexCharts(document.getElementById('chart-demo-line'), {
-                chart: {
-                    type: "line",
-                    fontFamily: 'inherit',
-                    height: 240,
-                    parentHeightOffset: 0,
-                    toolbar: {
-                        show: true,
-                    },
-                    animations: {
-                        enabled: false
-                    },
-                },
-                fill: {
-                    opacity: 1,
-                },
-                stroke: {
-                    width: 2,
-                    lineCap: "round",
-                    curve: "straight",
-                },
-                series: [{
-                    name: "1STOCK_R",
-                    data: stock_1_r
-                }, {
-                    name: "1STOCK",
-                    data: stock_1
-                },
-                {
-                    name: "2CALZADO",
-                    data: calzado
-
-                },
-                {
-                    name: "2LIQUID",
-                    data: liquid
-                },
-                {
-                    name: "2PROYECT",
-                    data: proyect
-                },
-                {
-                    name: "OS",
-                    data: os
-                }],
-                grid: {
-                    padding: {
-                        top: -20,
-                        right: 0,
-                        left: -4,
-                        bottom: -4
-                    },
-                    strokeDashArray: 4,
-                },
-                xaxis: {
-                    labels: {
-                        padding: 0,
-                    },
-                    tooltip: {
-                        enabled: false
-                    },
-                    type: 'datetime',
-                },
-                yaxis: {
-                    labels: {
-                        padding: 4
-                    },
-                },
-                labels: fechas_tipo_venta,
-                colors: ["#fab005", "#5eba00", "#206bc4", "#fa054f", "#fa3505", "#6a6a6a"],
-                legend: {
+    document.addEventListener("DOMContentLoaded", function () {
+        var options = {
+            noData: {
+                text: 'Cargando...'
+            },
+            chart: {
+                type: "line",
+                fontFamily: 'inherit',
+                height: 240,
+                parentHeightOffset: 0,
+                toolbar: {
                     show: true,
-                    position: 'bottom',
-                    offsetY: 12,
-                    markers: {
-                        width: 10,
-                        height: 10,
-                        radius: 100,
-                    },
-                    itemMargin: {
-                        horizontal: 8,
-                        vertical: 8
-                    },
                 },
-            })).render();
+                animations: {
+                    enabled: false
+                },
+            },
+            fill: {
+                opacity: 1,
+            },
+            stroke: {
+                width: 2,
+                lineCap: "round",
+                curve: "straight",
+            },
+            series: [],
+            grid: {
+                padding: {
+                    top: -20,
+                    right: 0,
+                    left: -4,
+                    bottom: -4
+                },
+                strokeDashArray: 4,
+            },
+            xaxis: {
+                labels: {
+                    padding: 0,
+                },
+                tooltip: {
+                    enabled: false
+                },
+                type: 'datetime',
+            },
+            yaxis: {
+                labels: {
+                    padding: 4
+                },
+            },
+            labels: [],
+            colors: ["#fab005", "#5eba00", "#206bc4", "#fa054f", "#fa3505", "#6a6a6a"],
+            legend: {
+                show: true,
+                position: 'bottom',
+                offsetY: 12,
+                markers: {
+                    width: 10,
+                    height: 10,
+                    radius: 100,
+                },
+                itemMargin: {
+                    horizontal: 8,
+                    vertical: 8
+                },
+            },
         }
+
+        var chart = new ApexCharts(
+            document.querySelector("#chart-demo-line"),
+            options
+        );
+        chart.render();
+
+        $('#btn-generar-reporte').on('click', function (e) {
+            if (document.getElementById('select-tipo-reporte').value == '' || document.getElementById('select-horizonte').value == '') {
+                event.preventDefault()
+                $('#modal-error-reporte').modal('show');
+            } else {
+                e.preventDefault();
+                const content = document.getElementById("reportes-card")
+                content.style.display = "flex"
+
+                var tipo = $('#select-tipo-reporte').val()
+                var horizonte = $('#select-horizonte').val()
+                $.ajax({
+                    type: 'GET',
+                    url: "{% url 'reporte_grafico' %}",
+                    data: {
+                        'tipo': tipo,
+                        'horizonte': horizonte
+                    },
+                    success: function (response) {
+                        const content = document.getElementById("chart-demo-line")
+                        content.innerHTML = ''
+                        if (!response['valid']) {
+                            $("#modal-error-reporte").modal('show');
+                        }
+                        if (tipo == 'tipo_venta') {
+                            chart.updateOptions({
+                                labels: response.lista_fechas
+                            })
+                            chart.updateSeries([{
+                                name: "1STOCK_R",
+                                data: response.stock_r
+                            }, {
+                                name: "1STOCK",
+                                data: response.stock
+                            },
+                            {
+                                name: "2CALZADO",
+                                data: response.calzado
+
+                            },
+                            {
+                                name: "2LIQUID",
+                                data: response.liquid
+                            },
+                            {
+                                name: "2PROYECT",
+                                data: response.proyect
+                            },
+                            {
+                                name: "OS",
+                                data: response.os
+                            }])
+                        }
+                    }
+                })
+            }
+        })
     });
 </script>
 
-<!-- <script>
-    $(document).ready(function () {
-        $('#btn-guardar').on('click', function (e) {
-            e.preventDefault();
-            $.post('/', {
-                test_value: "TEST"
-            })
-        })
-    })
-</script> -->
 
 {% if error %}
 <script type="text/javascript">
     $(document).ready(function () {
         $("#modal-error-indicadores").modal('show');
-        var a = "{{detalles}}";
-        alert(a)
+
     });
 </script>
 {% endif %}
@@ -1284,4 +1279,7 @@
     e.classList.add('active')
 
 </script>
+
+
+
 {% endblock %}

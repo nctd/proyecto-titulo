@@ -1,15 +1,15 @@
-from django.http import response
-from django.shortcuts import get_object_or_404, render
+from django.db.backends.base.base import NO_DB_ALIAS
+from django.http import response, JsonResponse
+from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from django.contrib import messages
-
 from pandas.io import json
 
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
 
 from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
-from datetime import date,datetime
+from datetime import date,datetime,timedelta
+
 import pandas as pd
 import cx_Oracle
 
@@ -454,115 +454,6 @@ def indicadores(request):
         # OS
         progreso_os = getProgresoDiarioTipoVenta('OS')
         
-            
-        # if request.method == 'POST':
-        #     try:
-        #         stock_r_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK_R')
-        #         if not stock_r_exists:
-        #             print('NO EXISTE')
-        #             data_stock = {
-        #                 'tipo_venta': '1STOCK_R',
-        #                 'cantidad_despacho': cant_stock_r,
-        #                 'exitos': cant_exitosas_stock_r,
-        #                 'estado_final': prc_exitosas_stock_r
-        #             }
-                    
-        #             prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
-                    
-        #             if prog_tipo_venta.is_valid():
-        #                 prog_tipo_venta.save()
-        #             else:
-        #                 data = {
-        #                     'error': True,
-        #                     'detalles': 'Error al guardar el progreso'
-        #                 }
-        #                 return render(request,'indicadores/indicadores.html',data)
-        #         else:
-        #             print('EXISTE')
-                
-        #         stock_1_exists = IndicadorTipoVenta.objects.filter(fecha=date.today()).filter(tipo_venta='1STOCK')
-                
-        #         if not stock_1_exists:
-        #             data_stock = {
-        #                 'tipo_venta': '1STOCK',
-        #                 # 'cantidad_despacho': cant_stock,
-        #                 'exitos': cant_exitosas_stock,
-        #                 'estado_final': prc_exitosas_stock
-        #             }
-                    
-        #             prog_tipo_venta = IndicadorTipoVentaForm(data=data_stock)
-                    
-        #             if prog_tipo_venta.is_valid():
-        #                 prog_tipo_venta.save()
-        #             else:
-        #                 data = {
-        #                     'error': True,
-        #                     'detalles': 'Error al guardar el progreso'
-        #                 }
-        #                 return render(request,'indicadores/indicadores.html',data)
-        #         else:
-        #             print('EXISTE')
-
-        #     except ObjectDoesNotExist:
-        #         data = {
-        #             'error': True
-        #         }
-        reportes_tipo_venta =  IndicadorTipoVenta.objects.all().order_by('fecha').values_list('fecha',flat=True).distinct()
-        list_fecha_tipo_venta = []
-        if reportes_tipo_venta:
-            for fecha in reportes_tipo_venta:
-                list_fecha_tipo_venta.append(fecha)
-        else:
-            list_fecha_tipo_venta = [0]
-            
-        cumplimiento_1stock_r = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK_R').order_by('fecha')
-        list_cumpl_1stock_r = []
-        if cumplimiento_1stock_r:
-            for valor in cumplimiento_1stock_r:
-                list_cumpl_1stock_r.append(valor.estado_final)
-        else:
-            list_cumpl_1stock_r = [0]
-
-        cumplimiento_1stock = IndicadorTipoVenta.objects.filter(tipo_venta='1STOCK')
-        list_cumpl_1stock = []
-        if cumplimiento_1stock:
-            for valor in cumplimiento_1stock:
-                list_cumpl_1stock.append(valor.estado_final)
-        else:
-            list_cumpl_1stock = [0]
-            
-        cumplimiento_calzado = IndicadorTipoVenta.objects.filter(tipo_venta='2CALZADO')
-        list_cumpl_calzado = []
-        if cumplimiento_calzado:
-            for valor in cumplimiento_calzado:
-                list_cumpl_calzado.append(valor.estado_final)
-        else:
-            list_cumpl_calzado = [0]
-            
-        cumplimiento_liquid = IndicadorTipoVenta.objects.filter(tipo_venta='2LIQUID')
-        list_cumpl_liquid = []
-        if cumplimiento_liquid:
-            for valor in cumplimiento_liquid:
-                list_cumpl_liquid.append(valor.estado_final)
-        else:
-            list_cumpl_liquid = [0]
-            
-        cumplimiento_proyect = IndicadorTipoVenta.objects.filter(tipo_venta='2PROYECT')
-        list_cumpl_proyect = []
-        if cumplimiento_proyect:
-            for valor in cumplimiento_proyect:
-                list_cumpl_proyect.append(valor.estado_final)
-        else:
-            list_cumpl_proyect = [0]
-            
-        cumplimiento_os = IndicadorTipoVenta.objects.filter(tipo_venta='OS')
-        list_cumpl_os = []
-        if cumplimiento_os:
-            for valor in cumplimiento_os:
-                list_cumpl_os.append(valor.estado_final)
-        else:
-            list_cumpl_os = [0]
-
         data = {
             # Estado de carga por tarea
             'datos_no_liberada' : datos_no_liberada,
@@ -604,16 +495,6 @@ def indicadores(request):
             'progreso_liquida' : progreso_liquida,
             'progreso_proyect' : progreso_proyect,
             'progreso_os' : progreso_os,
-            
-            # Reportes graficos - Tipo venta
-            'fechas_tipo_venta' : json.dumps(list_fecha_tipo_venta),
-            'cumplimiento_1stock_r': json.dumps(list_cumpl_1stock_r),
-            'cumplimiento_1stock': json.dumps(list_cumpl_1stock),
-            'cumplimiento_calzado': json.dumps(list_cumpl_calzado),
-            'cumplimiento_liquid': json.dumps(list_cumpl_liquid),
-            'cumplimiento_proyect': json.dumps(list_cumpl_proyect),
-            'cumplimiento_os': json.dumps(list_cumpl_os),
-
         }
 
         return render(request,'indicadores/indicadores.html',data)
@@ -621,3 +502,122 @@ def indicadores(request):
     return render(request,'indicadores/indicadores.html')
 
 
+def reporteGrafico(request):
+    if request.is_ajax and request.method == 'GET':
+        tipo = request.GET.get('tipo',None)
+        horizonte = request.GET.get('horizonte',None)
+        
+        rango = 0
+        if horizonte == 'semanal':
+            rango = 7
+        if horizonte == 'quincenal':
+            rango = 15
+        if horizonte == 'mensual':
+            rango = 30
+            
+        fecha_inicio = (date.today()) - timedelta(days=rango) 
+        fecha_fin = date.today() + timedelta(days=1)
+        delta = fecha_fin - fecha_inicio
+        
+        if tipo == 'tipo_venta':
+            # reportes_tipo_venta =  IndicadorTipoVenta.objects.all().order_by('fecha').values_list('fecha',flat=True).distinct()
+            # reportes_tipo_venta = IndicadorTipoVenta.objects.filter(fecha__range=((date.today()) - timedelta(days=rango),date.today() + timedelta(days=1))).order_by('fecha').values_list('fecha',flat=True).distinct()
+            reportes_tipo_venta = IndicadorTipoVenta.objects.filter(fecha__range=(fecha_inicio,fecha_fin)).order_by('fecha').values_list()
+            list_fecha_tipo_venta = []
+                
+            if reportes_tipo_venta:
+                for i in range(delta.days + 1):
+                    fecha = fecha_inicio + timedelta(days=i)
+                    list_fecha_tipo_venta.append(fecha)
+                    
+                cumplimiento_1stock_r = reportes_tipo_venta.filter(tipo_venta='1STOCK_R')
+                list_cumpl_1stock_r = []
+                
+                cumplimiento_1stock = reportes_tipo_venta.filter(tipo_venta='1STOCK')
+                list_cumpl_1stock = []
+                
+                cumplimiento_calzado = reportes_tipo_venta.filter(tipo_venta='2CALZADO')
+                list_cumpl_calzado = []
+                
+                cumplimiento_calzado = reportes_tipo_venta.filter(tipo_venta='2CALZADO')
+                list_cumpl_calzado = []
+                
+                cumplimiento_liquid = reportes_tipo_venta.filter(tipo_venta='2LIQUID')
+                list_cumpl_liquid = []
+                
+                cumplimiento_proyect = reportes_tipo_venta.filter(tipo_venta='2PROYECTO')
+                list_cumpl_proyect = []
+                
+                
+                cumplimiento_os = reportes_tipo_venta.filter(tipo_venta='OS')
+                list_cumpl_os = []
+
+                for fecha in list_fecha_tipo_venta:
+                    if cumplimiento_1stock_r:
+                        if fecha in cumplimiento_1stock_r.values_list('fecha',flat=True):
+                            list_cumpl_1stock_r.append(cumplimiento_1stock_r.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                        else:
+                            list_cumpl_1stock_r.append(0)
+                    else:
+                        list_cumpl_1stock_r = [0]
+                    
+                    if cumplimiento_1stock:
+                        if fecha in cumplimiento_1stock.values_list('fecha',flat=True):
+                            list_cumpl_1stock.append(cumplimiento_1stock.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                        else:
+                            list_cumpl_1stock.append(0)
+                    else:
+                        list_cumpl_1stock = [0]
+                        
+                    if cumplimiento_calzado:
+                        if fecha in cumplimiento_calzado.values_list('fecha',flat=True):
+                            list_cumpl_calzado.append(cumplimiento_calzado.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                        else:
+                            list_cumpl_calzado.append(0)
+                    else:
+                        list_cumpl_calzado = [0]
+                        
+                    if cumplimiento_liquid:
+                        if fecha in cumplimiento_liquid.values_list('fecha',flat=True):
+                            list_cumpl_liquid.append(cumplimiento_liquid.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                        else:
+                            list_cumpl_liquid.append(0)
+                    else:
+                        list_cumpl_liquid = [0]
+                        
+                    if cumplimiento_proyect:
+                        if fecha in cumplimiento_proyect.values_list('fecha',flat=True):
+                            list_cumpl_proyect.append(cumplimiento_proyect.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                        else:
+                            list_cumpl_proyect.append(0)
+                    else:
+                        list_cumpl_proyect = [0]
+                        
+                    if cumplimiento_os:
+                        if fecha in cumplimiento_os.values_list('fecha',flat=True):
+                            list_cumpl_os.append(cumplimiento_os.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                        else:
+                            list_cumpl_os.append(0)
+                    else:
+                        list_cumpl_os = [0]
+
+                return JsonResponse({
+                    'valid':True,
+                    'lista_fechas': list_fecha_tipo_venta,
+                    'stock_r': list_cumpl_1stock_r,
+                    'stock': list_cumpl_1stock,
+                    'calzado': list_cumpl_calzado,
+                    'liquid': list_cumpl_liquid,
+                    'proyect': list_cumpl_proyect,
+                    'os': list_cumpl_os,
+                }, status=200)
+            else:
+                list_fecha_tipo_venta = [0]
+            return JsonResponse({
+                'valid':False,
+                'lista_fechas': 'No hay fechas',
+                },
+                status = 200)
+        if tipo == 'tipo_despacho':
+            pass
+    return JsonResponse({}, status = 400)
