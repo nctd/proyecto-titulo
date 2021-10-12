@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-xl">
+    <!-- Page title -->
+    <div class="page-header d-print-none">
+        <div class="row align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Agenda retiro clientes
+                </h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="page-body">
+    <div class="container-xl">
+        <!-- Content here -->
+        <div class="row row-cards">
+
+            <div class="col-12">
+                <div class="card">
+                    <div class='card-header'>
+                        <h3 class="card-title">Agendar retiro</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Fecha</label>
+                            <div class="col-4">
+                                <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <rect x="4" y="5" width="16" height="16" rx="2" />
+                                            <line x1="16" y1="3" x2="16" y2="7" />
+                                            <line x1="8" y1="3" x2="8" y2="7" />
+                                            <line x1="4" y1="11" x2="20" y2="11" />
+                                            <line x1="11" y1="15" x2="12" y2="15" />
+                                            <line x1="12" y1="15" x2="12" y2="18" />
+                                        </svg>
+                                    </span>
+                                    <!-- {{form.fecha_planificacion}} -->
+                                    <input class="form-control" placeholder="Fecha" id="datepicker-icon-prepend"
+                                        type='text' />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3 row">
+                            <label class="form-label col-3 col-form-label">Rango horario</label>
+                            <div class="col-4">
+                                <div class="input-icon">
+                                    <span class="input-icon-addon">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                            <rect x="4" y="5" width="16" height="16" rx="2" />
+                                            <line x1="16" y1="3" x2="16" y2="7" />
+                                            <line x1="8" y1="3" x2="8" y2="7" />
+                                            <line x1="4" y1="11" x2="20" y2="11" />
+                                            <line x1="11" y1="15" x2="12" y2="15" />
+                                            <line x1="12" y1="15" x2="12" y2="18" />
+                                        </svg>
+                                    </span>
+                                    <input class="form-control" placeholder="Horario" id="datepicker-icon-prepend"
+                                        type='text' />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Orden de venta</label>
+                                    <input type="text" class="form-control" name="ov" id="ov"
+                                        placeholder="EJ: OV243266">
+                                </div>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="mb-3">
+                                    <label class="form-label">Línea</label>
+                                    <input type="text" class="form-control" name="ov" id="ov" placeholder="EJ: 1">
+                                </div>
+                            </div>
+                            <div class="col-xl-4 mb-3">
+                                <label class="form-label" style="visibility: hidden;">bt</label>
+                                <button class="btn btn-primary w-100" id='btn-buscar' type="submit">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus"
+                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                                        stroke="currentColor" fill="none" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    Agregar OV/Línea
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer text-end">
+                        <div class="d-flex">
+                            <button type="submit" class="btn btn-success ms-auto">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-plus"
+                                    width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
+                                    </path>
+                                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                                </svg>
+                                Guardar y generar PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
