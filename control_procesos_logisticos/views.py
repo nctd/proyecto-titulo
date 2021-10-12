@@ -621,3 +621,6 @@ def reporteGrafico(request):
         if tipo == 'tipo_despacho':
             pass
     return JsonResponse({}, status = 400)
+
+def agendarRetiro(request):
+    return render(request,'agenda-retiro/agendar.html')
