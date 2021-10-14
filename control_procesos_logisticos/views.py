@@ -10,7 +10,9 @@ from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, Despach
 from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
 from datetime import date,datetime,timedelta
 
+from .crearPDF import PDF
 import pandas as pd
+
 import cx_Oracle
 
 
@@ -623,4 +625,30 @@ def reporteGrafico(request):
     return JsonResponse({}, status = 400)
 
 def agendarRetiro(request):
-    return render(request,'agenda-retiro/agendar.html')
+    return render(request,'agenda-retiro/agendar.html')   
+
+
+def retiroGenerarPDF(request):
+    pdf = PDF()
+    # Add a page
+    pdf.add_page()
+    
+    # pdf.set_font("Arial", size = 15)
+    pdf.titles('CITA NRO 12312')
+    pdf.texto('Fecha: ',27,10)
+    pdf.texto('Hora inicio: ',27,20)
+    pdf.texto('Hora fin: ',27,30)
+    pdf.texto('Cliente: ',27,40)
+    pdf.texto('Dirección de retiro: ',27,50)
+    
+    # pdf.draw_lines()
+    # pdf.cell(200, 10, txt = "CITA NRO 98543242", 
+    #         ln = 1, align = 'C')
+    
+    # # add another cell
+    # pdf.cell(200, 10, txt = "A Computer Science portal for geeks.",
+    #         ln = 2, align = 'C')
+    
+    # save the pdf with name .pdf
+    pdf.output("retiro.pdf")   
+    return JsonResponse({'valid':'CREADO'})

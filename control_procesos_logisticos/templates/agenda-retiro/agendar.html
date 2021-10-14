@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Fecha</label>
-                            <div class="col-4">
+                            <div class="col-xl-4">
                                 <div class="input-icon">
                                     <span class="input-icon-addon">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
@@ -52,7 +52,7 @@
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Rango horario</label>
-                            <div class="col-4">
+                            <div class="col-xl-4">
                                 <select type="text" class="form-select" id="select-progreso" value="">
                                     <option value="" disabled selected>Seleccionar tipo</option>
                                     <option value="1">00:00 - 01:00</option>
@@ -114,37 +114,37 @@
                                 </button>
                             </div>
                         </div>
-                        <div class="d-flex justify-content-center align-items-center mb-n3 mt-3">
+                        <!-- <div class="d-flex justify-content-center align-items-center mb-n3 mt-3"> -->
 
-                            <div class="table-responsive">
-                                <div class="gridjs gridjs-container">
-                                    <table class="gridjs-table" id='tabla-ov'>
-                                        <thead class="gridjs-thead">
-                                            <tr class="gridjs-tr">
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
-                                                    style="width: 200px;">
-                                                    Orden de venta</th>
-                                                <th class=" gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
-                                                    style="width: 200px;">
-                                                    Línea
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class=" gridjs-tbody" style="text-align: center;">
-                                            <tr class="gridjs-tr">
-                                                <!-- <td class="gridjs-td">12</td>
+                        <div class="table-responsive">
+                            <div class="gridjs gridjs-container">
+                                <table class="gridjs-table" id='tabla-ov'>
+                                    <thead class="gridjs-thead">
+                                        <tr class="gridjs-tr">
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
+                                                style="width: 200px;">
+                                                Orden de venta</th>
+                                            <th class=" gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
+                                                style="width: 200px;">
+                                                Línea
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class=" gridjs-tbody" style="text-align: center;">
+                                        <tr class="gridjs-tr">
+                                            <!-- <td class="gridjs-td">12</td>
                                                 <td class="gridjs-td">34</td> -->
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
+
                         </div>
+                        <!-- </div> -->
                     </div>
                     <div class="card-footer text-end">
                         <div class="d-flex">
-                            <button type="submit" class="btn btn-success ms-auto">
+                            <button type="button" class="btn btn-success ms-auto" id="btn-guardar-pdf">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-plus"
                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -201,5 +201,24 @@
 
     });
 
+</script>
+
+<script>
+    $('#btn-guardar-pdf').on('click', function (e) {
+        alert('A')
+        e.preventDefault();
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'generar_pdf_retiro' %}",
+            // data: {
+            //     'tipo': tipo,
+            //     'horizonte': horizonte
+            // },
+            success: function (response) {
+                alert('SUCESS')
+            }
+        })
+    }
+    )
 </script>
 {% endblock %}

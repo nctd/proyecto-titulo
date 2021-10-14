@@ -668,14 +668,38 @@
                                 </form>
                             </div> -->
                             <div class="col-12 p-3">
-                                <div class="col-4 mb-3">
-                                    <label class="form-label">Filtrar por:</label>
-                                    <select type="text" class="form-select" id="select-progreso" value="">
-                                        <option value="" disabled selected>Seleccionar tipo</option>
-                                        <option value="1">Tipo de despacho</option>
-                                        <option value="2">Tipo de venta</option>
-                                    </select>
+                                <div class="row">
+                                    <div class="col-xl-4 mb-3">
+                                        <label class="form-label">Filtrar por:</label>
+                                        <select type="text" class="form-select" id="select-progreso" value="">
+                                            <option value="" disabled selected>Seleccionar tipo</option>
+                                            <option value="1">Tipo de despacho</option>
+                                            <option value="2">Tipo de venta</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-xl-4 mb-3">
+                                        <label class="form-label" style="visibility: hidden;">bt</label>
+                                        <button class="btn btn-primary w-100" id='btn-progreso' type="button">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-adjustments-horizontal" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <circle cx="14" cy="6" r="2"></circle>
+                                                <line x1="4" y1="6" x2="12" y2="6"></line>
+                                                <line x1="16" y1="6" x2="20" y2="6"></line>
+                                                <circle cx="8" cy="12" r="2"></circle>
+                                                <line x1="4" y1="12" x2="6" y2="12"></line>
+                                                <line x1="10" y1="12" x2="20" y2="12"></line>
+                                                <circle cx="17" cy="18" r="2"></circle>
+                                                <line x1="4" y1="18" x2="15" y2="18"></line>
+                                                <line x1="19" y1="18" x2="20" y2="18"></line>
+                                            </svg>
+                                            Generar progreso diario
+                                        </button>
+                                    </div>
                                 </div>
+
                                 <div id='progreso-container'>
 
                                 </div>
@@ -715,10 +739,8 @@
                                                 <option value="mensual">Últimos 30 días</option>
                                             </select>
                                         </div>
-
-                                    </div>
-                                    <div class="row mb-3">
                                         <div class="col-xl-4 mb-3">
+                                            <label class="form-label" style="visibility: hidden;">bt</label>
                                             <button class="btn btn-primary w-100" id='btn-generar-reporte'
                                                 type="button">
                                                 <!-- Download SVG icon from http://tabler-icons.io/i/chart-infographic -->
@@ -928,9 +950,10 @@
 </script>
 
 <script>
-    $('#select-progreso').on('change', function (e) {
+    $('#btn-progreso').on('click', function (e) {
+        var select = document.getElementById('select-progreso')
         const container = document.getElementById("progreso-container")
-        if (this.value == 1) {
+        if (select.value == 1) {
             container.innerHTML = '<div class="form-group mb-4">' +
                 '<div class="col-6 col-sm-6">' +
                 '<label class="form-label col-form-label">Total de líneas planificadas</label>' +
@@ -1021,8 +1044,7 @@
                 '</div>' +
                 '</div >'
         }
-        if (this.value == 2) {
-
+        if (select.value == 2) {
             container.innerHTML = '<div class="form-group mb-4">' +
                 '<div class="col-6 col-sm-6">' +
                 '<label class="form-label col-form-label">Total de líneas planificadas</label>' +

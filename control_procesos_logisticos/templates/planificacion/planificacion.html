@@ -333,6 +333,7 @@
 
             return false;
         }
+
         var reader = new FileReader()
         reader.readAsArrayBuffer(event.target.files[0])
         reader.onload = function (event) {
@@ -340,7 +341,6 @@
             var work_book = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy;@' })
             var sheet_name = work_book.SheetNames
             var sheet_data = XLSX.utils.sheet_to_json(work_book.Sheets[sheet_name[0]], { raw: false, header: 1 })
-
             trigger.addEventListener('click', (event) => {
 
                 if (sheet_data.length > 0) {
