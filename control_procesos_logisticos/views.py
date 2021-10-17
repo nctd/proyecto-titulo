@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from pandas.io import json
 
-from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, TemporalLineaForm, TransporteForm
+from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
 
 from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
 from datetime import date,datetime,timedelta
@@ -625,6 +625,35 @@ def reporteGrafico(request):
     return JsonResponse({}, status = 400)
 
 def agendarRetiro(request):
+    if request.method == 'POST':
+
+        list_ov = []
+        for value in request.POST:
+            if value.startswith('OV'):
+                list_ov.append(value)
+
+        for value in list_ov:
+            id_cli = OrdenVenta.objects.filter(orden_venta=value.split('-')[0]).values_list('cliente',flat=True).first()
+            cliente = Cliente.objects.filter(id_cliente=id_cli).values_list('nombre',flat=True).first()
+            direccion = Cliente.objects.filter(id_cliente=id_cli).values_list('direccion',flat=True).first()
+            
+        data_retiro = {
+            'fecha': request.POST['fecha-retiro'],
+            'hora_inicio': request.POST['rango-horario'].split('-')[0],
+            'hora_fin': request.POST['rango-horario'].split('-')[1],
+            'cliente': cliente,
+            'direccion': direccion,
+        }
+        
+        retiro = RetiroForm(data=data_retiro)
+        if retiro.is_valid():
+            retiro.save()
+        else:
+            data = {
+                'error': True,
+                'detalles': 'Error al registrar el retiro'
+            }
+            return render(request,'agenda-retiro/agendar.html',data)   
     return render(request,'agenda-retiro/agendar.html')   
 
 
@@ -635,20 +664,28 @@ def retiroGenerarPDF(request):
     
     # pdf.set_font("Arial", size = 15)
     pdf.titles('CITA NRO 12312')
+    pdf.linea()
     pdf.texto('Fecha: ',27,10)
+    # pdf.texto('TEST ',60,10)
     pdf.texto('Hora inicio: ',27,20)
     pdf.texto('Hora fin: ',27,30)
     pdf.texto('Cliente: ',27,40)
     pdf.texto('Dirección de retiro: ',27,50)
     
-    # pdf.draw_lines()
-    # pdf.cell(200, 10, txt = "CITA NRO 98543242", 
-    #         ln = 1, align = 'C')
-    
-    # # add another cell
-    # pdf.cell(200, 10, txt = "A Computer Science portal for geeks.",
-    #         ln = 2, align = 'C')
-    
+
     # save the pdf with name .pdf
     pdf.output("retiro.pdf")   
     return JsonResponse({'valid':'CREADO'})
+
+def validarOrdenVentaRetiro(request):
+    if request.is_ajax and request.method == 'GET':
+        orden_venta = request.GET.get('orden_venta',None)
+        linea = request.GET.get('linea',None)
+        
+        ov_exists = OrdenVenta.objects.filter(orden_venta=orden_venta).exists()
+        linea_exists = Linea.objects.filter(orden_venta=orden_venta,num_linea=linea).exists()
+        
+        if ov_exists and linea_exists:
+            return JsonResponse({'valid':True})
+        else:
+            return JsonResponse({'valid':False})

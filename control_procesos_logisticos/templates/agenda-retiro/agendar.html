@@ -25,126 +25,135 @@
                         <h3 class="card-title">Agendar retiro</h3>
                     </div>
                     <div class="card-body">
-                        <div class="form-group mb-3 row">
-                            <label class="form-label col-3 col-form-label">Fecha</label>
-                            <div class="col-xl-4">
-                                <div class="input-icon">
-                                    <span class="input-icon-addon">
-                                        <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">Fecha</label>
+                                <div class="col-xl-4">
+                                    <div class="input-icon">
+                                        <span class="input-icon-addon">
+                                            <!-- Download SVG icon from http://tabler-icons.io/i/calendar -->
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <rect x="4" y="5" width="16" height="16" rx="2" />
+                                                <line x1="16" y1="3" x2="16" y2="7" />
+                                                <line x1="8" y1="3" x2="8" y2="7" />
+                                                <line x1="4" y1="11" x2="20" y2="11" />
+                                                <line x1="11" y1="15" x2="12" y2="15" />
+                                                <line x1="12" y1="15" x2="12" y2="18" />
+                                            </svg>
+                                        </span>
+                                        <input class="form-control" placeholder="Fecha" id="fecha-retiro"
+                                            name='fecha-retiro' type='text' />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3 row">
+                                <label class="form-label col-3 col-form-label">Rango horario</label>
+                                <div class="col-xl-4">
+                                    <select type="text" class="form-select" id="rango-horario" name="rango-horario"
+                                        value="">
+                                        <option value="" disabled selected>Seleccionar tipo</option>
+                                        <option value="00:00 - 01:00">00:00 - 01:00</option>
+                                        <option value="01:00 - 02:00">01:00 - 02:00</option>
+                                        <option value="02:00 - 03:00">02:00 - 03:00</option>
+                                        <option value="03:00 - 04:00">03:00 - 04:00</option>
+                                        <option value="04:00 - 05:00">04:00 - 05:00</option>
+                                        <option value="05:00 - 06:00">05:00 - 06:00</option>
+                                        <option value="06:00 - 07:00">06:00 - 07:00</option>
+                                        <option value="07:00 - 08:00">07:00 - 08:00</option>
+                                        <option value="08:00 - 09:00">08:00 - 09:00</option>
+                                        <option value="09:00 - 10:00">09:00 - 10:00</option>
+                                        <option value="10:00 - 11:00">10:00 - 11:00</option>
+                                        <option value="11:00 - 12:00">11:00 - 12:00</option>
+                                        <option value="12:00 - 13:00">12:00 - 13:00</option>
+                                        <option value="13:00 - 14:00">13:00 - 14:00</option>
+                                        <option value="14:00 - 15:00">14:00 - 15:00</option>
+                                        <option value="15:00 - 16:00">15:00 - 16:00</option>
+                                        <option value="16:00 - 17:00">16:00 - 17:00</option>
+                                        <option value="17:00 - 18:00">17:00 - 18:00</option>
+                                        <option value="18:00 - 19:00">18:00 - 19:00</option>
+                                        <option value="19:00 - 20:00">19:00 - 20:00</option>
+                                        <option value="20:00 - 21:00">20:00 - 21:00</option>
+                                        <option value="21:00 - 22:00">21:00 - 22:00</option>
+                                        <option value="22:00 - 23:00">22:00 - 23:00</option>
+                                        <option value="23:00 - 00:00">23:00 - 00:00</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Orden de venta</label>
+                                        <div class="input-group input-group-flat">
+                                            <span class="input-group-text" style="background-color: #f4f6fa;">
+                                                OV
+                                            </span>
+                                            <input type="text" class="form-control" name="ov_input" id="ov_input">
+                                        </div>
+                                        <!-- <input type="text" class="form-control" name="ov_input" id="ov_input"
+                                            placeholder="EJ: OV243266"> -->
+
+                                    </div>
+                                </div>
+                                <div class="col-lg-1">
+                                    <div class="mb-3">
+                                        <label class="form-label">Línea</label>
+                                        <input type="text" class="form-control" name="linea_input" id="linea_input"
+                                            placeholder="EJ: 1">
+                                    </div>
+                                </div>
+                                <div class="col-xl-5 mb-3">
+                                    <label class="form-label" style="visibility: hidden;">bt</label>
+                                    <button class="btn btn-primary w-100" id='btn-agregar-ov' type="button">
+                                        <!-- Download SVG icon from http://tabler-icons.io/i/search -->
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-plus" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
                                             stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                            <rect x="4" y="5" width="16" height="16" rx="2" />
-                                            <line x1="16" y1="3" x2="16" y2="7" />
-                                            <line x1="8" y1="3" x2="8" y2="7" />
-                                            <line x1="4" y1="11" x2="20" y2="11" />
-                                            <line x1="11" y1="15" x2="12" y2="15" />
-                                            <line x1="12" y1="15" x2="12" y2="18" />
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
                                         </svg>
-                                    </span>
-                                    <!-- {{form.fecha_planificacion}} -->
-                                    <input class="form-control" placeholder="Fecha" id="datepicker-icon-prepend"
-                                        type='text' />
+                                        Agregar OV/Línea
+                                    </button>
                                 </div>
                             </div>
-                        </div>
+                            <!-- <div class="d-flex justify-content-center align-items-center mb-n3 mt-3"> -->
 
-                        <div class="form-group mb-3 row">
-                            <label class="form-label col-3 col-form-label">Rango horario</label>
-                            <div class="col-xl-4">
-                                <select type="text" class="form-select" id="select-progreso" value="">
-                                    <option value="" disabled selected>Seleccionar tipo</option>
-                                    <option value="1">00:00 - 01:00</option>
-                                    <option value="2">01:00 - 02:00</option>
-                                    <option value="3">02:00 - 03:00</option>
-                                    <option value="4">03:00 - 04:00</option>
-                                    <option value="5">04:00 - 05:00</option>
-                                    <option value="6">05:00 - 06:00</option>
-                                    <option value="7">06:00 - 07:00</option>
-                                    <option value="8">07:00 - 08:00</option>
-                                    <option value="9">08:00 - 09:00</option>
-                                    <option value="10">09:00 - 10:00</option>
-                                    <option value="11">10:00 - 11:00</option>
-                                    <option value="12">11:00 - 12:00</option>
-                                    <option value="13">12:00 - 13:00</option>
-                                    <option value="14">13:00 - 14:00</option>
-                                    <option value="15">14:00 - 15:00</option>
-                                    <option value="16">15:00 - 16:00</option>
-                                    <option value="17">16:00 - 17:00</option>
-                                    <option value="18">17:00 - 18:00</option>
-                                    <option value="19">18:00 - 19:00</option>
-                                    <option value="20">19:00 - 20:00</option>
-                                    <option value="21">20:00 - 21:00</option>
-                                    <option value="22">21:00 - 22:00</option>
-                                    <option value="23">22:00 - 23:00</option>
-                                    <option value="24">23:00 - 00:00</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="mb-3">
-                                    <label class="form-label">Orden de venta</label>
-                                    <input type="text" class="form-control" name="ov_input" id="ov_input"
-                                        placeholder="EJ: OV243266">
-                                </div>
-                            </div>
-                            <div class="col-lg-1">
-                                <div class="mb-3">
-                                    <label class="form-label">Línea</label>
-                                    <input type="text" class="form-control" name="linea_input" id="linea_input"
-                                        placeholder="EJ: 1">
-                                </div>
-                            </div>
-                            <div class="col-xl-5 mb-3">
-                                <label class="form-label" style="visibility: hidden;">bt</label>
-                                <button class="btn btn-primary w-100" id='btn-agregar-ov' type="button">
-                                    <!-- Download SVG icon from http://tabler-icons.io/i/search -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-plus"
-                                        width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
-                                        stroke="currentColor" fill="none" stroke-linecap="round"
-                                        stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                    Agregar OV/Línea
-                                </button>
-                            </div>
-                        </div>
-                        <!-- <div class="d-flex justify-content-center align-items-center mb-n3 mt-3"> -->
-
-                        <div class="table-responsive">
-                            <div class="gridjs gridjs-container">
-                                <table class="gridjs-table" id='tabla-ov'>
-                                    <thead class="gridjs-thead">
-                                        <tr class="gridjs-tr">
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
-                                                style="width: 200px;">
-                                                Orden de venta</th>
-                                            <th class=" gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
-                                                style="width: 200px;">
-                                                Línea
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class=" gridjs-tbody" style="text-align: center;">
-                                        <tr class="gridjs-tr">
-                                            <!-- <td class="gridjs-td">12</td>
+                            <div class="table-responsive">
+                                <div class="gridjs gridjs-container">
+                                    <table class="gridjs-table" id='tabla-ov'>
+                                        <thead class="gridjs-thead">
+                                            <tr class="gridjs-tr">
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
+                                                    style="width: 200px;">
+                                                    ORDEN DE VENTA</th>
+                                                <th class=" gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
+                                                    style="width: 200px;">
+                                                    LÍNEA
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class=" gridjs-tbody" style="text-align: center;">
+                                            <tr class="gridjs-tr">
+                                                <!-- <td class="gridjs-td">12</td>
                                                 <td class="gridjs-td">34</td> -->
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-                        </div>
-                        <!-- </div> -->
+                            </div>
+                            <!-- </div> -->
                     </div>
                     <div class="card-footer text-end">
                         <div class="d-flex">
-                            <button type="button" class="btn btn-success ms-auto" id="btn-guardar-pdf">
+                            <button type="submit" class="btn btn-success ms-auto" id="btn-guardar-pdf">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-plus"
                                     width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -160,8 +169,8 @@
                         </div>
                     </div>
                 </div>
-
-
+                </form>
+                {{data.detalles}}
             </div>
         </div>
     </div>
@@ -176,7 +185,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const picker = new Litepicker({
-            element: document.getElementById('datepicker-icon-prepend'),
+            element: document.getElementById('fecha-retiro'),
             autoRefresh: true,
             format: 'DD/MM/YYYY',
             lang: 'es-ES',
@@ -187,23 +196,42 @@
 <script>
     var list_ov = []
     $("#btn-agregar-ov").on('click', function (e) {
-        var ov = document.getElementById('ov_input').value
+        var ov = 'OV' + document.getElementById('ov_input').value
         var linea = document.getElementById('linea_input').value
-
-        if (list_ov.includes(ov + linea)) {
-            alert('EXISTE')
-        } else {
-            if (ov !== '' && linea !== '') {
-                list_ov.push(ov + linea)
-                $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td">${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
+        e.preventDefault();
+        $.ajax({
+            type: 'GET',
+            url: "{% url 'validar_orden' %}",
+            data: {
+                'orden_venta': ov,
+                'linea': linea
+            },
+            success: function (response) {
+                if (response['valid']) {
+                    alert('VALIDA')
+                    if (list_ov.includes(ov + linea)) {
+                        alert('EXISTE')
+                    } else {
+                        if (ov !== '' && linea !== '') {
+                            list_ov.push(ov + linea)
+                            $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td"><input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
+                        }
+                    }
+                } else {
+                    alert('NO VALIDA')
+                }
+            },
+            error: function (response) {
+                alert('ERROR')
+                alert(response)
             }
-        }
+        })
 
     });
 
 </script>
 
-<script>
+<!-- <script>
     $('#btn-guardar-pdf').on('click', function (e) {
         alert('A')
         e.preventDefault();
@@ -220,5 +248,7 @@
         })
     }
     )
-</script>
+</script> -->
+
+
 {% endblock %}

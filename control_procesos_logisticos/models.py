@@ -134,27 +134,27 @@ class DetalleBulto(models.Model):
         db_table     = 'DETALLE_BULTO'
     
 class Retiro(models.Model):
-    id_retiro    = models.AutoField(primary_key=True)
-    fecha_hora  = models.DateTimeField(default=datetime.now)
-    hora_inicio = models.TimeField()
-    hora_fin    = models.TimeField()
+    id_retiro   = models.AutoField(primary_key=True)
+    fecha       = models.DateField()
+    hora_inicio = models.CharField(max_length=10)
+    hora_fin    = models.CharField(max_length=10)
     cliente     = models.CharField(max_length=40)
-    despacho = models.ForeignKey(Despacho,on_delete=PROTECT)
+    # despacho    = models.ForeignKey(Despacho,on_delete=PROTECT)
+    direccion   = models.CharField(max_length=80)
     activo      = models.BooleanField(default=False)
-    
     
     class Meta:
         verbose_name = 'Retiro'
         db_table     = 'RETIRO'
     
 class DetalleRetiro(models.Model):
-    id_detalle_retiro    = models.AutoField(primary_key=True)
-    orden_venta = models.CharField(max_length=40)
-    linea = models.CharField(max_length=40)
-    descripcion = models.CharField(max_length=40)
-    cantidad = models.IntegerField()
-    tipo_embalaje = models.CharField(max_length=40)
-    retiro = models.ForeignKey(Retiro,on_delete=PROTECT)
+    id_detalle_retiro = models.AutoField(primary_key=True)
+    orden_venta       = models.CharField(max_length=40)
+    linea             = models.CharField(max_length=40)
+    descripcion       = models.CharField(max_length=40)
+    cantidad          = models.IntegerField()
+    tipo_embalaje     = models.CharField(max_length=40)
+    retiro            = models.ForeignKey(Retiro,on_delete=PROTECT)
     
     class Meta:
         verbose_name = 'Detalle_Retiro'

@@ -4,7 +4,7 @@ from fpdf import FPDF
 class PDF(FPDF):
     def texto(self,text,x,y):
         self.set_xy(x,y)    
-        self.set_font('Arial', '', 12)
+        self.set_font('Arial', 'I', 12)
         self.cell(100,40,text)
         
     def titles(self,title):
@@ -14,8 +14,11 @@ class PDF(FPDF):
         # self.ln(20)
         
         
-    def draw_lines(self):
+    def linea(self):
         # self.line(10, 10, 10, 100)
-        self.set_line_width(1)
-        self.set_draw_color(255, 0, 0)
-        self.line(20, 20, 100, 20)
+        # self.set_xy(x,y)
+        self.set_line_width(0.5)
+        self.set_draw_color(103, 131, 179)
+        self.line(25, 25, 185, 25)
+        # X inicio, Y inicio, X fin, Y termino
+        self.line(25, 75, 185, 75)
