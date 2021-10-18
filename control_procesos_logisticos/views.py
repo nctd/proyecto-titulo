@@ -11,8 +11,9 @@ from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, Orde
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
-import pandas as pd
 
+import pandas as pd
+import requests
 import cx_Oracle
 
 
@@ -648,6 +649,7 @@ def agendarRetiro(request):
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             retiro.save()
+            retiroGenerarPDF(request,data_retiro)
         else:
             data = {
                 'error': True,
@@ -657,23 +659,38 @@ def agendarRetiro(request):
     return render(request,'agenda-retiro/agendar.html')   
 
 
-def retiroGenerarPDF(request):
+def retiroGenerarPDF(request,datos):
     pdf = PDF()
     # Add a page
     pdf.add_page()
     
     # pdf.set_font("Arial", size = 15)
+    
     pdf.titles('CITA NRO 12312')
     pdf.linea()
     pdf.texto('Fecha: ',27,10)
-    # pdf.texto('TEST ',60,10)
-    pdf.texto('Hora inicio: ',27,20)
-    pdf.texto('Hora fin: ',27,30)
-    pdf.texto('Cliente: ',27,40)
-    pdf.texto('Dirección de retiro: ',27,50)
+    pdf.texto(datos['fecha'],60,10)
     
+    pdf.texto('Hora inicio: ',27,20)
+    pdf.texto(datos['hora_inicio'],60,20)
+    
+    pdf.texto('Hora fin: ',27,30)
+    pdf.texto(datos['hora_fin'],60,30)
+    
+    pdf.texto('Cliente: ',27,40)
+    pdf.texto(datos['cliente'],60,40)
+    
+    pdf.texto('Dirección de retiro: ',27,50)
+    pdf.texto(datos['direccion'],60,50)    
 
-    # save the pdf with name .pdf
+    headers = ['Orden de venta','Línea OV','Descripción','Cantidad','Tipo Embalaje']
+    data = [['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA'],
+            ['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA'],
+            ['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA'],
+            ['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA']]
+
+    pdf.tabla(headers,data)
+
     pdf.output("retiro.pdf")   
     return JsonResponse({'valid':'CREADO'})
 
@@ -682,10 +699,19 @@ def validarOrdenVentaRetiro(request):
         orden_venta = request.GET.get('orden_venta',None)
         linea = request.GET.get('linea',None)
         
-        ov_exists = OrdenVenta.objects.filter(orden_venta=orden_venta).exists()
-        linea_exists = Linea.objects.filter(orden_venta=orden_venta,num_linea=linea).exists()
+        response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+            'ov': orden_venta,
+            'linea' : linea
+        })
+        # print(response.json()['resultado'])
         
-        if ov_exists and linea_exists:
+        if response.json()['resultado'] == 0 and response.status_code == 200 :
             return JsonResponse({'valid':True})
         else:
             return JsonResponse({'valid':False})
+        # return JsonResponse({'response':response.status_code})
+        # ov_exists = OrdenVenta.objects.filter(orden_venta=orden_venta).exists()
+        # linea_exists = Linea.objects.filter(orden_venta=orden_venta,num_linea=linea).exists()
+        
+        # if ov_exists and linea_exists:
+
