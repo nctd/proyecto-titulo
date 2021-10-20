@@ -632,64 +632,75 @@ def agendarRetiro(request):
         for value in request.POST:
             if value.startswith('OV'):
                 list_ov.append(value)
-
-        for value in list_ov:
-            id_cli = OrdenVenta.objects.filter(orden_venta=value.split('-')[0]).values_list('cliente',flat=True).first()
-            cliente = Cliente.objects.filter(id_cliente=id_cli).values_list('nombre',flat=True).first()
-            direccion = Cliente.objects.filter(id_cliente=id_cli).values_list('direccion',flat=True).first()
-            
-        data_retiro = {
-            'fecha': request.POST['fecha-retiro'],
-            'hora_inicio': request.POST['rango-horario'].split('-')[0],
-            'hora_fin': request.POST['rango-horario'].split('-')[1],
-            'cliente': cliente,
-            'direccion': direccion,
-        }
+                
+        data = []   
+        data_retiro = {}
+        data_detalle = []
+        for ov in list_ov:
+            response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+                'ov': ov.split('-')[0],
+                'linea' : ov.split('-')[1]
+            })
+            if response.json()['resultado'] == 0 and response.status_code == 200:
+                for value in response.json()['data']:
+                    data_retiro = {
+                        'fecha': request.POST['fecha-retiro'],
+                        'hora_inicio': request.POST['rango-horario'].split('-')[0],
+                        'hora_fin': request.POST['rango-horario'].split('-')[1],
+                        'cliente': value['cliente'],
+                        'direccion': value['direccion'],
+                    }
+                    data_detalle = [value['ov'],
+                                    value['linea'],
+                                    value['descripcion'],
+                                    value['cantidad'],
+                                    value['solicitud_material']]
+                    data.append(data_detalle)
+            else:
+                data = {
+                    'error': True
+                }
+                return render(request,'agenda-retiro/agendar.html',data)   
         
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             retiro.save()
-            retiroGenerarPDF(request,data_retiro)
+            retiroGenerarPDF(request,data_retiro,data)
         else:
             data = {
                 'error': True,
-                'detalles': 'Error al registrar el retiro'
+                'detalles': 'Error al registrar el retiro' + str(retiro.errors.values())
             }
             return render(request,'agenda-retiro/agendar.html',data)   
     return render(request,'agenda-retiro/agendar.html')   
 
 
-def retiroGenerarPDF(request,datos):
+def retiroGenerarPDF(request,data_retiro,data_detalle):
     pdf = PDF()
-    # Add a page
     pdf.add_page()
     
     # pdf.set_font("Arial", size = 15)
     
     pdf.titles('CITA NRO 12312')
     pdf.linea()
-    pdf.texto('Fecha: ',27,10)
-    pdf.texto(datos['fecha'],60,10)
+    pdf.texto('Fecha: ',14,10)
+    pdf.texto(data_retiro['fecha'],45,10)
     
-    pdf.texto('Hora inicio: ',27,20)
-    pdf.texto(datos['hora_inicio'],60,20)
+    pdf.texto('Hora inicio: ',14,20)
+    pdf.texto(data_retiro['hora_inicio'],45,20)
     
-    pdf.texto('Hora fin: ',27,30)
-    pdf.texto(datos['hora_fin'],60,30)
+    pdf.texto('Hora fin: ',14,30)
+    pdf.texto(data_retiro['hora_fin'],45,30)
     
-    pdf.texto('Cliente: ',27,40)
-    pdf.texto(datos['cliente'],60,40)
+    pdf.texto('Cliente: ',14,40)
+    pdf.texto(data_retiro['cliente'],45,40)
     
-    pdf.texto('Dirección de retiro: ',27,50)
-    pdf.texto(datos['direccion'],60,50)    
+    pdf.texto('Dirección de retiro: ',14,50)
+    pdf.texto(data_retiro['direccion'],45,50)    
 
     headers = ['Orden de venta','Línea OV','Descripción','Cantidad','Tipo Embalaje']
-    data = [['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA'],
-            ['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA'],
-            ['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA'],
-            ['OV247596','9999','VALVULA BOA-H DN050 PN16','9999','ENVIADA']]
 
-    pdf.tabla(headers,data)
+    pdf.tabla(headers,data_detalle)
 
     pdf.output("retiro.pdf")   
     return JsonResponse({'valid':'CREADO'})
@@ -705,7 +716,7 @@ def validarOrdenVentaRetiro(request):
         })
         # print(response.json()['resultado'])
         
-        if response.json()['resultado'] == 0 and response.status_code == 200 :
+        if response.json()['resultado'] == 0 and response.status_code == 200:
             return JsonResponse({'valid':True})
         else:
             return JsonResponse({'valid':False})
