@@ -48,6 +48,7 @@ def getLineaTipoDespacho(tipo_despacho):
     cursor.close()
     
     datos_linea = {
+        'tipo': tipo_despacho,
         'cant_lineas' : int(cant_lineas.getvalue()),
         'valor' : int(valor.getvalue()),
         'porc_lineas' : int(porc_lineas.getvalue()),
@@ -98,6 +99,7 @@ def getProgresoDiarioTipoDespacho(tipo_despacho):
     cursor.close()
     
     datos_linea = {
+        'tipo': tipo_despacho,
         'cant_lineas' : int(cant_lineas.getvalue()),
         'cant_exito_lineas' : int(cant_exito_lineas.getvalue()),
         'porc_exito_lineas' : int(porc_exito_lineas.getvalue()),
@@ -178,7 +180,7 @@ def planificacion(request):
                             'canal_venta':row[19],
                             'orden_compra':row[20],
                             'tipo_venta':row[16],
-                            'tipo_despacho':row[21],
+                            'tipo_despacho':row[18],
                         }
                     else:
                         data = {
@@ -198,7 +200,7 @@ def planificacion(request):
                         'canal_venta':row[19],
                         'orden_compra':row[20],
                         'tipo_venta':row[16],
-                        'tipo_despacho':row[21],
+                        'tipo_despacho':row[18],
                     }
                     
                 ov = OrdenVentaForm(data=data_ov)
@@ -366,18 +368,26 @@ def indicadores(request):
     lineas = Linea.objects.all()
     
     if lineas.count() > 0:
-        
+        tipos_despacho = OrdenVenta.objects.all().values_list('tipo_despacho',flat=True).distinct()
         # Lineas a despachar segun tipo de despacho
         # Despacho directo
-        datos_despacho_directo = getLineaTipoDespacho('DESPACHO DIRECTO')
-        # Traspaso entre sucursales
-        datos_despacho_traspaso = getLineaTipoDespacho('TRASPASO ENTRE SUCURSALES')
-        # Embalaje
-        datos_despacho_embalaje = getLineaTipoDespacho('EMBALAJE')
-        # Exportaciones
-        datos_despacho_exportaciones = getLineaTipoDespacho('EXPORTACIONES')
-        # Retira cliente
-        datos_despacho_retira = getLineaTipoDespacho('RETIRA CLIENTE')        
+        despachos = []
+        progreso_despachos = []
+        for val in tipos_despacho:
+            despach = getLineaTipoDespacho(val)
+            progreso = getProgresoDiarioTipoDespacho(val)
+            despachos.append(despach)
+            progreso_despachos.append(progreso)
+        print(despachos)
+        # datos_despacho_directo = getLineaTipoDespacho('DESPACHO DIRECTO')
+        # # Traspaso entre sucursales
+        # datos_despacho_traspaso = getLineaTipoDespacho('TRASPASO ENTRE SUCURSALES')
+        # # Embalaje
+        # datos_despacho_embalaje = getLineaTipoDespacho('EMBALAJE')
+        # # Exportaciones
+        # datos_despacho_exportaciones = getLineaTipoDespacho('EXPORTACIONES')
+        # # Retira cliente
+        # datos_despacho_retira = getLineaTipoDespacho('RETIRA CLIENTE')        
         
         # Lineas a despachar segun tipo de venta
         # 1STOCK_R
@@ -434,15 +444,18 @@ def indicadores(request):
         progreso_total = getTotalProgresoDiario()
         # Progreso diario de despachos - Tipo de despacho
         # DESPACHO DIRECTO
-        progreso_despacho_directo = getProgresoDiarioTipoDespacho('DESPACHO DIRECTO')
-        # TRASPASO ENTRE SUCURSALES
-        progreso_despacho_traspaso = getProgresoDiarioTipoDespacho('TRASPASO ENTRE SUCURSALES')
-        # EMBALAJE
-        progreso_despacho_embalaje = getProgresoDiarioTipoDespacho('EMBALAJE')
-        # EXPORTACIONES
-        progreso_despacho_exportaciones = getProgresoDiarioTipoDespacho('EXPORTACIONES')
-        # RETIRA CLIENTE
-        progreso_despacho_retira = getProgresoDiarioTipoDespacho('RETIRA CLIENTE')
+        # Lineas a despachar segun tipo de despacho
+        # Despacho directo
+        # progreso_despacho_directo = getProgresoDiarioTipoDespacho('DESPACHO DIRECTO')
+        # # TRASPASO ENTRE SUCURSALES
+        # progreso_despacho_traspaso = getProgresoDiarioTipoDespacho('TRASPASO ENTRE SUCURSALES')
+        # # EMBALAJE
+        # progreso_despacho_embalaje = getProgresoDiarioTipoDespacho('EMBALAJE')
+        # # EXPORTACIONES
+        # progreso_despacho_exportaciones = getProgresoDiarioTipoDespacho('EXPORTACIONES')
+        # # RETIRA CLIENTE
+        # progreso_despacho_retira = getProgresoDiarioTipoDespacho('RETIRA CLIENTE')
+        
         # Progreso diario de despachos - Tipo de venta
         # 1STOCK_R
         progreso_stock_r = getProgresoDiarioTipoVenta('1STOCK_R')
@@ -469,11 +482,12 @@ def indicadores(request):
             'list_reparto':list_reparto,
             
             # Tipo de despacho
-            'datos_despacho_directo' : datos_despacho_directo,
-            'datos_despacho_traspaso' : datos_despacho_traspaso,
-            'datos_despacho_embalaje' : datos_despacho_embalaje,
-            'datos_despacho_exportaciones' : datos_despacho_exportaciones,
-            'datos_despacho_retira' : datos_despacho_retira,
+            'datos_despacho': despachos,
+            # 'datos_despacho_directo' : datos_despacho_directo,
+            # 'datos_despacho_traspaso' : datos_despacho_traspaso,
+            # 'datos_despacho_embalaje' : datos_despacho_embalaje,
+            # 'datos_despacho_exportaciones' : datos_despacho_exportaciones,
+            # 'datos_despacho_retira' : datos_despacho_retira,
             
             # Tipo de venta
             'datos_stock' : datos_stock,
@@ -484,11 +498,12 @@ def indicadores(request):
             'datos_os' : datos_os,
 
             # Progreso diario - Tipo de despacho
-            'progreso_despacho_directo' : progreso_despacho_directo,
-            'progreso_despacho_traspaso' : progreso_despacho_traspaso,
-            'progreso_despacho_embalaje' : progreso_despacho_embalaje,
-            'progreso_despacho_exportaciones' : progreso_despacho_exportaciones,
-            'progreso_despacho_retira' : progreso_despacho_retira,
+            'datos_progreso': progreso_despachos,
+            # 'progreso_despacho_directo' : progreso_despacho_directo,
+            # 'progreso_despacho_traspaso' : progreso_despacho_traspaso,
+            # 'progreso_despacho_embalaje' : progreso_despacho_embalaje,
+            # 'progreso_despacho_exportaciones' : progreso_despacho_exportaciones,
+            # 'progreso_despacho_retira' : progreso_despacho_retira,
             
             # Progreso diario - Tipo de venta
             'progreso_total' : progreso_total,

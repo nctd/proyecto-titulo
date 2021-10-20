@@ -56,7 +56,55 @@
                             <div class="card-header">
                                 <h3 class="card-title">Lineas a despachar según tipo de despacho</h3>
                             </div>
+                            {% if datos_despacho %}
+                            {% for despacho in datos_despacho %}
                             <div class="col-sm-6 col-lg-6">
+                                <div class="card bg-yellow-lt">
+                                    <div class="card-body p-2">
+                                        <div class="text-dark text-center">
+                                            <h3>{{despacho.tipo}}</h3>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
+                                                            lineas
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <p class="float-lg-end" style="font-size: 1rem;">
+                                                            {{despacho.cant_lineas}}</p>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
+                                                            {{despacho.porc_lineas}}%
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
+                                                            despacho
+                                                            (CLP)
+                                                        </p>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <p class="float-lg-end" style="font-size: 1rem;">
+                                                            ${{despacho.valor}}</p>
+                                                    </div>
+                                                    <div class="col-sm-3">
+                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
+                                                            {{despacho.porc_valor}}%
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %%}
+                            {% endif %}
+                            <!-- <div class="col-sm-6 col-lg-6">
                                 <div class="card bg-yellow-lt">
                                     <div class="card-body p-2">
                                         <div class="text-dark text-center">
@@ -276,7 +324,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </div> -->
 
                         </div>
 

@@ -295,6 +295,18 @@
     });
 
 </script>
+
+<script>
+    $("#btn-guardar-pdf").on('click', function (e) {
+        if ($('#fecha-retiro').val() == '' || $('#rango-horario').val() == null) {
+            e.preventDefault()
+            alert($('#rango-horario').val())
+            alert($('#fecha-retiro').val())
+
+        }
+    })
+</script>
+
 <script>
     $("#linea_input").on('change', function (e) {
         event.stopPropagation();
