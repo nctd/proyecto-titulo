@@ -741,3 +741,5 @@ def validarOrdenVentaRetiro(request):
         
         # if ov_exists and linea_exists:
 
+def visualizarRetiros(request):
+    return render(request,'agenda-retiro/buscar-retiro.html') 

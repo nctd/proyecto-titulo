@@ -48,7 +48,7 @@
 
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" id="card-container" style="display: none;">
                 <div class="tab-content">
                     <div class="tab-pane" id="lineas-tipo-despacho">
 
@@ -913,6 +913,7 @@
         if ($('#tab-reportes').hasClass('card-active')) {
             $('#tab-reportes').removeClass('card-active')
         }
+        document.getElementById('card-container').style.display = null
     })
     $("#tab-tipo-venta").on('click', function (e) {
         const tab = document.getElementById('tab-tipo-venta')
@@ -932,6 +933,7 @@
         if ($('#tab-reportes').hasClass('card-active')) {
             $('#tab-reportes').removeClass('card-active')
         }
+        document.getElementById('card-container').style.display = null
     })
     $("#tab-carga").on('click', function (e) {
         const tab = document.getElementById('tab-carga')
@@ -948,6 +950,7 @@
         if ($('#tab-reportes').hasClass('card-active')) {
             $('#tab-reportes').removeClass('card-active')
         }
+        document.getElementById('card-container').style.display = null
     })
     $("#tab-progreso").on('click', function (e) {
         const tab = document.getElementById('tab-progreso')
@@ -967,10 +970,8 @@
         if ($('#tab-reportes').hasClass('card-active')) {
             $('#tab-reportes').removeClass('card-active')
         }
-
+        document.getElementById('card-container').style.display = null
         // document.getElementById('select-reporte').value = "";
-
-
 
     })
     $("#tab-reportes").on('click', function (e) {
@@ -994,6 +995,7 @@
         if ($('#tab-progreso').hasClass('card-active')) {
             $('#tab-progreso').removeClass('card-active')
         }
+        document.getElementById('card-container').style.display = null
     })
 </script>
 

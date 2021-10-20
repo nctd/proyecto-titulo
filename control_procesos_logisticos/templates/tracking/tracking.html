@@ -27,7 +27,7 @@
                     <form method='GET'>
                         <div class="card-body">
                             <div class="d-flex justify-content-center align-items-center mb-n3 mt-3 col-xl">
-                                <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3" id="div_ov">
+                                <div class="col-12 col-sm-4 col-md-2 col-lg-4 mb-3" id="div_ov">
                                     <label class="form-label">Orden de venta</label>
                                     <input type="text" class="form-control" name="id_ov" id="id_ov"
                                         placeholder="Ingrese el N° OV">
@@ -35,7 +35,7 @@
                                 </div>
                             </div>
                             <div class="d-flex justify-content-center align-items-center mb-n3 mt-3 col-xl">
-                                <div class="col-6 col-sm-4 col-md-2 col-lg-4 mb-3">
+                                <div class="col-12 col-sm-4 col-md-2 col-lg-4 mb-3">
                                     <button class="btn btn-primary w-100" id='btn-buscar' type="submit">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/search -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -63,7 +63,7 @@
                     <div class='card-body'>
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Orden de venta</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value='{{orden_venta}}'>
 
                             </div>
@@ -71,28 +71,28 @@
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Cliente final</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value='{{cliente}}'>
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Orden de compra cliente</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value='{{orden_compra}}'>
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Tipo de venta</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value='{{tipo_venta}}'>
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">División / Canal de venta</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value='{{canal_venta}}'>
                             </div>
                         </div>
@@ -106,7 +106,7 @@
                     <div class="card-body">
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Tipo de despacho</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value="{{tipo_despacho}}">
 
                             </div>
@@ -114,7 +114,7 @@
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Transporte</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly
                                     value="{{despacho.transporte.empresa}}">
                             </div>
@@ -122,21 +122,21 @@
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Guía de despacho</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value="{{despacho.guia_despacho}}">
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">OT Transporte / Patente</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value="{{ot}}">
                             </div>
                         </div>
 
                         <div class="form-group mb-3 row">
                             <label class="form-label col-3 col-form-label">Cita / PL</label>
-                            <div class="col-6">
+                            <div class="col-xl-6">
                                 <input type="text" class="form-control" readonly value="{{cita}}">
                             </div>
                         </div>
