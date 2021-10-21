@@ -5,9 +5,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from pandas.io import json
 
-from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
+from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, DetalleRetiroForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
 
-from .models import Articulo, Cliente, Despacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion,Transporte,TemporalLinea
+from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte,TemporalLinea
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
@@ -679,8 +679,31 @@ def agendarRetiro(request):
         
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
-            retiro.save()
+            id_retiro = retiro.save()
             retiroGenerarPDF(request,data_retiro,data)
+            
+            for item in data:
+                print(item)
+                print(item[3])         
+                data_det = {
+                    'orden_venta' : item[0],
+                    'linea' : item[1],
+                    'descripcion' : item[2],
+                    'cantidad' : item[3],
+                    'tipo_embalaje' : item[4],
+                    'retiro' : id_retiro.pk
+                }
+                print(data_det)
+                det_retiro = DetalleRetiroForm(data=data_det)
+                if det_retiro.is_valid():
+                    det_retiro.save()
+                else:
+                    data = {
+                        'error': True, 
+                        'detalles': 'Error al registrar detalles del retiro' + str(det_retiro.errors.as_data())
+                    }
+                    return render(request,'agenda-retiro/agendar.html',data)   
+            
         else:
             data = {
                 'error': True,
@@ -742,4 +765,24 @@ def validarOrdenVentaRetiro(request):
         # if ov_exists and linea_exists:
 
 def visualizarRetiros(request):
+
     return render(request,'agenda-retiro/buscar-retiro.html') 
+
+def obtenerRetiros(request):
+    if request.is_ajax and request.method == 'GET':
+        try:
+            if('fecha_desde' and 'fecha_hasta' in request.GET):
+                fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
+                fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
+                retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])        
+                
+                list_detalles = []
+                for retiro in retiros:
+                    detalle = json.dumps(list(DetalleRetiro.objects.filter(retiro=retiro.id_retiro).values()))
+                    
+                    list_detalles.append(detalle)
+                    print(list_detalles)
+                    
+                return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles},status=200)
+        except ObjectDoesNotExist:
+            return JsonResponse({'valid': False, 'error': True},status=400)

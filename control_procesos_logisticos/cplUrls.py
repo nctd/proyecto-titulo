@@ -1,4 +1,4 @@
-from control_procesos_logisticos.views import agendarRetiro, home,planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaRetiro, visualizarRetiros
+from control_procesos_logisticos.views import agendarRetiro, obtenerRetiros, home, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaRetiro, visualizarRetiros
 from django.urls import path
 
 urlpatterns = [
@@ -11,4 +11,5 @@ urlpatterns = [
     path('get/agendar/generar-retiro',retiroGenerarPDF,name='generar_pdf_retiro'),
     path('get/agendar/validar-ov',validarOrdenVentaRetiro,name='validar_orden'),
     path('buscar-retiro',visualizarRetiros,name='buscar_retiro'),
+    path('get/agendar/obtener-retiro',obtenerRetiros,name='obtener_retiro'),
 ]

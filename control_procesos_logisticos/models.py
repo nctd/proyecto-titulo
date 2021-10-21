@@ -140,7 +140,7 @@ class Retiro(models.Model):
     hora_fin    = models.CharField(max_length=10)
     cliente     = models.CharField(max_length=40)
     # despacho    = models.ForeignKey(Despacho,on_delete=PROTECT)
-    direccion   = models.CharField(max_length=80)
+    direccion   = models.CharField(max_length=120)
     activo      = models.BooleanField(default=False)
     
     class Meta:
@@ -151,9 +151,9 @@ class DetalleRetiro(models.Model):
     id_detalle_retiro = models.AutoField(primary_key=True)
     orden_venta       = models.CharField(max_length=40)
     linea             = models.CharField(max_length=40)
-    descripcion       = models.CharField(max_length=40)
+    descripcion       = models.CharField(max_length=120)
     cantidad          = models.IntegerField()
-    tipo_embalaje     = models.CharField(max_length=40)
+    tipo_embalaje     = models.CharField(max_length=120)
     retiro            = models.ForeignKey(Retiro,on_delete=PROTECT)
     
     class Meta:
