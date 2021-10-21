@@ -146,10 +146,10 @@
     $("#btn-buscar-retiro").on('click', function (e) {
         if ($('#fecha-desde').val() !== '' || $('#fecha-hasta').val() !== '') {
             e.preventDefault()
-            alert($('#fecha-desde').val())
-            alert($('#fecha-hasta').val())
+            // alert($('#fecha-desde').val())
+            // alert($('#fecha-hasta').val())
 
-            alert('test')
+            // alert('test')
             $.ajax({
                 type: 'GET',
                 url: "{% url 'obtener_retiro' %}",
@@ -159,20 +159,23 @@
                 },
                 success: function (response) {
                     if (response['valid']) {
-                        alert(response)
+                        // alert(response)
                         alert(response['detalle_retiros'])
+                        var data = response['detalle_retiros']
+                        alert(data)
                         var grid = new gridjs.Grid({
                             search: true,
                             pagination: {
                                 limit: 20
                             },
                             sort: true,
-                            // resizable: true,
                             columns: ["Orden de venta", "Línea", "Descripción", "Cantidad", "Tipo Embalaje"],
-                            data: [response['detalle_retiros']],
+                            data: [data],
+                            // server: {
+                            //     url: "{% url 'obtener_retiro' %}",
+                            //     then: data => data.detalle_retiros.map(detalle => [detalle.orden_venta, detalle.linea, detalle.descripcion, detalle.cantidad, detalle.tipo_embalaje])
+                            // },
                             fixedHeader: true,
-                            // height: '300px',
-                            // autoWidth: true,
                             style: {
                                 td: {
                                     'min-width': '200px'

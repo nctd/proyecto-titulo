@@ -642,7 +642,6 @@ def reporteGrafico(request):
 
 def agendarRetiro(request):
     if request.method == 'POST':
-
         list_ov = []
         for value in request.POST:
             if value.startswith('OV'):
@@ -702,7 +701,12 @@ def agendarRetiro(request):
                         'error': True, 
                         'detalles': 'Error al registrar detalles del retiro' + str(det_retiro.errors.as_data())
                     }
-                    return render(request,'agenda-retiro/agendar.html',data)   
+                    return render(request,'agenda-retiro/agendar.html',data)
+                   
+            data = {
+                'guardado': True
+            }
+            return render(request,'agenda-retiro/agendar.html',data)
             
         else:
             data = {
@@ -752,7 +756,7 @@ def validarOrdenVentaRetiro(request):
             'ov': orden_venta,
             'linea' : linea
         })
-        # print(response.json()['resultado'])
+
         
         if response.json()['resultado'] == 0 and response.status_code == 200:
             return JsonResponse({'valid':True})
@@ -765,7 +769,6 @@ def validarOrdenVentaRetiro(request):
         # if ov_exists and linea_exists:
 
 def visualizarRetiros(request):
-
     return render(request,'agenda-retiro/buscar-retiro.html') 
 
 def obtenerRetiros(request):
@@ -778,11 +781,14 @@ def obtenerRetiros(request):
                 
                 list_detalles = []
                 for retiro in retiros:
-                    detalle = json.dumps(list(DetalleRetiro.objects.filter(retiro=retiro.id_retiro).values()))
-                    
-                    list_detalles.append(detalle)
+                    print(retiro)
+                    # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+                    if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
+                        detalle = json.dumps(list(DetalleRetiro.objects.filter(retiro=retiro.id_retiro).values()))  
+                        list_detalles.append(detalle)
+                        print(detalle)
                     print(list_detalles)
                     
-                return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles},status=200)
+                return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles}, safe=False, status=200)
         except ObjectDoesNotExist:
             return JsonResponse({'valid': False, 'error': True},status=400)
