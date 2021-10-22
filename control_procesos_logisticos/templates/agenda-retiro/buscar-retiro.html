@@ -144,12 +144,11 @@
 
 <script>
     $("#btn-buscar-retiro").on('click', function (e) {
+        const content = document.getElementById("wrapper")
+        content.innerHTML = ''
         if ($('#fecha-desde').val() !== '' || $('#fecha-hasta').val() !== '') {
             e.preventDefault()
-            // alert($('#fecha-desde').val())
-            // alert($('#fecha-hasta').val())
 
-            // alert('test')
             $.ajax({
                 type: 'GET',
                 url: "{% url 'obtener_retiro' %}",
@@ -159,22 +158,17 @@
                 },
                 success: function (response) {
                     if (response['valid']) {
-                        // alert(response)
+                        alert(response)
                         alert(response['detalle_retiros'])
                         var data = response['detalle_retiros']
-                        alert(data)
                         var grid = new gridjs.Grid({
                             search: true,
                             pagination: {
                                 limit: 20
                             },
                             sort: true,
-                            columns: ["Orden de venta", "Línea", "Descripción", "Cantidad", "Tipo Embalaje"],
-                            data: [data],
-                            // server: {
-                            //     url: "{% url 'obtener_retiro' %}",
-                            //     then: data => data.detalle_retiros.map(detalle => [detalle.orden_venta, detalle.linea, detalle.descripcion, detalle.cantidad, detalle.tipo_embalaje])
-                            // },
+                            columns: ['FECHA', 'RANGO HORARIO', "ORDEN DE VENTA", "LÍNEA OV", 'CLIENTE', "DESCRIPCIÓN", "CANTIDAD", "TIPO EMBALAJE"],
+                            data: data,
                             fixedHeader: true,
                             style: {
                                 td: {
@@ -202,7 +196,6 @@
                             },
 
                         }).render(document.getElementById("wrapper"))
-
                     } else {
                         alert('else')
                     }
@@ -210,7 +203,7 @@
                 error: function (response) {
                     alert('ERROR')
                     alert(response)
-                }
+                },
             })
         }
     })

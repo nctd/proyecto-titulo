@@ -777,17 +777,19 @@ def obtenerRetiros(request):
             if('fecha_desde' and 'fecha_hasta' in request.GET):
                 fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
                 fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
-                retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])        
-                
+                retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
+                print(retiros)
                 list_detalles = []
                 for retiro in retiros:
                     print(retiro)
                     # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
                     if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
-                        detalle = json.dumps(list(DetalleRetiro.objects.filter(retiro=retiro.id_retiro).values()))  
-                        list_detalles.append(detalle)
-                        print(detalle)
-                    print(list_detalles)
+                        detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+                        for detalle in detalles:
+                            fila = [retiro.fecha,retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
+                            list_detalles.append(fila)
+                        
+                    
                     
                 return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles}, safe=False, status=200)
         except ObjectDoesNotExist:
