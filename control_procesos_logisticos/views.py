@@ -771,9 +771,10 @@ def validarOrdenVentaRetiro(request):
 def visualizarRetiros(request):
     if request.method == 'GET':
         data = {'res' : ''}
-        print('aaa')
         try:
             if('fecha-desde' and 'fecha-hasta' in request.GET):
+                val1 = request.GET['fecha-desde']
+                val2 = request.GET['fecha-hasta']
                 fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
                 fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
                 retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
@@ -799,8 +800,8 @@ def visualizarRetiros(request):
                             list_detalles.append(test)
                 data = {
                     'detalle_retiros' : list_detalles,
-                    'fec_inicio': fec_desde,
-                    'fec_hasta' : fec_hasta
+                    'fec_inicio': val1,
+                    'fec_hasta' : val2
                 }
             return render(request,'agenda-retiro/buscar-retiro.html',data) 
         except:

@@ -89,8 +89,8 @@
                                 <div class="col-lg-6">
                                     <div class="mb-3">
                                         <label class="form-label">Orden de venta</label>
-                                        <div class="input-group input-group-flat">
-                                            <span class="input-group-text" style="background-color: #f4f6fa;">
+                                        <div class="input-group mb-2">
+                                            <span class="input-group-text">
                                                 OV
                                             </span>
                                             <input type="text" class="form-control" name="ov_input" id="ov_input">
@@ -140,10 +140,7 @@
                                             </tr>
                                         </thead>
                                         <tbody class=" gridjs-tbody" style="text-align: center;">
-                                            <tr class="gridjs-tr">
-                                                <!-- <td class="gridjs-td">12</td>
-                                                <td class="gridjs-td">34</td> -->
-                                            </tr>
+
                                         </tbody>
                                     </table>
                                 </div>
@@ -301,6 +298,7 @@
 <script>
     var list_ov = []
     $("#btn-agregar-ov").on('click', function (e) {
+
         var ov = 'OV' + document.getElementById('ov_input').value
         var linea = document.getElementById('linea_input').value
         e.preventDefault();
@@ -324,8 +322,8 @@
                     }
                 } else {
                     $("#modal-error-retiro").modal('show');
-                    $('#ov_input').addClass('is-invalid is-invalid-lite');
-                    $('#linea_input').addClass('is-invalid is-invalid-lite');
+                    $('#ov_input').addClass('is-invalid');
+                    $('#linea_input').addClass('is-invalid');
                     // alert('NO VALIDA')
                 }
             },
@@ -341,23 +339,45 @@
 
 <script>
     $("#btn-guardar-pdf").on('click', function (e) {
+        var filas = document.getElementById("tabla-ov").rows.length;
         if ($('#fecha-retiro').val() == '' || $('#rango-horario').val() == null) {
             e.preventDefault()
-            alert($('#rango-horario').val())
-            alert($('#fecha-retiro').val())
+            $('#content-error-guardar-retiro').text('Seleccione una fecha de retiro y un rango horario')
+            $("#modal-error-guardar-retiro").modal('show');
+            if ($('#rango-horario').val() == null) {
+                $('#rango-horario').addClass('is-invalid');
+            }
+            if ($('#fecha-retiro').val() == '') {
+                $('#fecha-retiro').addClass('is-invalid');
+            }
+
+
+        } else if (filas < 2) {
+            e.preventDefault()
+            $('#content-error-guardar-retiro').text('Debe agregar al menos una orden de venta para agendar el retiro')
+            $("#modal-error-guardar-retiro").modal('show');
 
         }
+
     })
 </script>
 
 <script>
-    $("#linea_input").on('change', function (e) {
+    $("#linea_input").on('click', function (e) {
         event.stopPropagation();
-        $('#linea_input').removeClass("is-invalid is-invalid-lite");
+        $('#linea_input').removeClass("is-invalid");
     })
-    $("#ov_input").on('change', function (e) {
+    $("#ov_input").on('click', function (e) {
         event.stopPropagation();
-        $('#ov_input').removeClass("is-invalid is-invalid-lite");
+        $('#ov_input').removeClass("is-invalid");
+    })
+    $("#fecha-retiro").on('click', function (e) {
+        event.stopPropagation();
+        $('#fecha-retiro').removeClass("is-invalid");
+    })
+    $("#rango-horario").on('click', function (e) {
+        event.stopPropagation();
+        $('#rango-horario').removeClass("is-invalid");
     })
 </script>
 
@@ -379,6 +399,7 @@
     });
 </script>
 {% endif %}
+
 <!-- <script>
     $('#btn-guardar-pdf').on('click', function (e) {
         alert('A')
