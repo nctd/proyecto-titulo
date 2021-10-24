@@ -769,14 +769,13 @@ def validarOrdenVentaRetiro(request):
         # if ov_exists and linea_exists:
 
 def visualizarRetiros(request):
-    return render(request,'agenda-retiro/buscar-retiro.html') 
-
-def obtenerRetiros(request):
-    if request.is_ajax and request.method == 'GET':
+    if request.method == 'GET':
+        data = {'res' : ''}
+        print('aaa')
         try:
-            if('fecha_desde' and 'fecha_hasta' in request.GET):
-                fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
-                fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
+            if('fecha-desde' and 'fecha-hasta' in request.GET):
+                fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
+                fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
                 retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
                 print(retiros)
                 list_detalles = []
@@ -786,11 +785,57 @@ def obtenerRetiros(request):
                     if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
                         detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
                         for detalle in detalles:
-                            fila = [retiro.fecha,retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
-                            list_detalles.append(fila)
-                        
-                    
-                    
-                return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles}, safe=False, status=200)
-        except ObjectDoesNotExist:
-            return JsonResponse({'valid': False, 'error': True},status=400)
+                            test = {
+                                'fecha': retiro.fecha,
+                                'rango_horario': retiro.hora_inicio +' - '+ retiro.hora_fin,
+                                'orden_venta': detalle.orden_venta,
+                                'linea' : detalle.linea,
+                                'cliente': retiro.cliente,
+                                'descripcion': detalle.descripcion,
+                                'cantidad': detalle.cantidad,
+                                'tipo_embalaje': detalle.tipo_embalaje
+                            }
+                            # fila = [retiro.fecha,retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
+                            list_detalles.append(test)
+                data = {
+                    'detalle_retiros' : list_detalles,
+                    'fec_inicio': fec_desde,
+                    'fec_hasta' : fec_hasta
+                }
+            return render(request,'agenda-retiro/buscar-retiro.html',data) 
+        except:
+            return render(request,'agenda-retiro/buscar-retiro.html') 
+    return render(request,'agenda-retiro/buscar-retiro.html') 
+
+def obtenerRetiros(request):
+    pass
+    # if request.is_ajax and request.method == 'GET':
+    #     try:
+    #         if('fecha_desde' and 'fecha_hasta' in request.GET):
+    #             fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
+    #             fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
+    #             retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
+    #             print(retiros)
+    #             list_detalles = []
+    #             for retiro in retiros:
+    #                 print(retiro)
+    #                 # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+    #                 if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
+    #                     detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+    #                     for detalle in detalles:
+    #                         test = {
+    #                             'fecha': retiro.fecha,
+    #                             'rango_horario': retiro.hora_inicio +' - '+ retiro.hora_fin,
+    #                             'orden_venta': detalle.orden_venta,
+    #                             'linea' : detalle.linea,
+    #                             'cliente': retiro.cliente,
+    #                             'descripcion': detalle.descripcion,
+    #                             'cantidad': detalle.cantidad,
+    #                             'tipo_embalaje': detalle.tipo_embalaje
+    #                         }
+    #                         # fila = [retiro.fecha,retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
+    #                         list_detalles.append(test)
+
+    #             return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles}, safe=False, status=200)
+    #     except ObjectDoesNotExist:
+    #         return JsonResponse({'valid': False, 'error': True},status=400)

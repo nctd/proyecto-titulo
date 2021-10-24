@@ -47,7 +47,7 @@
                                                 </svg>
                                             </span>
                                             <input class="form-control" placeholder="Fecha" id="fecha-desde"
-                                                name='fecha-desde' type='text' />
+                                                name='fecha-desde' type='text' value="{{fec_desde}}" />
                                         </div>
                                     </div>
                                     <div class='col-xl-4 mb-3'>
@@ -69,7 +69,7 @@
                                                 </svg>
                                             </span>
                                             <input class="form-control" placeholder="Fecha" id="fecha-hasta"
-                                                name='fecha-hasta' type='text' />
+                                                name='fecha-hasta' type='text' value="{{fec_hasta}}" />
                                         </div>
                                     </div>
                                     <div class="col-xl-4 mb-3">
@@ -92,14 +92,56 @@
                     </div>
                 </div>
             </div>
-            {{detalle_retiros}}
+
             <div class="col-12">
                 <div class="card" id='tablaDatos'>
                     <div class="card-header">
                         <h3 class="card-title">Datos</h3>
                     </div>
 
-                    <div id="wrapper"></div>
+                    <div id="wrapper">
+                        <div class="table-responsive">
+                            <div class="gridjs gridjs-container">
+                                <table class="gridjs-table" id="retiros-table">
+                                    <thead class="gridjs-thead">
+                                        <tr class="gridjs-tr">
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">FECHA</th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">RANGO HORARIO
+                                            </th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">
+                                                ORDEN DE VENTA
+                                            </th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LÍNEA OV</th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CLIENTE</th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCIÓN</th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CANTIDAD</th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">TIPO EMBALAJE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="gridjs-tbody" style="text-align: center;">
+                                        {% if detalle_retiros %}
+                                        {% for det in detalle_retiros %}
+                                        <tr class="gridjs-tr">
+                                            <td class="gridjs-td">{{det.fecha | date:"d-m-Y"}}</td>
+                                            <td class="gridjs-td">{{det.rango_horario}}</td>
+                                            <td class="gridjs-td">{{det.orden_venta}} </td>
+                                            <td class="gridjs-td">{{det.linea}}</td>
+                                            <td class="gridjs-td">{{det.cliente}}</td>
+                                            <td class="gridjs-td">{{det.descripcion}}</td>
+                                            <td class="gridjs-td">{{det.cantidad}}</td>
+                                            <td class="gridjs-td">{{det.tipo_embalaje}}</td>
+
+                                        </tr>
+                                        {% endfor %}
+
+                                        {% endif %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -139,72 +181,146 @@
             },
 
         });
+        $("table#retiros-table").Grid({
+            search: true,
+            pagination: {
+                limit: 20
+            },
+            sort: true,
+            fixedHeader: true,
+            style: {
+                th: {
+                    'text-align': 'center'
+                },
+                td: {
+                    'min-width': '150px',
+                    'text-align': 'center'
+                },
+                container: {
+                    'padding': '8px'
+                }
+            },
+            language: {
+                'search': {
+                    'placeholder': '🔍 Buscar...'
+                },
+                'pagination': {
+                    'previous': 'Anterior',
+                    'next': 'Siguiente',
+                    'showing': 'Mostrando',
+                    'results': () => 'registros',
+                    'of': 'de',
+                    'to': 'hasta'
+                },
+                'loading': 'Cargando...',
+                'noRecordsFound': 'No se encontraron registros',
+                'error': 'Ha ocurrido un error al mostrar los resultados',
+            },
+        });
     })
 </script>
 
+
+
 <script>
     $("#btn-buscar-retiro").on('click', function (e) {
-        const content = document.getElementById("wrapper")
-        content.innerHTML = ''
-        if ($('#fecha-desde').val() !== '' || $('#fecha-hasta').val() !== '') {
+        alert('TEST')
+        // const content = document.getElementById("wrapper")
+        // content.innerHTML = ''
+        if ($('#fecha-desde').val() == '' || $('#fecha-hasta').val() == '') {
             e.preventDefault()
 
-            $.ajax({
-                type: 'GET',
-                url: "{% url 'obtener_retiro' %}",
-                data: {
-                    'fecha_desde': $('#fecha-desde').val(),
-                    'fecha_hasta': $('#fecha-hasta').val()
-                },
-                success: function (response) {
-                    if (response['valid']) {
-                        alert(response)
-                        alert(response['detalle_retiros'])
-                        var data = response['detalle_retiros']
-                        var grid = new gridjs.Grid({
-                            search: true,
-                            pagination: {
-                                limit: 20
-                            },
-                            sort: true,
-                            columns: ['FECHA', 'RANGO HORARIO', "ORDEN DE VENTA", "LÍNEA OV", 'CLIENTE', "DESCRIPCIÓN", "CANTIDAD", "TIPO EMBALAJE"],
-                            data: data,
-                            fixedHeader: true,
-                            style: {
-                                td: {
-                                    'min-width': '200px'
-                                },
-                                container: {
-                                    'padding': '8px'
-                                }
-                            },
-                            language: {
-                                'search': {
-                                    'placeholder': '🔍 Buscar...'
-                                },
-                                'pagination': {
-                                    'previous': 'Anterior',
-                                    'next': 'Siguiente',
-                                    'showing': 'Mostrando',
-                                    'results': () => 'registros',
-                                    'of': 'de',
-                                    'to': 'hasta'
-                                },
-                                'loading': 'Cargando...',
-                                'noRecordsFound': 'No se encontraron registros',
-                                'error': 'Ha ocurrido un error al mostrar los resultados',
-                            },
+            alert('AAAAAAA')
+            // $("div#wrapper").Grid({
+            //     columns: ['Name', 'Age', 'Email'],
+            //     data: [
+            //         ['John', 25, 'john@k.com'],
+            //         ['Mark', 59, 'mark@e.com'],
+            //         // ...
+            //     ],
+            // });
+            // var grid = new gridjs.Grid({
+            //     search: true,
+            //     pagination: {
+            //         limit: 20
+            //     },
+            //     sort: true,
+            //     columns: ['FECHA', 'RANGO HORARIO', "ORDEN DE VENTA", "LÍNEA OV", 'CLIENTE', "DESCRIPCIÓN", "CANTIDAD", "TIPO EMBALAJE"],
+            //     // data: [],
+            //     // data: () => {
+            //     //     return new Promise(resolve => {
+            //     //         setTimeout(() =>
+            //     //             resolve(data), 1000);
+            //     //     });
+            //     // },
+            //     server: {
+            //         url: "{% url 'obtener_retiro' %}?fecha_desde=01/10/2021&fecha_hasta=30/10/2021",
+            //         then: data => data.detalle_retiros.map(retiro => [retiro.fecha, retiro.rango_horario, retiro.orden_venta, retiro.linea])
+            //     },
+            //     handle: (res) => {
+            //         alert('HANDLE')
+            //     },
+            //     fixedHeader: true,
+            //     style: {
+            //         td: {
+            //             'min-width': '200px'
+            //         },
+            //         container: {
+            //             'padding': '8px'
+            //         }
+            //     },
+            //     language: {
+            //         'search': {
+            //             'placeholder': '🔍 Buscar...'
+            //         },
+            //         'pagination': {
+            //             'previous': 'Anterior',
+            //             'next': 'Siguiente',
+            //             'showing': 'Mostrando',
+            //             'results': () => 'registros',
+            //             'of': 'de',
+            //             'to': 'hasta'
+            //         },
+            //         'loading': 'Cargando...',
+            //         'noRecordsFound': 'No se encontraron registros',
+            //         'error': 'Ha ocurrido un error al mostrar los resultados',
+            //     },
 
-                        }).render(document.getElementById("wrapper"))
-                    } else {
-                        alert('else')
-                    }
-                },
-                error: function (response) {
-                    alert('ERROR')
-                    alert(response)
-                },
-            })
+            // }).render(document.getElementById("wrapper"))
+            // setTimeout(() => {
+            //     // lets update the config
+            //     grid.updateConfig({
+            //         search: true,
+            //         data: [
+            //             ['John', 'john@example.com', '(353) 01 222 3333'],
+            //             ['Mark', 'mark@gmail.com', '(01) 22 888 4444'],
+            //         ]
+            //     }).forceRender();
+            // }, 2000);
+
+
+            // $.ajax({
+            //     type: 'GET',
+            //     url: "{% url 'obtener_retiro' %}",
+            //     data: {
+            //         'fecha_desde': $('#fecha-desde').val(),
+            //         'fecha_hasta': $('#fecha-hasta').val()
+            //     },
+            //     success: function (response) {
+            //         if (response['valid']) {
+            //             var data = response['detalle_retiros']
+
+
+            //         } else {
+            //             alert('else')
+            //         }
+            //     },
+            //     error: function (response) {
+            //         alert('ERROR')
+            //         alert(response)
+            //     },
+
+            // })
         }
     })
 </script>
