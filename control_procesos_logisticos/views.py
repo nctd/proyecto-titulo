@@ -751,22 +751,35 @@ def validarOrdenVentaRetiro(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
         linea = request.GET.get('linea',None)
+        cliente = request.GET.get('cliente',None)
+        if cliente == '':
+            cliente = None
+        validar = ''
         
         response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
             'ov': orden_venta,
             'linea' : linea
         })
-
         
-        if response.json()['resultado'] == 0 and response.status_code == 200:
-            return JsonResponse({'valid':True})
-        else:
+        if response.json()['resultado'] == 1:
             return JsonResponse({'valid':False})
-        # return JsonResponse({'response':response.status_code})
-        # ov_exists = OrdenVenta.objects.filter(orden_venta=orden_venta).exists()
-        # linea_exists = Linea.objects.filter(orden_venta=orden_venta,num_linea=linea).exists()
-        
-        # if ov_exists and linea_exists:
+        else:
+            for value in response.json()['data']:
+                validar = value['cliente']
+
+            if cliente != None:
+                if cliente == validar:
+                    if response.json()['resultado'] == 0 and response.status_code == 200:
+                        return JsonResponse({'valid':True, 'cliente': cliente})
+                else:
+                    return JsonResponse({'valid':False, 'cliente':False,'detalles':'La orden de venta no pertenece al mismo cliente'})
+
+            if cliente == None:
+                if response.json()['resultado'] == 0 and response.status_code == 200:
+                    return JsonResponse({'valid':True, 'cliente': validar})
+                else:
+                    return JsonResponse({'valid':False})
+
 
 def visualizarRetiros(request):
     if request.method == 'GET':

@@ -106,6 +106,9 @@
                                         <input type="text" class="form-control" name="linea_input" id="linea_input"
                                             placeholder="EJ: 1">
                                     </div>
+                                    <div class="mb-3" style="display:none">
+                                        <input type="text" class="form-control" name="cliente_input" id="cliente_input">
+                                    </div>
                                 </div>
                                 <div class="col-xl-5 mb-3">
                                     <label class="form-label" style="visibility: hidden;">bt</label>
@@ -172,7 +175,7 @@
         </div>
     </div>
 </div>
-<div class="modal modal-blur fade" id="modal-error-retiro" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal modal-blur fade" id="modal-error-validar" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -188,7 +191,8 @@
                         d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
                 </svg>
                 <h3>Alerta</h3>
-                <div class="text-muted">No se encontro la orden de venta y/o linea ingresadas</div>
+                <div class="text-muted" id='content-error-validar'>No se encontro la orden de venta y/o linea ingresadas
+                </div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
@@ -301,35 +305,54 @@
 
         var ov = 'OV' + document.getElementById('ov_input').value
         var linea = document.getElementById('linea_input').value
+        var cliente = document.getElementById('cliente_input').value
+
+        alert(ov)
+        alert(cliente)
         e.preventDefault();
         $.ajax({
             type: 'GET',
             url: "{% url 'validar_orden' %}",
             data: {
                 'orden_venta': ov,
-                'linea': linea
+                'linea': linea,
+                'cliente': cliente
             },
             success: function (response) {
                 if (response['valid']) {
-                    alert('VALIDA')
+                    // alert('VALIDA')
                     if (list_ov.includes(ov + linea)) {
                         alert('EXISTE')
                     } else {
                         if (ov !== '' && linea !== '') {
                             list_ov.push(ov + linea)
                             $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td"><input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
+                            document.getElementById("cliente_input").value = response['cliente']
+                            $('#ov_input').removeClass("is-invalid");
+                            $('#linea_input').removeClass("is-invalid");
+                            alert(response['cliente'])
                         }
                     }
                 } else {
-                    $("#modal-error-retiro").modal('show');
-                    $('#ov_input').addClass('is-invalid');
-                    $('#linea_input').addClass('is-invalid');
+                    var texto = response['detalles']
+                    if (!response['cliente']) {
+                        alert(texto)
+                        $("#modal-error-validar").modal('show');
+                        $('#content-error-validar').text(texto)
+                        $('#ov_input').addClass('is-invalid');
+                        $('#linea_input').addClass('is-invalid');
+                    } else {
+                        $("#modal-error-validar").modal('show');
+                        $('#ov_input').addClass('is-invalid');
+                        $('#linea_input').addClass('is-invalid');
+
+                    }
                     // alert('NO VALIDA')
                 }
             },
             error: function (response) {
                 alert('ERROR')
-                alert(response)
+                alert(response.responseText)
             }
         })
 
@@ -394,8 +417,6 @@
     $(document).ready(function () {
         $("#modal-error-guardar-retiro").modal('show');
         $('#content-error-guardar-retiro').text('{{detalles}}')
-        var a = "{{detalles}}";
-        alert(a)
     });
 </script>
 {% endif %}

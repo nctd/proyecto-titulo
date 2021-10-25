@@ -116,6 +116,7 @@
                                             <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCIÓN</th>
                                             <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CANTIDAD</th>
                                             <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">TIPO EMBALAJE</th>
+                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"></th>
                                         </tr>
                                     </thead>
                                     <tbody class="gridjs-tbody" style="text-align: center;">
@@ -130,6 +131,22 @@
                                             <td class="gridjs-td">{{det.descripcion}}</td>
                                             <td class="gridjs-td">{{det.cantidad}}</td>
                                             <td class="gridjs-td">{{det.tipo_embalaje}}</td>
+                                            <td class="text-end">
+                                                <span class="dropdown">
+                                                    <button class="btn dropdown-toggle align-text-top"
+                                                        data-bs-boundary="viewport"
+                                                        data-bs-toggle="dropdown">Acciones</button>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <button class="dropdown-item" id="generar-pdf" type="button"
+                                                            onclick="generarPDF()">
+                                                            Generar PDF
+                                                        </button>
+                                                        <button class="dropdown-item" id="anular-retiro">
+                                                            Anular
+                                                        </button>
+                                                    </div>
+                                                </span>
+                                            </td>
 
                                         </tr>
                                         {% endfor %}
@@ -215,17 +232,21 @@
         });
         $("table#retiros-table").Grid({
             search: true,
+            autoWidth: true,
             pagination: {
                 limit: 20
             },
             sort: true,
             fixedHeader: true,
             style: {
+                table: {
+                    'white-space': 'nowrap'
+                },
                 th: {
                     'text-align': 'center'
                 },
                 td: {
-                    'min-width': '150px',
+                    'min-width': '140px',
                     'text-align': 'center'
                 },
                 container: {
@@ -249,6 +270,7 @@
                 'error': 'Ha ocurrido un error al mostrar los resultados',
             },
         });
+
     })
 </script>
 
@@ -282,5 +304,21 @@
         $('#fecha-desde').removeClass("is-invalid");
     })
 </script>
+
+<script>
+    function generarPDF() {
+        alert('GENERAR PDF')
+        // $.ajax({
+        //     type: 'POST',
+        //     url: "{% url 'generar_pdf_retiro' %}",
+        //     data: {
+        //         'orden_venta': ov,
+        //         'linea': linea,
+        //         'cliente': cliente
+        //     },
+        // })
+    }
+</script>
+
 
 {% endblock %}
