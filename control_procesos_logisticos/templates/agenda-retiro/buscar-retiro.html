@@ -144,7 +144,8 @@
                                                                 onclick="generarPDF('{{det.retiro}}')">
                                                                 Generar PDF
                                                             </button>
-                                                            <button class="dropdown-item" id="anular-retiro">
+                                                            <button class="dropdown-item" id="anular-retiro"
+                                                                type="button" onclick="exportarDatos()">
                                                                 Anular
                                                             </button>
                                                         </div>
@@ -326,5 +327,32 @@
     }
 </script>
 
+<script>
+    function exportarDatos() {
+        var table = document.getElementById('retiros-table')
+        var rows = []
+
+        for (var i = 0, row; row = table.rows[i]; i++) {
+            columna1 = row.cells[0].innerText;
+            columna2 = row.cells[1].innerText;
+            rows.push([columna1, columna2])
+        }
+        csvContent = "data:text/csv;charset=utf-8,";
+        /* add the column delimiter as comma(,) and each row splitted by new line character (\n) */
+        rows.forEach(function (rowArray) {
+            row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        });
+        alert(rows)
+        /* create a hidden <a> DOM node and set its download attribute */
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "Stock_Price_Report.csv");
+        document.body.appendChild(link);
+        /* download the data file named "Stock_Price_Report.csv" */
+        link.click();
+    }
+</script>
 
 {% endblock %}
