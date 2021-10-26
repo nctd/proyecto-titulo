@@ -102,61 +102,64 @@
                     <div id="wrapper">
                         <div class="table-responsive">
                             <div class="gridjs gridjs-container">
-                                <table class="gridjs-table" id="retiros-table">
-                                    <thead class="gridjs-thead">
-                                        <tr class="gridjs-tr">
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">FECHA</th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">RANGO HORARIO
-                                            </th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">
-                                                ORDEN DE VENTA
-                                            </th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LÍNEA OV</th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CLIENTE</th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCIÓN</th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CANTIDAD</th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">TIPO EMBALAJE</th>
-                                            <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="gridjs-tbody" style="text-align: center;">
-                                        {% if detalle_retiros %}
-                                        {% for det in detalle_retiros %}
-                                        <tr class="gridjs-tr">
-                                            <td class="gridjs-td">{{det.fecha | date:"d-m-Y"}}</td>
-                                            <td class="gridjs-td">{{det.rango_horario}}</td>
-                                            <td class="gridjs-td">{{det.orden_venta}} </td>
-                                            <td class="gridjs-td">{{det.linea}}</td>
-                                            <td class="gridjs-td">{{det.cliente}}</td>
-                                            <td class="gridjs-td">{{det.descripcion}}</td>
-                                            <td class="gridjs-td">{{det.cantidad}}</td>
-                                            <td class="gridjs-td">{{det.tipo_embalaje}}</td>
-                                            <td class="text-end">
-                                                <span class="dropdown">
-                                                    <button class="btn dropdown-toggle align-text-top"
-                                                        data-bs-boundary="viewport"
-                                                        data-bs-toggle="dropdown">Acciones</button>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <button class="dropdown-item" id="generar-pdf" type="button"
-                                                            onclick="generarPDF()">
-                                                            Generar PDF
-                                                        </button>
-                                                        <button class="dropdown-item" id="anular-retiro">
-                                                            Anular
-                                                        </button>
-                                                    </div>
-                                                </span>
-                                            </td>
+                                <form method="POST">
+                                    <table class="gridjs-table" id="retiros-table">
+                                        <thead class="gridjs-thead">
+                                            <tr class="gridjs-tr">
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">FECHA</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">RANGO HORARIO
+                                                </th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">
+                                                    ORDEN DE VENTA
+                                                </th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LÍNEA OV</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CLIENTE</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCIÓN</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CANTIDAD</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">TIPO EMBALAJE</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="gridjs-tbody" style="text-align: center;">
+                                            {% if detalle_retiros %}
+                                            {% for det in detalle_retiros %}
+                                            <tr class="gridjs-tr">
+                                                <td class="gridjs-td">{{det.fecha | date:"d-m-Y"}}</td>
+                                                <td class="gridjs-td">{{det.rango_horario}}</td>
+                                                <td class="gridjs-td">{{det.orden_venta}} </td>
+                                                <td class="gridjs-td">{{det.linea}}</td>
+                                                <td class="gridjs-td">{{det.cliente}}</td>
+                                                <td class="gridjs-td">{{det.descripcion}}</td>
+                                                <td class="gridjs-td">{{det.cantidad}}</td>
+                                                <td class="gridjs-td">{{det.tipo_embalaje}}</td>
+                                                <td class="gridjs-td">
 
-                                        </tr>
-                                        {% endfor %}
 
-                                        {% endif %}
+                                                    <span class="dropdown">
+                                                        <button class="btn dropdown-toggle align-text-top"
+                                                            data-bs-boundary="viewport"
+                                                            data-bs-toggle="dropdown">Acciones</button>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <button class="dropdown-item" id="generar-pdf" type="button"
+                                                                onclick="generarPDF('{{det.retiro}}')">
+                                                                Generar PDF
+                                                            </button>
+                                                            <button class="dropdown-item" id="anular-retiro">
+                                                                Anular
+                                                            </button>
+                                                        </div>
+                                                    </span>
+                                                </td>
 
-                                    </tbody>
-                                </table>
+                                            </tr>
+                                            {% endfor %}
+
+                                            {% endif %}
+
+                                        </tbody>
+                                    </table>
+                                </form>
                             </div>
-
                         </div>
                     </div>
 
@@ -306,17 +309,20 @@
 </script>
 
 <script>
-    function generarPDF() {
-        alert('GENERAR PDF')
-        // $.ajax({
-        //     type: 'POST',
-        //     url: "{% url 'generar_pdf_retiro' %}",
-        //     data: {
-        //         'orden_venta': ov,
-        //         'linea': linea,
-        //         'cliente': cliente
-        //     },
-        // })
+    function generarPDF(retiro) {
+        alert(retiro)
+        // e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'buscar_retiro_pdf' %}",
+            data: {
+                'retiro': retiro,
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+                alert(response)
+            }
+        })
     }
 </script>
 

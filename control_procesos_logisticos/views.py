@@ -679,11 +679,9 @@ def agendarRetiro(request):
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             id_retiro = retiro.save()
-            retiroGenerarPDF(request,data_retiro,data)
+            retiroGenerarPDF(request,data_retiro,data,'agendarRetiro')
             
-            for item in data:
-                print(item)
-                print(item[3])         
+            for item in data:  
                 data_det = {
                     'orden_venta' : item[0],
                     'linea' : item[1],
@@ -692,7 +690,6 @@ def agendarRetiro(request):
                     'tipo_embalaje' : item[4],
                     'retiro' : id_retiro.pk
                 }
-                print(data_det)
                 det_retiro = DetalleRetiroForm(data=data_det)
                 if det_retiro.is_valid():
                     det_retiro.save()
@@ -717,7 +714,7 @@ def agendarRetiro(request):
     return render(request,'agenda-retiro/agendar.html')   
 
 
-def retiroGenerarPDF(request,data_retiro,data_detalle):
+def retiroGenerarPDF(request,data_retiro,data_detalle,ruta):
     pdf = PDF()
     pdf.add_page()
     
@@ -744,7 +741,7 @@ def retiroGenerarPDF(request,data_retiro,data_detalle):
 
     pdf.tabla(headers,data_detalle)
 
-    pdf.output("retiro.pdf")   
+    pdf.output("retiro"+ruta+".pdf")   
     return JsonResponse({'valid':'CREADO'})
 
 def validarOrdenVentaRetiro(request):
@@ -770,15 +767,15 @@ def validarOrdenVentaRetiro(request):
             if cliente != None:
                 if cliente == validar:
                     if response.json()['resultado'] == 0 and response.status_code == 200:
-                        return JsonResponse({'valid':True, 'cliente': cliente})
+                        return JsonResponse({'valid':True, 'cliente': cliente}, status=200)
                 else:
-                    return JsonResponse({'valid':False, 'cliente':False,'detalles':'La orden de venta no pertenece al mismo cliente'})
+                    return JsonResponse({'valid':False, 'cliente':False,'detalles':'La orden de venta no pertenece al mismo cliente'}, status=400)
 
             if cliente == None:
                 if response.json()['resultado'] == 0 and response.status_code == 200:
-                    return JsonResponse({'valid':True, 'cliente': validar})
+                    return JsonResponse({'valid':True, 'cliente': validar}, status=200)
                 else:
-                    return JsonResponse({'valid':False})
+                    return JsonResponse({'valid':False}, status=400)
 
 
 def visualizarRetiros(request):
@@ -791,15 +788,15 @@ def visualizarRetiros(request):
                 fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
                 fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
                 retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
-                print(retiros)
+
                 list_detalles = []
                 for retiro in retiros:
-                    print(retiro)
+
                     # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
                     if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
                         detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
                         for detalle in detalles:
-                            test = {
+                            fila = {
                                 'fecha': retiro.fecha,
                                 'rango_horario': retiro.hora_inicio +' - '+ retiro.hora_fin,
                                 'orden_venta': detalle.orden_venta,
@@ -807,10 +804,11 @@ def visualizarRetiros(request):
                                 'cliente': retiro.cliente,
                                 'descripcion': detalle.descripcion,
                                 'cantidad': detalle.cantidad,
-                                'tipo_embalaje': detalle.tipo_embalaje
+                                'tipo_embalaje': detalle.tipo_embalaje,
+                                'retiro' : retiro.id_retiro
                             }
                             # fila = [retiro.fecha,retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
-                            list_detalles.append(test)
+                            list_detalles.append(fila)
                 data = {
                     'detalle_retiros' : list_detalles,
                     'fec_inicio': val1,
@@ -821,35 +819,33 @@ def visualizarRetiros(request):
             return render(request,'agenda-retiro/buscar-retiro.html') 
     return render(request,'agenda-retiro/buscar-retiro.html') 
 
-def obtenerRetiros(request):
-    pass
-    # if request.is_ajax and request.method == 'GET':
-    #     try:
-    #         if('fecha_desde' and 'fecha_hasta' in request.GET):
-    #             fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
-    #             fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
-    #             retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
-    #             print(retiros)
-    #             list_detalles = []
-    #             for retiro in retiros:
-    #                 print(retiro)
-    #                 # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
-    #                 if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
-    #                     detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
-    #                     for detalle in detalles:
-    #                         test = {
-    #                             'fecha': retiro.fecha,
-    #                             'rango_horario': retiro.hora_inicio +' - '+ retiro.hora_fin,
-    #                             'orden_venta': detalle.orden_venta,
-    #                             'linea' : detalle.linea,
-    #                             'cliente': retiro.cliente,
-    #                             'descripcion': detalle.descripcion,
-    #                             'cantidad': detalle.cantidad,
-    #                             'tipo_embalaje': detalle.tipo_embalaje
-    #                         }
-    #                         # fila = [retiro.fecha,retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
-    #                         list_detalles.append(test)
+def buscarRetiroPDF(request):
+    if request.is_ajax and request.method == 'POST':
+        if request.POST['retiro']:
+            retiro = Retiro.objects.filter(id_retiro=request.POST['retiro'])
+            data_retiro = {}
+            data_detalle = []
+            for value in retiro:
+                data_retiro = {
+                    'fecha': str(value.fecha),
+                    'hora_inicio': value.hora_inicio,
+                    'hora_fin': value.hora_fin,
+                    'cliente': value.cliente,
+                    'direccion': value.direccion,
+                }
+                
+                detalles = DetalleRetiro.objects.filter(retiro=request.POST['retiro'])
 
-    #             return JsonResponse({'valid': True, 'detalle_retiros' : list_detalles}, safe=False, status=200)
-    #     except ObjectDoesNotExist:
-    #         return JsonResponse({'valid': False, 'error': True},status=400)
+                for det in detalles:
+                    detalle = [
+                        det.orden_venta,
+                        str(det.linea),
+                        det.descripcion,
+                        str(det.cantidad),
+                        det.tipo_embalaje]
+                    data_detalle.append(detalle)
+
+            retiroGenerarPDF(request,data_retiro,data_detalle,'buscarRetiroPDF')
+            return JsonResponse({'valid':True},status=200)
+    else:
+        return JsonResponse({'valid':False},status=400)
