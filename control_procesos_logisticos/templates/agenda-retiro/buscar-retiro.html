@@ -145,7 +145,7 @@
                                                                 Generar PDF
                                                             </button>
                                                             <button class="dropdown-item" id="anular-retiro"
-                                                                type="button" onclick="exportarDatos()">
+                                                                type="button">
                                                                 Anular
                                                             </button>
                                                         </div>
@@ -162,10 +162,31 @@
                                 </form>
                             </div>
                         </div>
+                        <div class="card-footer text-start">
+                            <div class="r-flex">
+                                <button type="submit" class="btn btn-success ms-auto" id="btn-generar-reporte"
+                                    onclick="generarReporte()">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-file-download" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                        <path
+                                            d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
+                                        </path>
+                                        <line x1="12" y1="11" x2="12" y2="17"></line>
+                                        <polyline points="9 14 12 17 15 14"></polyline>
+                                    </svg>
+                                    Generar reporte
+                                </button>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
+
+
         </div>
     </div>
 </div>
@@ -328,30 +349,48 @@
 </script>
 
 <script>
-    function exportarDatos() {
-        var table = document.getElementById('retiros-table')
-        var rows = []
+    function generarReporte() {
+        alert('GENERAR REPORTE')
+        // e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'reporte_retiros' %}",
+            data: {
+                'csrfmiddlewaretoken': '{{ csrf_token }}'
+            },
+            success: function (response) {
+                alert(response)
+            }
+        })
+        // var table = document.getElementById('retiros-table')
+        // var rows = []
 
-        for (var i = 0, row; row = table.rows[i]; i++) {
-            columna1 = row.cells[0].innerText;
-            columna2 = row.cells[1].innerText;
-            rows.push([columna1, columna2])
-        }
-        csvContent = "data:text/csv;charset=utf-8,";
-        /* add the column delimiter as comma(,) and each row splitted by new line character (\n) */
-        rows.forEach(function (rowArray) {
-            row = rowArray.join(",");
-            csvContent += row + "\r\n";
-        });
-        alert(rows)
-        /* create a hidden <a> DOM node and set its download attribute */
-        var encodedUri = encodeURI(csvContent);
-        var link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "Stock_Price_Report.csv");
-        document.body.appendChild(link);
-        /* download the data file named "Stock_Price_Report.csv" */
-        link.click();
+        // for (var i = 0, row; row = table.rows[i]; i++) {
+        //     columna1 = row.cells[0].innerText;
+        //     columna2 = row.cells[1].innerText;
+        //     columna3 = row.cells[2].innerText;
+        //     columna4 = row.cells[3].innerText;
+        //     columna5 = row.cells[4].innerText;
+        //     columna6 = row.cells[5].innerText;
+        //     columna7 = row.cells[6].innerText;
+        //     columna8 = row.cells[7].innerText;
+        //     rows.push([columna1, columna2, columna3, columna4, columna5, columna6, columna7, columna8])
+        // }
+        // csvContent = "data:text/xlsx;charset=utf-8,";
+        // /* add the column delimiter as comma(,) and each row splitted by new line character (\n) */
+        // rows.forEach(function (rowArray) {
+        //     row = rowArray.join(",");
+        //     csvContent += row + "\r\n";
+        // });
+        // alert(rows)
+        // /* create a hidden <a> DOM node and set its download attribute */
+        // var encodedUri = encodeURI(csvContent);
+        // var link = document.createElement("a");
+        // link.setAttribute("href", encodedUri);
+        // link.setAttribute("download", "Stock_Price_Report.csv");
+        // document.body.appendChild(link);
+        // /* download the data file named "Stock_Price_Report.csv" */
+        // link.click();
     }
 </script>
 

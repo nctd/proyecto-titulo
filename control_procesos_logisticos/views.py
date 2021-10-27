@@ -1,9 +1,13 @@
-from django.db.backends.base.base import NO_DB_ALIAS
-from django.http import response, JsonResponse
+import io
+import pandas as pd
+import requests
+import cx_Oracle
+import xlsxwriter
+
+from django.http import response, JsonResponse,HttpResponse
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from pandas.io import json
 
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, DetalleRetiroForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
 
@@ -12,9 +16,7 @@ from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
 
-import pandas as pd
-import requests
-import cx_Oracle
+
 
 
 def getLineaTipoVenta(tipo_venta):
@@ -787,7 +789,7 @@ def visualizarRetiros(request):
                 val2 = request.GET['fecha-hasta']
                 fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
                 fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
-                retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta])     
+                retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta],activo=0)     
 
                 list_detalles = []
                 for retiro in retiros:
@@ -849,3 +851,39 @@ def buscarRetiroPDF(request):
             return JsonResponse({'valid':True},status=200)
     else:
         return JsonResponse({'valid':False},status=400)
+    
+def generarReporteRetiros(request):
+    # if request.is_ajax and request.method == 'POST':
+    # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    # response['Content-Disposition'] = 'attachment; filename="test.xlsx"'
+    
+
+    output = io.BytesIO()
+
+        # Even though the final file will be in memory the module uses temp
+        # files during assembly for efficiency. To avoid this on servers that
+        # don't allow temp files, for example the Google APP Engine, set the
+        # 'in_memory' Workbook() constructor option as shown in the docs.
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+    data = [[1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]]
+
+    # Write some test data.
+    for row_num, columns in enumerate(data):
+        for col_num, cell_data in enumerate(columns):
+            worksheet.write(row_num, col_num, cell_data)
+
+    # Close the workbook before sending the data.
+    workbook.close()
+
+    # Rewind the buffer.
+    output.seek(0)
+    filename = 'django_simple.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    return response
