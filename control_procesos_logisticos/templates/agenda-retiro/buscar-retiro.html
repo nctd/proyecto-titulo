@@ -148,10 +148,10 @@
                                                                 href="{% url 'buscar_retiro_pdf' %}?retiro={{det.retiro}}">
                                                                 Generar PDF
                                                             </a>
-                                                            <button class="dropdown-item" id="anular-retiro"
-                                                                type="button">
+                                                            <a class="dropdown-item" id="anular-retiro" type="button"
+                                                                href="{% url 'anular_retiro' %}?retiro={{det.retiro}}">
                                                                 Anular
-                                                            </button>
+                                                            </a>
                                                         </div>
                                                     </span>
                                                 </td>
@@ -269,7 +269,8 @@
             fixedHeader: true,
             style: {
                 table: {
-                    'white-space': 'nowrap'
+                    'white-space': 'nowrap',
+                    'margin-bottom': '80px'
                 },
                 th: {
                     'text-align': 'center'

@@ -912,3 +912,8 @@ def generarReporteRetiros(request):
     )
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
     return response
+
+def anularRetiro(request):
+    anular = Retiro.objects.filter(id_retiro=request.GET.get('retiro',None)).update(activo=1)
+    print(anular)
+    return JsonResponse({'valid': True})
