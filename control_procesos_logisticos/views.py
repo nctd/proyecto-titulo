@@ -1,4 +1,5 @@
 import io
+from django.http.request import QueryDict
 import pandas as pd
 import requests
 import cx_Oracle
@@ -797,7 +798,7 @@ def visualizarRetiros(request):
                 fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
                 fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
                 retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta],activo=0)     
-
+                print(retiros)
                 list_detalles = []
                 for retiro in retiros:
                     # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
@@ -914,6 +915,12 @@ def generarReporteRetiros(request):
     return response
 
 def anularRetiro(request):
-    anular = Retiro.objects.filter(id_retiro=request.GET.get('retiro',None)).update(activo=1)
-    print(anular)
-    return JsonResponse({'valid': True})
+    if request.is_ajax and request.method == 'PUT':
+        put = QueryDict(request.body)
+        retiro = put.get('retiro')
+        anular = Retiro.objects.filter(id_retiro=retiro).update(activo=1)
+        
+        if anular > 0:
+            return JsonResponse({'valid': True})
+        else:
+            return JsonResponse({'valid': False})
