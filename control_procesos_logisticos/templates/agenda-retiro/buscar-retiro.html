@@ -140,10 +140,14 @@
                                                             data-bs-boundary="viewport"
                                                             data-bs-toggle="dropdown">Acciones</button>
                                                         <div class="dropdown-menu dropdown-menu-end">
-                                                            <button class="dropdown-item" id="generar-pdf" type="button"
+                                                            <!-- <button class="dropdown-item" id="generar-pdf" type="button"
                                                                 onclick="generarPDF('{{det.retiro}}')">
                                                                 Generar PDF
-                                                            </button>
+                                                            </button> -->
+                                                            <a class="dropdown-item" id="generar-pdf" type="button"
+                                                                href="{% url 'buscar_retiro_pdf' %}?retiro={{det.retiro}}">
+                                                                Generar PDF
+                                                            </a>
                                                             <button class="dropdown-item" id="anular-retiro"
                                                                 type="button">
                                                                 Anular
@@ -164,8 +168,8 @@
                         </div>
                         <div class="card-footer text-start">
                             <div class="r-flex">
-                                <button type="submit" class="btn btn-success ms-auto" id="btn-generar-reporte"
-                                    onclick="generarReporte()">
+                                <a class="btn btn-success ms-auto" id="btn-generar-reporte"
+                                    href="{% url 'reporte_retiros' %}?fecha_desde={{fec_inicio}}&fecha_hasta={{fec_hasta}}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         class="icon icon-tabler icon-tabler-file-download" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -179,7 +183,7 @@
                                         <polyline points="9 14 12 17 15 14"></polyline>
                                     </svg>
                                     Generar reporte
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -303,9 +307,6 @@
 
 <script>
     $("#btn-buscar-retiro").on('click', function (e) {
-        // const content = document.getElementById("wrapper")
-        // content.innerHTML = ''
-
         if ($('#fecha-desde').val() == '' || $('#fecha-hasta').val() == '') {
             e.preventDefault()
             if ($('#fecha-desde').val() == '') {
@@ -356,41 +357,16 @@
             type: 'POST',
             url: "{% url 'reporte_retiros' %}",
             data: {
-                'csrfmiddlewaretoken': '{{ csrf_token }}'
+                'csrfmiddlewaretoken': '{{ csrf_token }}',
+                'fecha-desde': '{{fec_inicio}}',
+                'fecha-hasta': '{{fec_hasta}}'
             },
             success: function (response) {
                 alert(response)
+
             }
         })
-        // var table = document.getElementById('retiros-table')
-        // var rows = []
 
-        // for (var i = 0, row; row = table.rows[i]; i++) {
-        //     columna1 = row.cells[0].innerText;
-        //     columna2 = row.cells[1].innerText;
-        //     columna3 = row.cells[2].innerText;
-        //     columna4 = row.cells[3].innerText;
-        //     columna5 = row.cells[4].innerText;
-        //     columna6 = row.cells[5].innerText;
-        //     columna7 = row.cells[6].innerText;
-        //     columna8 = row.cells[7].innerText;
-        //     rows.push([columna1, columna2, columna3, columna4, columna5, columna6, columna7, columna8])
-        // }
-        // csvContent = "data:text/xlsx;charset=utf-8,";
-        // /* add the column delimiter as comma(,) and each row splitted by new line character (\n) */
-        // rows.forEach(function (rowArray) {
-        //     row = rowArray.join(",");
-        //     csvContent += row + "\r\n";
-        // });
-        // alert(rows)
-        // /* create a hidden <a> DOM node and set its download attribute */
-        // var encodedUri = encodeURI(csvContent);
-        // var link = document.createElement("a");
-        // link.setAttribute("href", encodedUri);
-        // link.setAttribute("download", "Stock_Price_Report.csv");
-        // document.body.appendChild(link);
-        // /* download the data file named "Stock_Price_Report.csv" */
-        // link.click();
     }
 </script>
 

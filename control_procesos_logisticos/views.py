@@ -4,7 +4,7 @@ import requests
 import cx_Oracle
 import xlsxwriter
 
-from django.http import response, JsonResponse,HttpResponse
+from django.http import FileResponse, JsonResponse,HttpResponse
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
@@ -681,7 +681,7 @@ def agendarRetiro(request):
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             id_retiro = retiro.save()
-            retiroGenerarPDF(request,data_retiro,data,'agendarRetiro')
+            retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
             
             for item in data:  
                 data_det = {
@@ -716,13 +716,13 @@ def agendarRetiro(request):
     return render(request,'agenda-retiro/agendar.html')   
 
 
-def retiroGenerarPDF(request,data_retiro,data_detalle,ruta):
+def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     pdf = PDF()
     pdf.add_page()
     
     # pdf.set_font("Arial", size = 15)
     
-    pdf.titles('CITA NRO 12312')
+    pdf.titles('CITA NRO '+id_retiro)
     pdf.linea()
     pdf.texto('Fecha: ',14,10)
     pdf.texto(data_retiro['fecha'],45,10)
@@ -742,9 +742,16 @@ def retiroGenerarPDF(request,data_retiro,data_detalle,ruta):
     headers = ['Orden de venta','Línea OV','Descripción','Cantidad','Tipo Embalaje']
 
     pdf.tabla(headers,data_detalle)
-
-    pdf.output("retiro"+ruta+".pdf")   
-    return JsonResponse({'valid':'CREADO'})
+    
+    pdf.output("pdf/CITA"+id_retiro+".pdf",'F')
+    # filename = 'CITA'+id_retiro+'_'+str(date.today())+'.pdf'
+    # response = HttpResponse(
+    #     pdf.output(),
+    #     content_type='application/pdf'
+    # )
+    # response['Content-Disposition'] = 'attachment; filename=%s' % filename   
+    # return JsonResponse({'valid':'CREADO'})
+    return FileResponse(open("pdf/CITA"+id_retiro+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
 def validarOrdenVentaRetiro(request):
     if request.is_ajax and request.method == 'GET':
@@ -793,7 +800,6 @@ def visualizarRetiros(request):
 
                 list_detalles = []
                 for retiro in retiros:
-
                     # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
                     if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
                         detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
@@ -822,65 +828,84 @@ def visualizarRetiros(request):
     return render(request,'agenda-retiro/buscar-retiro.html') 
 
 def buscarRetiroPDF(request):
-    if request.is_ajax and request.method == 'POST':
-        if request.POST['retiro']:
-            retiro = Retiro.objects.filter(id_retiro=request.POST['retiro'])
-            data_retiro = {}
-            data_detalle = []
-            for value in retiro:
-                data_retiro = {
-                    'fecha': str(value.fecha),
-                    'hora_inicio': value.hora_inicio,
-                    'hora_fin': value.hora_fin,
-                    'cliente': value.cliente,
-                    'direccion': value.direccion,
-                }
-                
-                detalles = DetalleRetiro.objects.filter(retiro=request.POST['retiro'])
+    # if request.is_ajax and request.method == 'POST':
+    if request.GET.get('retiro',None):
+        # retiro = Retiro.objects.filter(id_retiro=request.POST['retiro'])
+        retiro = Retiro.objects.filter(id_retiro=request.GET.get('retiro',None))
+        data_retiro = {}
+        data_detalle = []
+        for value in retiro:
+            print(value.fecha)
+            data_retiro = {
+                'fecha': datetime.strptime(str(value.fecha), '%Y-%m-%d').strftime('%d/%m/%y'),
+                'hora_inicio': value.hora_inicio,
+                'hora_fin': value.hora_fin,
+                'cliente': value.cliente,
+                'direccion': value.direccion,
+            }
+            
+            # detalles = DetalleRetiro.objects.filter(retiro=request.POST['retiro'])
+            detalles = DetalleRetiro.objects.filter(retiro=request.GET.get('retiro',None))
 
-                for det in detalles:
-                    detalle = [
-                        det.orden_venta,
-                        str(det.linea),
-                        det.descripcion,
-                        str(det.cantidad),
-                        det.tipo_embalaje]
-                    data_detalle.append(detalle)
+            for det in detalles:
+                detalle = [
+                    det.orden_venta,
+                    str(det.linea),
+                    det.descripcion,
+                    str(det.cantidad),
+                    det.tipo_embalaje]
+                data_detalle.append(detalle)
 
-            retiroGenerarPDF(request,data_retiro,data_detalle,'buscarRetiroPDF')
-            return JsonResponse({'valid':True},status=200)
-    else:
-        return JsonResponse({'valid':False},status=400)
+        # retiroGenerarPDF(request,data_retiro,data_detalle,request.POST['retiro'])
+        return retiroGenerarPDF(request,data_retiro,data_detalle,request.GET.get('retiro',None))
+        
+    #     return JsonResponse({'valid':True},status=200)
+    # else:
+    #     return JsonResponse({'valid':False},status=400)
     
 def generarReporteRetiros(request):
+
     # if request.is_ajax and request.method == 'POST':
     # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     # response['Content-Disposition'] = 'attachment; filename="test.xlsx"'
-    
 
+    fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
+    fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
     output = io.BytesIO()
 
-        # Even though the final file will be in memory the module uses temp
-        # files during assembly for efficiency. To avoid this on servers that
-        # don't allow temp files, for example the Google APP Engine, set the
-        # 'in_memory' Workbook() constructor option as shown in the docs.
     workbook = xlsxwriter.Workbook(output)
     worksheet = workbook.add_worksheet()
-    data = [[1, 2, 3],
-            [4, 5, 6],
-            [7, 8, 9]]
-
+    
+    columns = ['FECHA','RANGO HORARIO','ORDEN DE VENTA', 'LÍNEA OV', 'CLIENTE', 'DESCRIPCIÓN', 'CANTIDAD', 'TIPO EMBALAJE']
+    row_num = 0
+    cell_format = workbook.add_format({'bold': True})
     # Write some test data.
-    for row_num, columns in enumerate(data):
-        for col_num, cell_data in enumerate(columns):
-            worksheet.write(row_num, col_num, cell_data)
+    for col_num in range(len(columns)):
+            worksheet.set_column(0,3,20)
+            worksheet.set_column(4,5,40)
+            worksheet.set_column(6,7,20)
+            worksheet.write(row_num, col_num, columns[col_num],cell_format)
+            
+    filas = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta],activo=0)   
+    print(filas)
+    list_detalles = []
+    for retiro in filas:
+        # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+        if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
+            detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+            for detalle in detalles:
+                fila = [datetime.strptime(str(retiro.fecha), '%Y-%m-%d').strftime('%d-%m-%y'),retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
+                list_detalles.append(fila)
+    for fila in list_detalles:
+        row_num += 1
+        for col_num in range(len(fila)):
+            worksheet.write(row_num, col_num, fila[col_num])
 
-    # Close the workbook before sending the data.
     workbook.close()
 
-    # Rewind the buffer.
+
     output.seek(0)
-    filename = 'django_simple.xlsx'
+    filename = 'reporte_'+str(date.today())+'.xlsx'
     response = HttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
