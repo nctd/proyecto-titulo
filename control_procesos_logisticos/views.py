@@ -682,8 +682,8 @@ def agendarRetiro(request):
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             id_retiro = retiro.save()
-            retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
-            
+            file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
+
             for item in data:  
                 data_det = {
                     'orden_venta' : item[0],
@@ -704,8 +704,10 @@ def agendarRetiro(request):
                     return render(request,'agenda-retiro/agendar.html',data)
                    
             data = {
-                'guardado': True
+                'guardado': True,
+                'file':file
             }
+            
             return render(request,'agenda-retiro/agendar.html',data)
             
         else:
@@ -803,7 +805,7 @@ def visualizarRetiros(request):
                 for retiro in retiros:
                     # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
                     if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
-                        detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+                        detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro,activo=0)
                         for detalle in detalles:
                             fila = {
                                 'fecha': retiro.fecha,
@@ -832,7 +834,7 @@ def buscarRetiroPDF(request):
     # if request.is_ajax and request.method == 'POST':
     if request.GET.get('retiro',None):
         # retiro = Retiro.objects.filter(id_retiro=request.POST['retiro'])
-        retiro = Retiro.objects.filter(id_retiro=request.GET.get('retiro',None))
+        retiro = Retiro.objects.filter(id_retiro=request.GET.get('retiro',None),activo=0)
         data_retiro = {}
         data_detalle = []
         for value in retiro:
@@ -846,7 +848,7 @@ def buscarRetiroPDF(request):
             }
             
             # detalles = DetalleRetiro.objects.filter(retiro=request.POST['retiro'])
-            detalles = DetalleRetiro.objects.filter(retiro=request.GET.get('retiro',None))
+            detalles = DetalleRetiro.objects.filter(retiro=request.GET.get('retiro',None),activo=0)
 
             for det in detalles:
                 detalle = [
@@ -893,7 +895,7 @@ def generarReporteRetiros(request):
     for retiro in filas:
         # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
         if DetalleRetiro.objects.filter(retiro=retiro.id_retiro).exists():
-            detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
+            detalles = DetalleRetiro.objects.filter(retiro=retiro.id_retiro,activo=0)
             for detalle in detalles:
                 fila = [datetime.strptime(str(retiro.fecha), '%Y-%m-%d').strftime('%d-%m-%y'),retiro.hora_inicio +' - '+ retiro.hora_fin,detalle.orden_venta,detalle.linea,retiro.cliente,detalle.descripcion,detalle.cantidad,detalle.tipo_embalaje]
                 list_detalles.append(fila)
@@ -918,8 +920,10 @@ def anularRetiro(request):
     if request.is_ajax and request.method == 'PUT':
         put = QueryDict(request.body)
         retiro = put.get('retiro')
-        anular = Retiro.objects.filter(id_retiro=retiro).update(activo=1)
-        
+        linea = put.get('linea')
+        # retiro = Retiro.objects.filter(id_retiro=retiro)
+        anular = DetalleRetiro.objects.filter(retiro_id=retiro,linea=linea).update(activo=1)
+        print(anular)
         if anular > 0:
             return JsonResponse({'valid': True})
         else:

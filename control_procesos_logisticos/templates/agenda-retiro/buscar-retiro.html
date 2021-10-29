@@ -149,7 +149,8 @@
                                                                 Generar PDF
                                                             </a>
                                                             <button class="dropdown-item" id="anular-retiro"
-                                                                type="button" onclick="anularRetiro('{{det.retiro}}')">
+                                                                type="button"
+                                                                onclick="anularRetiro('{{det.retiro}}','{{det.linea}}')">
                                                                 Anular
                                                             </button>
                                                         </div>
@@ -252,7 +253,8 @@
                 <div class="w-100">
                     <div class="row">
 
-                        <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+                        <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal"
+                                id="bt-retiro-anulado">
                                 OK
                             </a></div>
                     </div>
@@ -368,8 +370,7 @@
 </script>
 
 <script>
-    function anularRetiro(retiro) {
-        alert(retiro)
+    function anularRetiro(retiro, linea) {
         // e.preventDefault();
         $.ajax({
             type: 'PUT',
@@ -377,12 +378,17 @@
             headers: { 'X-CSRFToken': '{{ csrf_token }}' },
             data: {
                 'retiro': retiro,
+                'linea': linea
             },
             // dataType: 'json',
             success: function (response) {
                 if (response['valid']) {
                     $("#modal-retiro-anulado").modal('show');
-                    location.reload()
+                    // location.reload()
+                    $('#bt-retiro-anulado').on('click', function (e) {
+                        location.reload()
+                        return false;
+                    })
                 }
             }
         })

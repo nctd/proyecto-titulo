@@ -271,6 +271,7 @@
         </div>
     </div>
 </div>
+
 <script>
     const e = document.getElementById('nav-item-agenda')
     e.classList.add('active')
@@ -307,8 +308,6 @@
         var linea = document.getElementById('linea_input').value
         var cliente = document.getElementById('cliente_input').value
 
-        alert(ov)
-        alert(cliente)
         e.preventDefault();
         $.ajax({
             type: 'GET',
@@ -318,27 +317,28 @@
                 'linea': linea,
                 'cliente': cliente
             },
+            dataType: "json",
             success: function (response) {
+                if (list_ov.includes(ov + linea)) {
+                    $('#content-error-validar').text('La orden de venta/línea ingresada ya existe en la tabla')
+                    $("#modal-error-validar").modal('show');
+                    // alert('EXISTE')
+                }
                 if (response['valid']) {
-                    // alert('VALIDA')
-                    if (list_ov.includes(ov + linea)) {
-                        alert('EXISTE')
-                    } else {
-                        if (ov !== '' && linea !== '') {
-                            list_ov.push(ov + linea)
-                            $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td"><input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
-                            document.getElementById("cliente_input").value = response['cliente']
-                            $('#ov_input').removeClass("is-invalid");
-                            $('#linea_input').removeClass("is-invalid");
-                            alert(response['cliente'])
-                        }
+                    if (ov !== '' && linea !== '') {
+                        list_ov.push(ov + linea)
+                        $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td"><input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
+                        document.getElementById("cliente_input").value = response['cliente']
+                        $('#ov_input').removeClass("is-invalid");
+                        $('#linea_input').removeClass("is-invalid");
                     }
                 } else {
                     var texto = response['detalles']
+                    alert(response['cliente'])
                     if (!response['cliente']) {
-                        alert(texto)
-                        $("#modal-error-validar").modal('show');
+                        // alert('texto')
                         $('#content-error-validar').text(texto)
+                        $("#modal-error-validar").modal('show');
                         $('#ov_input').addClass('is-invalid');
                         $('#linea_input').addClass('is-invalid');
                     } else {
@@ -351,8 +351,10 @@
                 }
             },
             error: function (response) {
-                alert('ERROR')
-                alert(response.responseText)
+                data = JSON.parse(response.responseText)
+                $('#content-error-validar').text(data['detalles'])
+                $("#modal-error-validar").modal('show');
+
             }
         })
 
@@ -408,6 +410,8 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#modal-retiro-guardado").modal('show');
+
+        // alert('{{file}}')
     });
 </script>
 {% endif %}
@@ -420,6 +424,7 @@
     });
 </script>
 {% endif %}
+
 
 <!-- <script>
     $('#btn-guardar-pdf').on('click', function (e) {

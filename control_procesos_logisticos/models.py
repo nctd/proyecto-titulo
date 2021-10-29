@@ -155,6 +155,7 @@ class DetalleRetiro(models.Model):
     cantidad          = models.IntegerField()
     tipo_embalaje     = models.CharField(max_length=120)
     retiro            = models.ForeignKey(Retiro,on_delete=PROTECT)
+    activo            = models.BooleanField(default=False)
     
     class Meta:
         verbose_name = 'Detalle_Retiro'
