@@ -1,10 +1,11 @@
 import io
-from django.http.request import QueryDict
 import pandas as pd
 import requests
 import cx_Oracle
 import xlsxwriter
+import json
 
+from django.http.request import QueryDict
 from django.http import FileResponse, JsonResponse,HttpResponse
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
@@ -682,7 +683,7 @@ def agendarRetiro(request):
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             id_retiro = retiro.save()
-            file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
+            # file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
 
             for item in data:  
                 data_det = {
@@ -705,9 +706,8 @@ def agendarRetiro(request):
                    
             data = {
                 'guardado': True,
-                'file':file
+                'retiro': str(id_retiro.pk)
             }
-            
             return render(request,'agenda-retiro/agendar.html',data)
             
         else:
@@ -928,3 +928,7 @@ def anularRetiro(request):
             return JsonResponse({'valid': True})
         else:
             return JsonResponse({'valid': False})
+        
+        
+def testLogin(request):
+    return render(request,'login/login.html') 

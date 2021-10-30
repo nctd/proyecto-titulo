@@ -175,6 +175,7 @@
         </div>
     </div>
 </div>
+<iframe id="my_iframe" style="display:none;"></iframe>
 <div class="modal modal-blur fade" id="modal-error-validar" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -307,7 +308,12 @@
         var ov = 'OV' + document.getElementById('ov_input').value
         var linea = document.getElementById('linea_input').value
         var cliente = document.getElementById('cliente_input').value
-
+        if ($('#linea_input').val() == '') {
+            $('#linea_input').addClass('is-invalid');
+        }
+        if ($('#ov_input').val() == '') {
+            $('#ov_input').addClass('is-invalid');
+        }
         e.preventDefault();
         $.ajax({
             type: 'GET',
@@ -322,9 +328,9 @@
                 if (list_ov.includes(ov + linea)) {
                     $('#content-error-validar').text('La orden de venta/línea ingresada ya existe en la tabla')
                     $("#modal-error-validar").modal('show');
+
                     // alert('EXISTE')
-                }
-                if (response['valid']) {
+                } else if (response['valid']) {
                     if (ov !== '' && linea !== '') {
                         list_ov.push(ov + linea)
                         $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td"><input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
@@ -334,7 +340,6 @@
                     }
                 } else {
                     var texto = response['detalles']
-                    alert(response['cliente'])
                     if (!response['cliente']) {
                         // alert('texto')
                         $('#content-error-validar').text(texto)
@@ -410,8 +415,8 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#modal-retiro-guardado").modal('show');
+        document.getElementById('my_iframe').src = `{% url 'buscar_retiro_pdf' %}?retiro={{retiro}}`
 
-        // alert('{{file}}')
     });
 </script>
 {% endif %}
@@ -426,24 +431,6 @@
 {% endif %}
 
 
-<!-- <script>
-    $('#btn-guardar-pdf').on('click', function (e) {
-        alert('A')
-        e.preventDefault();
-        $.ajax({
-            type: 'GET',
-            url: "{% url 'generar_pdf_retiro' %}",
-            // data: {
-            //     'tipo': tipo,
-            //     'horizonte': horizonte
-            // },
-            success: function (response) {
-                alert('SUCESS')
-            }
-        })
-    }
-    )
-</script> -->
 
 
 {% endblock %}

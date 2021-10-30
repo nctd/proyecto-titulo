@@ -396,24 +396,24 @@
 </script>
 
 <script>
-    function generarReporte() {
-        alert('GENERAR REPORTE')
-        // e.preventDefault();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'reporte_retiros' %}",
-            data: {
-                'csrfmiddlewaretoken': '{{ csrf_token }}',
-                'fecha-desde': '{{fec_inicio}}',
-                'fecha-hasta': '{{fec_hasta}}'
-            },
-            success: function (response) {
-                alert(response)
+    // function generarReporte() {
+    //     alert('GENERAR REPORTE')
+    //     // e.preventDefault();
+    //     $.ajax({
+    //         type: 'POST',
+    //         url: "{% url 'reporte_retiros' %}",
+    //         data: {
+    //             'csrfmiddlewaretoken': '{{ csrf_token }}',
+    //             'fecha-desde': '{{fec_inicio}}',
+    //             'fecha-hasta': '{{fec_hasta}}'
+    //         },
+    //         success: function (response) {
+    //             alert(response)
 
-            }
-        })
+    //         }
+    //     })
 
-    }
+    // }
 </script>
 
 {% endblock %}
