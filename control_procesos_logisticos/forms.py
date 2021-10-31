@@ -1,8 +1,8 @@
 from django import forms
 from django.core.exceptions import ValidationError
 from django.db.models import fields
-# from import_export import widgets
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
 
@@ -79,3 +79,49 @@ class DetalleRetiroForm(forms.ModelForm):
         model = DetalleRetiro
         fields = '__all__'
         
+        
+class CustomUserCreationForm(UserCreationForm):
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'type':'password','id':'password1'}),
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'type':'password','id':'password2'}),
+    )
+
+
+
+    class Meta:
+        model = User
+        fields = [
+            'username', 'first_name', 'last_name', 'email', 'password1',
+            'password2'
+        ]
+        widgets = {
+            'username':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'username','error_messages' : {'required': 'error message here'}
+                },),
+            'email':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'email',
+                    'id':'email',
+                },),
+            'first_name':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'first_name',
+                },),
+            'last_name':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'last_name',
+                },),
+
+            
+                
+        }

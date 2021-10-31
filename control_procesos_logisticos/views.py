@@ -6,12 +6,16 @@ import xlsxwriter
 import json
 
 from django.http.request import QueryDict
-from django.http import FileResponse, JsonResponse,HttpResponse
-from django.shortcuts import render
+from django.http import FileResponse, JsonResponse,HttpResponse,HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required, permission_required
 
-from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, DespachoForm, DetalleRetiroForm, IndicadorTipoVentaForm, LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
+
+from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, DetalleRetiroForm,\
+                                              LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
 
 from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte,TemporalLinea
 from datetime import date,datetime,timedelta
@@ -130,9 +134,11 @@ def getProgresoDiarioTipoVenta(tipo_venta):
 
     
 # Create your views here.
+@login_required(login_url='/accounts/login/')
 def home(request):
     return render(request,'index.html')
 
+@login_required(login_url='/accounts/login/')
 def planificacion(request):
     data = {
         'form': PlanificacionForm,
@@ -930,5 +936,33 @@ def anularRetiro(request):
             return JsonResponse({'valid': False})
         
         
-def testLogin(request):
-    return render(request,'login/login.html') 
+def login(request, method='POST'):
+    if request.method == 'POST':
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        print(username)
+        user = auth.authenticate(username=username, password=password)
+
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return HttpResponseRedirect('/')
+
+        else:
+            return HttpResponse("Invalid login. Please try again.")
+    return render(request, "registration/login.html")
+
+def registro(request):
+    data = {
+        'form': CustomUserCreationForm()
+    }
+    print(data)
+    if request.method == 'POST':
+        formulario = CustomUserCreationForm(data=request.POST)
+        # print(formulario)
+        if formulario.is_valid():
+            formulario.save()
+            return redirect(to='/accounts/login/')
+        data['form'] = formulario
+        data['error'] = formulario.errors.as_json()
+        print(data['error'])
+    return render(request,'registration/registro.html',data) 

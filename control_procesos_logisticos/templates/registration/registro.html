@@ -1,5 +1,6 @@
 {% load static %}
 
+
 <!doctype html>
 
 <html lang="es">
@@ -29,24 +30,34 @@
     <div class="page page-center">
         <div class="container-tight py-4">
             <div class="text-center mb-4">
-                <a href="."><img src="./static/logo.svg" height="36" alt=""></a>
+                <a href="."><img src="{% static 'img/logo_ksb.svg' %}" height="36" alt=""></a>
             </div>
-            <form class="card card-md" action="." method="get" autocomplete="off">
+            <form class="card card-md" action="" method="POST">
+                {% csrf_token %}
                 <div class="card-body">
-                    <h2 class="card-title text-center mb-4">Inicio de sesión</h2>
+                    <h2 class="card-title text-center mb-4">Registro de usuario</h2>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        {{ form.first_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Apellido</label>
+                        {{ form.last_name }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre de usuario</label>
+                        <label class="form-label">{{form.username.errors}}</label>
+                        {{ form.username }}
+                    </div>
                     <div class="mb-3">
                         <label class="form-label">Correo electrónico</label>
-                        <input type="email" class="form-control">
+                        {{ form.email }}
                     </div>
-                    <div class="mb-2">
-                        <label class="form-label">
-                            Contraseña
-                            <span class="form-label-description">
-                                <a href="./forgot-password.html">¿Olvidaste tu contraseña?</a>
-                            </span>
-                        </label>
+                    <div class="mb-3">
+                        <label class="form-label">Contraseña</label>
                         <div class="input-group input-group-flat">
-                            <input type="password" class="form-control" autocomplete="off">
+                            {{ form.password1 }}
+                            <!-- <input type="password" class="form-control" placeholder="Password" autocomplete="off"> -->
                             <span class="input-group-text">
                                 <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                                     <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
@@ -62,23 +73,45 @@
                             </span>
                         </div>
                     </div>
-                    <div class="mb-2">
+                    <div class="mb-3">
+                        <label class="form-label">Confirmación</label>
+                        <div class="input-group input-group-flat">
+                            {{ form.password2 }}
+                            <!-- <input type="password" class="form-control" placeholder="Password" autocomplete="off"> -->
+                            <span class="input-group-text">
+                                <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
+                                    <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <circle cx="12" cy="12" r="2" />
+                                        <path
+                                            d="M22 12c-2.667 4.667 -6 7 -10 7s-7.333 -2.333 -10 -7c2.667 -4.667 6 -7 10 -7s7.333 2.333 10 7" />
+                                    </svg>
+                                </a>
+                            </span>
+                        </div>
+                    </div>
+                    <!-- <div class="mb-3">
                         <label class="form-check">
                             <input type="checkbox" class="form-check-input" />
-                            <span class="form-check-label">Remember me on this device</span>
+                            <span class="form-check-label">Agree the <a href="./terms-of-service.html"
+                                    tabindex="-1">terms
+                                    and policy</a>.</span>
                         </label>
-                    </div>
+                    </div> -->
                     <div class="form-footer">
-                        <button type="submit" class="btn btn-primary w-100">Iniciar sesión</button>
+                        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
                     </div>
                 </div>
-
             </form>
             <div class="text-center text-muted mt-3">
-                No tiene una cuenta? <a href="./sign-up.html" tabindex="-1">Registrese</a>
+                Ya tiene una cuenta? <a href="{% url 'login' %}" tabindex="-1">Iniciar sesión</a>
             </div>
         </div>
     </div>
+
     <!-- Libs JS -->
     <!-- Tabler Core -->
     <script src="{% static 'js/tabler.min.js' %}"></script>
