@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, DetalleRetiroForm,\
                                               LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
 
-from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte,TemporalLinea
+from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte,TemporalLinea
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
@@ -388,7 +388,6 @@ def indicadores(request):
             progreso = getProgresoDiarioTipoDespacho(val)
             despachos.append(despach)
             progreso_despachos.append(progreso)
-        print(despachos)
         # datos_despacho_directo = getLineaTipoDespacho('DESPACHO DIRECTO')
         # # Traspaso entre sucursales
         # datos_despacho_traspaso = getLineaTipoDespacho('TRASPASO ENTRE SUCURSALES')
@@ -493,11 +492,6 @@ def indicadores(request):
             
             # Tipo de despacho
             'datos_despacho': despachos,
-            # 'datos_despacho_directo' : datos_despacho_directo,
-            # 'datos_despacho_traspaso' : datos_despacho_traspaso,
-            # 'datos_despacho_embalaje' : datos_despacho_embalaje,
-            # 'datos_despacho_exportaciones' : datos_despacho_exportaciones,
-            # 'datos_despacho_retira' : datos_despacho_retira,
             
             # Tipo de venta
             'datos_stock' : datos_stock,
@@ -554,7 +548,8 @@ def reporteGrafico(request):
             list_fecha_tipo_venta = []
                 
             if reportes_tipo_venta:
-                for i in range(delta.days + 1):
+                # for i in range(delta.days + 1):
+                for i in range(delta.days):
                     fecha = fecha_inicio + timedelta(days=i)
                     list_fecha_tipo_venta.append(fecha)
                     
@@ -646,8 +641,54 @@ def reporteGrafico(request):
                 'lista_fechas': 'No hay fechas',
                 },
                 status = 200)
+            
         if tipo == 'tipo_despacho':
-            pass
+            reportes_despacho = IndicadorDespacho.objects.filter(fecha__range=(fecha_inicio,fecha_fin)).order_by('fecha').values_list()
+            list_fecha_despacho = []
+            list_cumplimientos = []
+            
+            if reportes_despacho:
+                # for i in range(delta.days + 1):
+                for i in range(delta.days):
+                    fecha = fecha_inicio + timedelta(days=i)
+                    list_fecha_despacho.append(fecha)
+                    
+                    
+                tipos_despacho = OrdenVenta.objects.all().values_list('tipo_despacho',flat=True).distinct()
+                for despacho in tipos_despacho:
+                    cumplimiento = reportes_despacho.filter(tipo_despacho=despacho)
+                    # print(cumplimiento)
+                    list_cumplimientos.append(cumplimiento)
+                    # print(cumplimiento)
+                list_cumpl_despachos = []
+                list_total_despachos = []
+                for cumplimiento in list_cumplimientos:
+                    for fecha in list_fecha_despacho:
+                        if cumplimiento:
+                            if fecha in cumplimiento.values_list('fecha',flat=True):
+                                list_cumpl_despachos.append(cumplimiento.values_list('estado_final',flat=True).filter(fecha=fecha).first())
+                            else:
+                                list_cumpl_despachos.append(0)
+
+                    data_despachos = {'despacho' : cumplimiento.values_list('tipo_despacho',flat=True).first(),
+                                'valores': list_cumpl_despachos}
+                    list_total_despachos.append(data_despachos)
+                    list_cumpl_despachos = []
+                return JsonResponse({
+                    'valid':True,
+                    'lista_fechas': list_fecha_despacho,
+                    'despachos': list_total_despachos,
+                }, status=200)
+                
+            else:
+                list_fecha_tipo_venta = [0]
+                
+            return JsonResponse({
+                'valid':False,
+                'lista_fechas': 'No hay fechas',
+                },
+                status = 200)
+            
     return JsonResponse({}, status = 400)
 
 def agendarRetiro(request):

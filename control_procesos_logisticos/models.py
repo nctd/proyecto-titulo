@@ -189,7 +189,7 @@ class DetalleCita(models.Model):
 
 class IndicadorDespacho(models.Model):
     id_int_dep = models.AutoField(primary_key=True)
-    tipo_venta = models.CharField(max_length=20,blank=True)
+    tipo_despacho = models.CharField(max_length=100,blank=True)
     cantidad_despacho = models.IntegerField()
     exitos = models.IntegerField()
     estado_final = models.IntegerField()
@@ -202,7 +202,7 @@ class IndicadorDespacho(models.Model):
     
 class IndicadorTipoVenta(models.Model):
     id_int_tp    = models.AutoField(primary_key=True)
-    tipo_venta = models.CharField(max_length=20,blank=True)
+    tipo_venta = models.CharField(max_length=100,blank=True)
     cantidad_despacho = models.IntegerField()
     exitos = models.IntegerField()
     estado_final = models.IntegerField()

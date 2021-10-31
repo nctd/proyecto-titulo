@@ -102,229 +102,8 @@
                                     </div>
                                 </div>
                             </div>
-                            {% endfor %%}
+                            {% endfor %}
                             {% endif %}
-                            <!-- <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-yellow-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>Despacho directo</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_despacho_directo.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_directo.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            despacho
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_despacho_directo.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_directo.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-yellow-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>Traspaso entre sucursales</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_despacho_traspaso.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_traspaso.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            despacho
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_despacho_traspaso.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_traspaso.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-yellow-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>Embalaje</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_despacho_embalaje.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_embalaje.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            despacho
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_despacho_embalaje.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_embalaje.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-yellow-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>Exportaciones</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_despacho_exportaciones.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_exportaciones.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            despacho
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_despacho_exportaciones.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_exportaciones.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-yellow-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>Retira cliente</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_despacho_retira.cant_lineas}}
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_retira.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            despacho
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_despacho_retira.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_despacho_retira.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> -->
 
                         </div>
 
@@ -1036,9 +815,13 @@
     $('#btn-progreso').on('click', function (e) {
         var select = document.getElementById('select-progreso')
         const container = document.getElementById("progreso-container")
+        var contador = 0
+
         if (select.value == '') {
             $("#modal-progreso-error-filtro").modal('show');
+            $('#select-progreso').addClass('is-invalid');
         }
+
         if (select.value == 1) {
             container.innerHTML = '<div class="form-group mb-4">' +
                 '<div class="col-6 col-sm-6">' +
@@ -1053,82 +836,31 @@
                 '{% endif %}' +
                 '</div >' +
                 '</div >' +
-
                 '</div >' +
                 '</div >' +
 
+                '{% if datos_progreso %}' +
+                '{% for despacho in datos_progreso %}' +
+                // `${contador += 1}` +
                 '<div class="form-group mb-4 row">' +
                 '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">Despachos directos</label>' +
+                '<label class="form-label col-form-label">{{despacho.tipo}}</label>' +
                 '<div class="progress">' +
-                '{% if progreso_despacho_directo.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_despacho_directo.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_directo.cant_exito_lineas}}/{{progreso_despacho_directo.cant_lineas}} ({{progreso_despacho_directo.porc_exito_lineas}}%)</span>' +
+                '{% if despacho.cant_exito_lineas >= 1 %}' +
+                '<div class="progress-bar bg-teal" style="width: {{despacho.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                '<span class="text-dark text-h3">{{despacho.cant_exito_lineas}}/{{despacho.cant_lineas}} ({{despacho.porc_exito_lineas}}%)</span>' +
                 '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_directo.cant_exito_lineas}}/{{progreso_despacho_directo.cant_lineas}} ({{progreso_despacho_directo.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">Traspaso entre sucursales</label>' +
-                '<div class="progress">' +
-                '{% if progreso_despacho_traspaso.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_despacho_traspaso.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_traspaso.cant_exito_lineas}}/{{progreso_despacho_traspaso.cant_lineas}} ({{progreso_despacho_traspaso.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_traspaso.cant_exito_lineas}}/{{progreso_despacho_traspaso.cant_lineas}} ({{progreso_despacho_traspaso.porc_exito_lineas}}%)</span>' +
+                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                '<span class="text-dark text-h3">{{despacho.cant_exito_lineas}}/{{despacho.cant_lineas}} ({{despacho.porc_exito_lineas}}%)</span>' +
                 '{% endif %}' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '<div class="form-group mb-4 row">' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">Embalaje</label>' +
-                '<div class="progress">' +
-                '{% if progreso_despacho_embalaje.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_despacho_embalaje.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_embalaje.cant_exito_lineas}}/{{progreso_despacho_embalaje.cant_lineas}} ({{progreso_despacho_embalaje.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_embalaje.cant_exito_lineas}}/{{progreso_despacho_embalaje.cant_lineas}} ({{progreso_despacho_embalaje.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
                 '</div>' +
-                '</div>' +
-                '</div >' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">Exportaciones</label>' +
-                '<div class="progress">' +
-                '{% if progreso_despacho_exportaciones.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_despacho_exportaciones.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_exportaciones.cant_exito_lineas}}/{{progreso_despacho_exportaciones.cant_lineas}} ({{progreso_despacho_exportaciones.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_exportaciones.cant_exito_lineas}}/{{progreso_despacho_exportaciones.cant_lineas}} ({{progreso_despacho_exportaciones.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div >' +
-                '</div >' +
-                '</div>' +
-                '<div class="form-group mb-4 row">' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">Retira cliente</label>' +
-                '<div class="progress">' +
-                '{% if progreso_despacho_retira.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_despacho_retira.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_retira.cant_exito_lineas}}/{{progreso_despacho_retira.cant_lineas}} ({{progreso_despacho_retira.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_despacho_retira.cant_exito_lineas}}/{{progreso_despacho_retira.cant_lineas}} ({{progreso_despacho_retira.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '</div >'
+                '{% endfor %}' +
+                '{% endif %}'
+
         }
         if (select.value == 2) {
             container.innerHTML = '<div class="form-group mb-4">' +
@@ -1238,6 +970,12 @@
     })
 </script>
 
+<script>
+    $("#select-progreso").on('click', function (e) {
+        event.stopPropagation();
+        $('#select-progreso').removeClass("is-invalid");
+    })
+</script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         var options = {
@@ -1364,7 +1102,20 @@
                                 name: "OS",
                                 data: response.os
                             }])
+                        } else if (tipo == 'tipo_despacho') {
+                            alert(response.despachos)
+                            chart.updateOptions({
+                                labels: response.lista_fechas
+                            })
+                            response.despachos.forEach(e => {
+                                chart.appendSeries({
+                                    name: e.despacho,
+                                    data: e.valores
+                                })
+                            });
+
                         }
+
                     }
                 })
             }
