@@ -344,7 +344,12 @@ def tracking(request):
             
             despacho = Despacho.objects.get(id_despacho=desp)
         
-            
+            cita_valida = DetalleRetiro.objects.filter(orden_venta=request.GET['id_ov'])
+            if cita_valida.exists():
+                cita = Retiro.objects.filter(id_retiro=cita_valida.values_list('retiro_id',flat=True).first())
+                cita_pl = cita.values_list('id_retiro',flat=True).first()
+            else:
+                cita_pl = '-'
             data = {
                 'orden_venta': ov,
                 'cliente' : ov.cliente.nombre,
@@ -354,13 +359,12 @@ def tracking(request):
                 'canal_venta': ov.canal_venta,
                 'despacho': despacho,
                 'lineas': lineas,
+                'tipo_despacho': ov.tipo_despacho,
+                'cita': cita_pl
             }
             
+
             data['response'] = 'OV ENCONTRADA'
-            data['tipodespacho'] = 'DESPACHO DIRECTO'
-            data['guiadespacho'] = 'GD252900'
-            data['ot'] = 'AB123'
-            data['cita'] = '123456'
             data['existe'] = True
             return render(request,'tracking/tracking.html',data)
         except ObjectDoesNotExist:
@@ -727,6 +731,17 @@ def agendarRetiro(request):
                 }
                 return render(request,'agenda-retiro/agendar.html',data)   
         
+        valido = Retiro.objects.filter(fecha=datetime.strptime(request.POST['fecha-retiro'], "%d/%m/%Y").date(),activo=0)
+        if valido.exists():
+            for value in valido:
+                existe = DetalleRetiro.objects.filter(retiro=value.id_retiro,activo=0,orden_venta=ov.split('-')[0],linea=ov.split('-')[1])
+                if existe.exists():
+                    data = {
+                        'error': True,
+                        'detalles': 'Ya existe un retiro programado para la orden de venta ingresada'
+                    }
+                    return render(request,'agenda-retiro/agendar.html',data)
+        
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             id_retiro = retiro.save()
@@ -744,6 +759,21 @@ def agendarRetiro(request):
                 det_retiro = DetalleRetiroForm(data=data_det)
                 if det_retiro.is_valid():
                     det_retiro.save()
+                    data_plan = {
+                        'llave_busqueda': item[0]+item[1],
+                        'fecha_planificacion':request.POST['fecha-retiro'],
+                        'orden_venta': item[0]
+                    }
+                        
+                    pl = PlanificacionForm(data=data_plan)
+                    if pl.is_valid():
+                        pl.save()
+                    else:
+                        data = {
+                            'error': True,
+                            'detalles': 'Error al crear la planificación'
+                        }
+                        return render(request,'agenda-retiro/agendar.html',data)
                 else:
                     data = {
                         'error': True, 
@@ -755,6 +785,7 @@ def agendarRetiro(request):
                 'guardado': True,
                 'retiro': str(id_retiro.pk)
             }
+
             return render(request,'agenda-retiro/agendar.html',data)
             
         else:
@@ -794,13 +825,6 @@ def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     pdf.tabla(headers,data_detalle)
     
     pdf.output("pdf/CITA"+id_retiro+".pdf",'F')
-    # filename = 'CITA'+id_retiro+'_'+str(date.today())+'.pdf'
-    # response = HttpResponse(
-    #     pdf.output(),
-    #     content_type='application/pdf'
-    # )
-    # response['Content-Disposition'] = 'attachment; filename=%s' % filename   
-    # return JsonResponse({'valid':'CREADO'})
     return FileResponse(open("pdf/CITA"+id_retiro+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
 def validarOrdenVentaRetiro(request):
@@ -847,7 +871,7 @@ def visualizarRetiros(request):
                 fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
                 fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
                 retiros = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta],activo=0)     
-                print(retiros)
+
                 list_detalles = []
                 for retiro in retiros:
                     # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
@@ -885,7 +909,7 @@ def buscarRetiroPDF(request):
         data_retiro = {}
         data_detalle = []
         for value in retiro:
-            print(value.fecha)
+
             data_retiro = {
                 'fecha': datetime.strptime(str(value.fecha), '%Y-%m-%d').strftime('%d/%m/%y'),
                 'hora_inicio': value.hora_inicio,
@@ -937,7 +961,7 @@ def generarReporteRetiros(request):
             worksheet.write(row_num, col_num, columns[col_num],cell_format)
             
     filas = Retiro.objects.filter(fecha__range=[fec_desde,fec_hasta],activo=0)   
-    print(filas)
+
     list_detalles = []
     for retiro in filas:
         # detalle = DetalleRetiro.objects.filter(retiro=retiro.id_retiro)
@@ -977,20 +1001,19 @@ def anularRetiro(request):
             return JsonResponse({'valid': False})
         
         
-def login(request, method='POST'):
-    if request.method == 'POST':
-        username = request.POST.get('username', '')
-        password = request.POST.get('password', '')
-        print(username)
-        user = auth.authenticate(username=username, password=password)
+# def login_user(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username', '')
+#         password = request.POST.get('password', '')
+#         print(username)
+#         user = auth.authenticate(username=username, password=password)
 
-        if user is not None and user.is_active:
-            auth.login(request, user)
-            return HttpResponseRedirect('/')
-
-        else:
-            return HttpResponse("Invalid login. Please try again.")
-    return render(request, "registration/login.html")
+#         if user is not None and user.is_active:
+#             auth.login(request, user)
+#             return HttpResponseRedirect('/')
+#         else:
+#             return HttpResponse("Invalid login. Please try again.")
+#     return render(request, "registration/login.html")
 
 def registro(request):
     data = {
@@ -999,11 +1022,10 @@ def registro(request):
     print(data)
     if request.method == 'POST':
         formulario = CustomUserCreationForm(data=request.POST)
-        # print(formulario)
+
         if formulario.is_valid():
             formulario.save()
-            return redirect(to='/accounts/login/')
+
+            return redirect(to='/accounts/login?register=true')
         data['form'] = formulario
-        data['error'] = formulario.errors.as_json()
-        print(data['error'])
     return render(request,'registration/registro.html',data) 

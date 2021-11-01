@@ -591,7 +591,7 @@
                             <div id='reportes-container' class="col-lg-12 mt-3">
                                 <div class="card" id="reportes-card" style="display: none;">
                                     <div class="card-body">
-                                        <h3 class="card-title">Cumplimiento por tipo de venta</h3>
+                                        <h3 class="card-title" id='titulo-grafico'>Cumplimiento por tipo de venta</h3>
                                         <div id="chart-demo-line" class="chart-lg"></div>
                                     </div>
                                 </div>
@@ -978,77 +978,7 @@
 </script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        var options = {
-            noData: {
-                text: 'Cargando...'
-            },
-            chart: {
-                type: "line",
-                fontFamily: 'inherit',
-                height: 240,
-                parentHeightOffset: 0,
-                toolbar: {
-                    show: true,
-                },
-                animations: {
-                    enabled: false
-                },
-            },
-            fill: {
-                opacity: 1,
-            },
-            stroke: {
-                width: 2,
-                lineCap: "round",
-                curve: "straight",
-            },
-            series: [],
-            grid: {
-                padding: {
-                    top: -20,
-                    right: 0,
-                    left: -4,
-                    bottom: -4
-                },
-                strokeDashArray: 4,
-            },
-            xaxis: {
-                labels: {
-                    padding: 0,
-                },
-                tooltip: {
-                    enabled: false
-                },
-                type: 'datetime',
-            },
-            yaxis: {
-                labels: {
-                    padding: 4
-                },
-            },
-            labels: [],
-            colors: ["#fab005", "#5eba00", "#206bc4", "#fa054f", "#fa3505", "#6a6a6a"],
-            legend: {
-                show: true,
-                position: 'bottom',
-                offsetY: 12,
-                markers: {
-                    width: 10,
-                    height: 10,
-                    radius: 100,
-                },
-                itemMargin: {
-                    horizontal: 8,
-                    vertical: 8
-                },
-            },
-        }
 
-        var chart = new ApexCharts(
-            document.querySelector("#chart-demo-line"),
-            options
-        );
-        chart.render();
 
         $('#btn-generar-reporte').on('click', function (e) {
             if (document.getElementById('select-tipo-reporte').value == '' || document.getElementById('select-horizonte').value == '') {
@@ -1075,6 +1005,86 @@
                             $("#modal-error-reporte").modal('show');
                         }
                         if (tipo == 'tipo_venta') {
+                            $('#titulo-grafico').text('Cumplimiento por tipo de venta')
+
+                            var options = {
+                                noData: {
+                                    text: 'Cargando...'
+                                },
+                                chart: {
+                                    type: "line",
+                                    fontFamily: 'inherit',
+                                    height: 240,
+                                    parentHeightOffset: 0,
+                                    toolbar: {
+                                        show: true,
+                                        offsetX: 0,
+                                        offsetY: -25,
+                                    },
+                                    animations: {
+                                        enabled: true
+                                    },
+                                },
+                                fill: {
+                                    opacity: 1,
+                                },
+                                stroke: {
+                                    width: 2,
+                                    lineCap: "round",
+                                    curve: "straight",
+                                },
+                                series: [],
+                                grid: {
+                                    padding: {
+                                        top: -20,
+                                        right: 20,
+                                        left: -4,
+                                        bottom: -4
+                                    },
+                                    strokeDashArray: 5,
+                                },
+                                xaxis: {
+                                    labels: {
+                                        padding: 0,
+                                    },
+                                    tooltip: {
+                                        enabled: false
+                                    },
+                                    type: 'datetime',
+                                },
+                                yaxis: {
+                                    labels: {
+                                        padding: 4
+                                    },
+                                    max: 100,
+                                    min: 0
+                                },
+                                dataLabels: {
+                                    enabled: true,
+                                },
+                                labels: [],
+                                colors: ["#fab005", "#5eba00", "#206bc4", "#fa054f", "#fa3505", "#6a6a6a"],
+                                legend: {
+                                    show: true,
+                                    position: 'bottom',
+                                    offsetY: 12,
+                                    markers: {
+                                        width: 10,
+                                        height: 10,
+                                        radius: 100,
+                                    },
+                                    itemMargin: {
+                                        horizontal: 8,
+                                        vertical: 8
+                                    },
+                                },
+                            }
+
+                            var chart = new ApexCharts(
+                                document.querySelector("#chart-demo-line"),
+                                options
+                            );
+                            chart.render();
                             chart.updateOptions({
                                 labels: response.lista_fechas
                             })
@@ -1102,17 +1112,103 @@
                                 name: "OS",
                                 data: response.os
                             }])
-                        } else if (tipo == 'tipo_despacho') {
-                            alert(response.despachos)
+                        }
+                        if (tipo == 'tipo_despacho') {
+                            $('#titulo-grafico').text('Cumplimiento por tipo de despacho')
+                            var options = {
+                                noData: {
+                                    text: 'Cargando...'
+                                },
+                                chart: {
+                                    type: "line",
+                                    fontFamily: 'inherit',
+                                    height: 240,
+                                    parentHeightOffset: 0,
+                                    toolbar: {
+                                        show: true,
+                                        offsetX: 0,
+                                        offsetY: -25,
+                                    },
+                                    animations: {
+                                        enabled: true
+                                    },
+                                },
+                                fill: {
+                                    opacity: 1,
+                                },
+                                stroke: {
+                                    width: 2,
+                                    lineCap: "round",
+                                    curve: "straight",
+                                },
+                                series: [],
+                                grid: {
+                                    padding: {
+                                        top: -20,
+                                        right: 20,
+                                        left: -4,
+                                        bottom: -4
+                                    },
+                                    strokeDashArray: 5,
+                                },
+                                xaxis: {
+                                    labels: {
+                                        padding: 0,
+                                    },
+                                    tooltip: {
+                                        enabled: false
+                                    },
+                                    type: 'datetime',
+                                },
+                                yaxis: {
+                                    labels: {
+                                        padding: 4
+                                    },
+                                    max: 100,
+                                    min: 0
+                                },
+                                dataLabels: {
+                                    enabled: true,
+                                },
+                                labels: [],
+                                colors: ["#fab005", "#5eba00", "#206bc4", "#fa054f", "#fa3505", "#6a6a6a"],
+                                legend: {
+                                    show: true,
+                                    position: 'bottom',
+                                    offsetY: 12,
+                                    markers: {
+                                        width: 10,
+                                        height: 10,
+                                        radius: 100,
+                                    },
+                                    itemMargin: {
+                                        horizontal: 8,
+                                        vertical: 8
+                                    },
+                                },
+                            }
+
+                            var chart = new ApexCharts(
+                                document.querySelector("#chart-demo-line"),
+                                options
+                            );
+                            chart.render();
+
+
                             chart.updateOptions({
-                                labels: response.lista_fechas
+                                labels: response.lista_fechas,
+
                             })
+
                             response.despachos.forEach(e => {
                                 chart.appendSeries({
                                     name: e.despacho,
                                     data: e.valores
                                 })
                             });
+
+                            // chart.hideSeries('Limpiar')
+                            chart.toggleSeries('Limpiar')
 
                         }
 

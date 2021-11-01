@@ -110,18 +110,19 @@ END;
 
 -- Procedimiento para obtener los valores de estado por carga segun el estado
 CREATE OR REPLACE PROCEDURE SP_ESTADO_CARGA(v_estado VARCHAR2, v_cant_lineas OUT NUMBER, v_porc_estado OUT NUMBER) IS
-    
     v_total_lineas NUMBER;
     
 BEGIN
     SELECT COUNT(num_linea)
     INTO v_total_lineas
-    FROM linea;
+    FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
 
     SELECT COUNT(num_linea)
     INTO v_cant_lineas
-    FROM linea
-    WHERE UPPER(estado) = UPPER(v_estado);
+    FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE UPPER(estado) = UPPER(v_estado)
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
 
     BEGIN 
         v_porc_estado := ROUND(v_cant_lineas * 100 / v_total_lineas);

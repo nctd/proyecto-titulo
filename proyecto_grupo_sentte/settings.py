@@ -33,7 +33,7 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 
 # LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Application definition
 

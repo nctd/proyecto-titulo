@@ -39,14 +39,15 @@
                     <div class="mb-3">
                         <label class="form-label">Nombre</label>
                         {{ form.first_name }}
+
                     </div>
+
                     <div class="mb-3">
                         <label class="form-label">Apellido</label>
                         {{ form.last_name }}
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3" id="container-username">
                         <label class="form-label">Nombre de usuario</label>
-                        <label class="form-label">{{form.username.errors}}</label>
                         {{ form.username }}
                     </div>
                     <div class="mb-3">
@@ -55,9 +56,9 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Contraseña</label>
-                        <div class="input-group input-group-flat">
+                        <div class="input-group mb-2">
                             {{ form.password1 }}
-                            <!-- <input type="password" class="form-control" placeholder="Password" autocomplete="off"> -->
+
                             <span class="input-group-text">
                                 <a href="#" class="link-secondary" title="Show password" data-bs-toggle="tooltip">
                                     <!-- Download SVG icon from http://tabler-icons.io/i/eye -->
@@ -75,7 +76,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Confirmación</label>
-                        <div class="input-group input-group-flat">
+                        <div class="input-group mb-2" id="container-password2">
                             {{ form.password2 }}
                             <!-- <input type="password" class="form-control" placeholder="Password" autocomplete="off"> -->
                             <span class="input-group-text">
@@ -112,8 +113,30 @@
         </div>
     </div>
 
-    <!-- Libs JS -->
-    <!-- Tabler Core -->
+    {% if form.errors.username %}
+    <script>
+        $('#username').addClass('is-invalid');
+        $('#container-username').append('<div class="invalid-feedback">{{form.errors.username}}</div>')
+    </script>
+    {% endif %}
+
+    {% if form.errors.password2 %}
+    <script>
+        $('#password1').addClass('is-invalid');
+        $('#password2').addClass('is-invalid');
+        $('#container-password2').append('<div class="invalid-feedback">{{form.errors.password2}}</div>')
+    </script>
+    {% endif %}
+
+    <!-- {% if messages %}
+    {% for m in messages %}
+    <script>
+        alert('{{m}}')
+    </script>
+    {% endfor %}
+    {% endif %} -->
+
+
     <script src="{% static 'js/tabler.min.js' %}"></script>
 </body>
 

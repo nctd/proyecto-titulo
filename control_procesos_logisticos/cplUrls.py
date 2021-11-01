@@ -16,6 +16,6 @@ urlpatterns = [
     path('get/agendar/buscar-retiro-pdf',buscarRetiroPDF,name='buscar_retiro_pdf'),
     path('get/agendar/reporte-retiros',generarReporteRetiros,name='reporte_retiros'),
     path('put/agendar/anular-retiro',anularRetiro,name='anular_retiro'),
-    # path('login',testLogin,name='login')
     path('registro/', registro, name='registro')
+    # path('/login',login_user,name='login'),
 ]
