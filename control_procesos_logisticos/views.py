@@ -22,7 +22,7 @@ from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
 
-
+from .utils import crearPlanificacion
 
 
 def getLineaTipoVenta(tipo_venta):
@@ -161,7 +161,7 @@ def planificacion(request):
                         if existe:
                             data = {'error': True,
                                     'form': PlanificacionForm,
-                                    'detalles': 'La orden de venta ya existe en la planificación'}
+                                    'detalles': 'La orden de venta: '+value['ov']+', ya existe en la planificación'}
                             return render(request,'planificacion/planificacion.html',data)
                         
             for row in df.itertuples():
@@ -194,10 +194,9 @@ def planificacion(request):
                             'tipo_venta': value['tipo_venta'],
                             'tipo_despacho': value['clausula'],
                         }
-                        print(data_orden_venta)
+
                         ov_exists = OrdenVenta.objects.filter(orden_venta=value['ov']).exists()
                         if ov_exists:
-                            print('existe')
                             id_ov = OrdenVenta.objects.get(orden_venta=value['ov'])
                         elif not ov_exists:
                             ov = OrdenVentaForm(data=data_orden_venta)
@@ -698,7 +697,7 @@ def agendarRetiro(request):
             # file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
 
             for item in data:  
-                print(data)
+
                 data_det = {
                     'orden_venta' : item[0],
                     'linea' : item[1],
@@ -711,19 +710,22 @@ def agendarRetiro(request):
                 if det_retiro.is_valid():
                     det_retiro.save()
                     
+                    orden_venta = crearPlanificacion(item[0],item[1])
+
                     data_plan = {
                         'llave_busqueda': item[0]+item[1],
-                        'fecha_planificacion':request.POST['fecha-retiro'],
-                        'orden_venta': item[0]
+                        'fecha_planificacion': datetime.strptime(request.POST['fecha-retiro'], "%d/%m/%Y").date(),
+                        # 'orden_venta': item[0]
+                        'orden_venta': orden_venta
                     }
-
+                    # print(data_plan)
                     pl = PlanificacionForm(data=data_plan)
                     if pl.is_valid():
                         pl.save()
                     else:
                         data = {
                             'error': True,
-                            'detalles': 'Error al crear la planificación'+ str(pl.errors.as_data())
+                            'detalles': 'Error al crear la planificació1n'+ str(pl.errors.as_data())
                         }
                         return render(request,'agenda-retiro/agendar.html',data)
                 else:
