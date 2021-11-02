@@ -36,13 +36,13 @@
                 {% csrf_token %}
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">Registro de usuario</h2>
-                    <div class="mb-3">
+                    <div class="mb-3" id="container-first">
                         <label class="form-label">Nombre</label>
                         {{ form.first_name }}
 
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3" id="container-last">
                         <label class="form-label">Apellido</label>
                         {{ form.last_name }}
                     </div>
@@ -103,7 +103,7 @@
                         </label>
                     </div> -->
                     <div class="form-footer">
-                        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                        <button type="submit" class="btn btn-primary w-100" id="bt-registro">Registrarse</button>
                     </div>
                 </div>
             </form>
@@ -127,7 +127,50 @@
         $('#container-password2').append('<div class="invalid-feedback">{{form.errors.password2}}</div>')
     </script>
     {% endif %}
+    <script>
+        $("#first_name").on('click', function (e) {
+            event.stopPropagation();
+            $('#first_name').removeClass("is-invalid");
+        })
+        $("#last_name").on('click', function (e) {
+            event.stopPropagation();
+            $('#last_name').removeClass("is-invalid");
+        })
+        $("#username").on('click', function (e) {
+            event.stopPropagation();
+            $('#username').removeClass("is-invalid");
+        })
+        $("#password1").on('click', function (e) {
+            event.stopPropagation();
+            $('#password1').removeClass("is-invalid");
+        })
+        $("#password2").on('click', function (e) {
+            event.stopPropagation();
+            $('#password2').removeClass("is-invalid");
+        })
+    </script>
+    <script>
+        $("#bt-registro").one('click', function (e) {
+            // $('feedback-username').remove()
+            if ($("#first_name").val() == '') {
+                e.preventDefault()
+                $('#first_name').addClass('is-invalid');
+                $('#container-first').append('<div id="feedback-username" class="invalid-feedback">Debe ingresar un nombre</div>')
+            }
+            if ($("#last_name").val() == '') {
+                e.preventDefault()
+                $('#last_name').addClass('is-invalid');
+                $('#container-last').append('<div id="feedback-username" class="invalid-feedback">Debe ingresar un apellido</div>')
+            }
+            if ($("#username").val() == '') {
+                e.preventDefault()
+                $('#username').addClass('is-invalid');
+                $('#container-username').append('<div id="feedback-username" class="invalid-feedback">Debe ingresar un nombre de usuario</div>')
+                event.stopPropagation();
+            }
+        })
 
+    </script>
     <!-- {% if messages %}
     {% for m in messages %}
     <script>

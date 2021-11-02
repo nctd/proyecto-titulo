@@ -40,17 +40,23 @@ CREATE OR REPLACE PROCEDURE SP_DATOS_REPORTE_VENTA(v_tipo_venta VARCHAR2,v_cant_
 BEGIN
     SELECT COUNT(num_linea),SUM(valor)
     INTO v_total_lineas,v_total_valor
-    FROM linea;
+    FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
     
     SELECT COUNT(num_linea)
     INTO v_cant_lineas
     FROM linea l JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE UPPER(ov.tipo_venta) = UPPER(v_tipo_venta);
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE UPPER(ov.tipo_venta) = UPPER(v_tipo_venta) AND l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
     
     SELECT SUM(NVL(valor,0))
     INTO v_valor
     FROM linea l JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE UPPER(ov.tipo_venta) = UPPER(v_tipo_venta);
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE UPPER(ov.tipo_venta) = UPPER(v_tipo_venta) AND l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
     
     IF v_valor IS NULL THEN
         v_valor := 0;
@@ -78,17 +84,24 @@ CREATE OR REPLACE PROCEDURE SP_DATOS_REPORTE_DESPACHO(v_tipo_despacho VARCHAR2,v
 BEGIN
     SELECT COUNT(num_linea),SUM(valor)
     INTO v_total_lineas,v_total_valor
-    FROM linea;
+    FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
     
     SELECT COUNT(num_linea)
     INTO v_cant_lineas
     FROM linea l JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho);
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho) AND l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
     
     SELECT SUM(NVL(valor,0))
     INTO v_valor
     FROM linea l JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho);
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho) AND l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
+
     
     IF v_valor IS NULL THEN
         v_valor := 0;
@@ -116,12 +129,14 @@ BEGIN
     SELECT COUNT(num_linea)
     INTO v_total_lineas
     FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
-    WHERE TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
 
     SELECT COUNT(num_linea)
     INTO v_cant_lineas
     FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
     WHERE UPPER(estado) = UPPER(v_estado)
+    AND l.orden_venta_id||num_linea = llave_busqueda
     AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
 
     BEGIN 
@@ -141,14 +156,20 @@ BEGIN
     SELECT COUNT(num_linea)
     INTO v_cant_lineas
     FROM linea l JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE UPPER(ov.tipo_venta) = UPPER(v_tipo_venta);
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY')
+    AND UPPER(ov.tipo_venta) = UPPER(v_tipo_venta);
     
     SELECT COUNT(num_linea)
     INTO v_cant_lineas_exitosas
     FROM linea l JOIN despacho dp ON(l.despacho_id = dp.id_despacho)
     JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
     WHERE dp.guia_despacho IS NOT NULL AND dp.guia_despacho LIKE 'GD%'
-    AND UPPER(ov.tipo_venta) = UPPER(v_tipo_venta); 
+    AND UPPER(ov.tipo_venta) = UPPER(v_tipo_venta)
+    AND l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY'); 
     
     BEGIN
         v_porc_exito_linea := ROUND(v_cant_lineas_exitosas * 100 / v_cant_lineas);
@@ -166,14 +187,22 @@ BEGIN
     SELECT COUNT(num_linea)
     INTO v_cant_lineas
     FROM linea l JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho);
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY')
+    AND UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho);
     
     SELECT COUNT(num_linea)
     INTO v_cant_lineas_exitosas
     FROM linea l JOIN despacho dp ON(l.despacho_id = dp.id_despacho)
     JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
     WHERE dp.guia_despacho IS NOT NULL AND dp.guia_despacho LIKE 'GD%'
-    AND UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho); 
+    AND UPPER(ov.tipo_despacho) = UPPER(v_tipo_despacho) 
+    AND l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY'); 
+     
+    
     
     BEGIN
         v_porc_exito_linea := ROUND(v_cant_lineas_exitosas * 100 / v_cant_lineas);
@@ -189,13 +218,18 @@ CREATE OR REPLACE PROCEDURE SP_OBTENER_TOTAL_PROGRESO(v_total_lineas OUT NUMBER,
 BEGIN
     SELECT COUNT(num_linea)
     INTO v_total_lineas
-    FROM linea;
+    FROM linea l JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY');
     
     SELECT COUNT(num_linea)
     INTO v_total_lineas_exitosas
     FROM linea l JOIN despacho dp ON(l.despacho_id = dp.id_despacho)
     JOIN orden_venta ov ON(l.orden_venta_id = ov.orden_venta)
-    WHERE dp.guia_despacho IS NOT NULL AND dp.guia_despacho LIKE 'GD%';
+    JOIN planificacion p ON l.orden_venta_id = p.orden_venta_id
+    WHERE l.orden_venta_id||num_linea = llave_busqueda
+    AND TO_CHAR(fecha_planificacion,'DD/MM/YYYY') = TO_CHAR(SYSDATE,'DD/MM/YYYY')
+    AND dp.guia_despacho IS NOT NULL AND dp.guia_despacho LIKE 'GD%';
     
     BEGIN
         v_porc_exito := ROUND(v_total_lineas_exitosas * 100 / v_total_lineas);

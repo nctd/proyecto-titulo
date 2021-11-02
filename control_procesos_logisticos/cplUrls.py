@@ -3,6 +3,7 @@ from control_procesos_logisticos.views import agendarRetiro, anularRetiro, busca
     validarOrdenVentaRetiro, visualizarRetiros,generarReporteRetiros,registro
 from django.urls import path
 
+
 urlpatterns = [
     path('',home, name='home'),
     path('planificacion/',planificacion, name='planificacion'),
@@ -16,6 +17,5 @@ urlpatterns = [
     path('get/agendar/buscar-retiro-pdf',buscarRetiroPDF,name='buscar_retiro_pdf'),
     path('get/agendar/reporte-retiros',generarReporteRetiros,name='reporte_retiros'),
     path('put/agendar/anular-retiro',anularRetiro,name='anular_retiro'),
-    path('registro/', registro, name='registro')
     # path('/login',login_user,name='login'),
 ]

@@ -3,14 +3,14 @@ import pandas as pd
 import requests
 import cx_Oracle
 import xlsxwriter
-import json
+
 
 from django.http.request import QueryDict
-from django.http import FileResponse, JsonResponse,HttpResponse,HttpResponseRedirect
+from django.http import FileResponse, JsonResponse,HttpResponse
 from django.shortcuts import redirect, render
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
-from django.contrib import auth
+from django.contrib import auth,messages
 from django.contrib.auth.decorators import login_required, permission_required
 
 
@@ -134,202 +134,167 @@ def getProgresoDiarioTipoVenta(tipo_venta):
 
     
 # Create your views here.
-@login_required(login_url='/accounts/login/')
+@login_required(login_url='/auth/login_user')
 def home(request):
     return render(request,'index.html')
 
-@login_required(login_url='/accounts/login/')
+@login_required(login_url='/auth/login_user')
 def planificacion(request):
     data = {
         'form': PlanificacionForm,
         'response': '',
     }
-    
     if request.method == 'POST':
         try:
-
             df = pd.read_excel(request.FILES['myfile'])
             df.fillna('-',inplace=True)
             
-            #     # exists = OrdenVenta.objects.filter(orden_venta=row[0]).exists()
-            #     # if exists:
-            #     #     data['response'] += row[0] +', '
-            
-            fecha_pl = datetime.strptime(request.POST['fecha_planificacion'], "%d/%m/%Y").date()
-            
-            pl_exists = Planificacion.objects.filter(fecha_planificacion=fecha_pl).exists()
-            if pl_exists:
-                data['existe'] = 'Ya hay una planificacion para esta fecha'
-                return render(request,'planificacion/planificacion.html',data)
-            
             for row in df.itertuples():
-                data_cli = {
-                    'nombre': row[5],
-                    'direccion': row[11],
-                    'correo_contacto': row[17]
-                }
+                response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+                    'ov': row[1],
+                    'linea' : row[2]
+                })
 
-                data_art = {
-                    'cod_articulo': row[7],
-                    'descripcion': row[8]
-                }
-                data_transporte = {
-                    'empresa': row[9],
-                }
-                tsp_exists = Transporte.objects.filter(empresa=row[9]).exists()
-                cli_exists = Cliente.objects.filter(nombre=row[5]).exists()  
-                
-                if not cli_exists:
-                    cli = ClienteForm(data=data_cli)
-                    if cli.is_valid():
-                        id_cli = cli.save()
-                        data_ov = {
-                            'orden_venta':row[1],
-                            'cliente':id_cli.pk,
-                            'tipo_pago':row[6],
-                            'canal_venta':row[19],
-                            'orden_compra':row[20],
-                            'tipo_venta':row[16],
-                            'tipo_despacho':row[18],
-                        }
-                    else:
-                        data = {
-                            'error': True,
-                            'detalles': 'Error al crear Cliente'
-                        }
-                        return render(request,'planificacion/planificacion.html',data)
+                if response.json()['resultado'] == 0:
+                    for value in response.json()['data']:
+                        existe = Planificacion.objects.filter(orden_venta_id=value['ov']).exists()
+                        if existe:
+                            data = {'error': True,
+                                    'form': PlanificacionForm,
+                                    'detalles': 'La orden de venta ya existe en la planificación'}
+                            return render(request,'planificacion/planificacion.html',data)
+                        
+            for row in df.itertuples():
+                response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+                    'ov': row[1],
+                    'linea' : row[2]
+                })
 
-                    
-                if cli_exists:
-                    cli = Cliente.objects.get(nombre=row[5])
-                    print(cli.pk)
-                    data_ov = {
-                        'orden_venta':row[1],
-                        'cliente':cli.pk,
-                        'tipo_pago':row[6],
-                        'canal_venta':row[19],
-                        'orden_compra':row[20],
-                        'tipo_venta':row[16],
-                        'tipo_despacho':row[18],
-                    }
-                    
-                ov = OrdenVentaForm(data=data_ov)
-                ov_exists = OrdenVenta.objects.filter(orden_venta=row[1]).exists()
-                if ov_exists:
-                    id_ov = OrdenVenta.objects.get(orden_venta=row[1])
-                elif ov.is_valid():
-                    id_ov = ov.save()
-                
-                else:
-                    data = {
-                            'error': True,
-                            'detalles': 'Error al crear Orden de venta' + str(ov.errors.values())
+                if response.json()['resultado'] == 0:
+                    for value in response.json()['data']:
+                        data_cliente = {
+                            'nombre': value['cliente'],
+                            'direccion': value['direccion'],
+                            'correo_contacto': value['correo_contacto']
                         }
-                    return render(request,'planificacion/planificacion.html',data)
-                
-                articulo = ArticuloForm(data=data_art)
-                art_exists = Articulo.objects.filter(cod_articulo=row[7]).exists()
-                if art_exists:
-                    id_art = Articulo.objects.get(cod_articulo=row[7])
-                elif articulo.is_valid():
-                    id_art = articulo.save()
-                else:
-                    data = {
-                        'error': True,
-                        'detalles': 'Error al crear Articulo' + str(articulo.errors.values())
-                    }
-                    
-                    return render(request,'planificacion/planificacion.html',data)
-                
-                if not tsp_exists:
-                    transporte = TransporteForm(data=data_transporte)
-                    if transporte.is_valid():
-                        id_tsp = transporte.save()
-                    else:
-                        data = {
-                            'error': True,
-                            'detalles': 'Error al crear Transporte'
+                        cliente_exists = Cliente.objects.filter(nombre=value['cliente']).exists()
+                        if cliente_exists:
+                            id_cli = Cliente.objects.get(nombre=value['cliente'])
+                        elif not cliente_exists:
+                            cliente = ClienteForm(data=data_cliente)
+                            if cliente.is_valid():
+                                id_cli = cliente.save()
+                                
+                        data_orden_venta = {
+                            'orden_venta': value['ov'],
+                            'cliente': id_cli.pk,
+                            'tipo_pago': value['tipo_pago'],
+                            'canal_venta': value['canal_venta'],
+                            'orden_compra': value['orden_compra'],
+                            'tipo_venta': value['tipo_venta'],
+                            'tipo_despacho': value['clausula'],
                         }
-                        return render(request,'planificacion/planificacion.html',data)
-                    data_despacho = {
-                        'direccion': row[11],
-                        'guia_despacho': row[15],
-                        'transporte': id_tsp.pk
-                    }
-                elif tsp_exists:
-                    tsp = Transporte.objects.get(empresa=row[9])
-                    data_despacho = {
-                        'direccion': row[11],
-                        'guia_despacho': row[15],
-                        'transporte': tsp.pk
-                    }
-                despacho = DespachoForm(data=data_despacho)
-                if despacho.is_valid():
-                    id_desp = despacho.save()
-                else:
-                    data = {
-                        'error': True,
-                        'detalles': 'Error al crear Despacho' + str(despacho.errors.values())
-                    }
-                    return render(request,'planificacion/planificacion.html',data)
-                data_linea = {
-                    'num_linea': row[2],
-                    'cantidad': row[12],
-                    'estado': row[14],
-                    'valor': row[13],
-                    'orden_venta': id_ov.pk,
-                    'articulo': id_art.pk,
-                    'despacho': id_desp.pk
-                }            
-            
-                linea = LineaForm(data=data_linea)
-                if linea.is_valid():
-                    linea.save()
-                else:
-                    data = {
-                        'error': True,
-                        'detalles': 'Error al crear linea'
-                    }
-                    return render(request,'planificacion/planificacion.html',data)
-                
-                data_temporal = {
-                        'num_linea':row[2],
-                        'orden_venta': id_ov.pk,
-                    }
-                    
-                temporal = TemporalLineaForm(data=data_temporal)
-                if temporal.is_valid():
-                    temporal.save()
-                
-                data_pl = {
-                    'llave_busqueda': row[3],
-                    'fecha_planificacion':request.POST['fecha_planificacion'],
-                    'orden_venta': id_ov.pk
-                }
-                    
-                pl = PlanificacionForm(data=data_pl)
-                if pl.is_valid():
-                    pl.save()
-                else:
-                    data = {
-                        'error': True,
-                        'detalles': 'Error al crear la planificación'
-                    }
-                    return render(request,'planificacion/planificacion.html',data)
-                data['guardado'] = True
-                    
-                # data['guardado'] = True
-                    
-        except ObjectDoesNotExist:
-            data = {
-                'error': True
-            }
-            
-            return render(request,'planificacion/planificacion.html',data)
-                    
- 
+                        print(data_orden_venta)
+                        ov_exists = OrdenVenta.objects.filter(orden_venta=value['ov']).exists()
+                        if ov_exists:
+                            print('existe')
+                            id_ov = OrdenVenta.objects.get(orden_venta=value['ov'])
+                        elif not ov_exists:
+                            ov = OrdenVentaForm(data=data_orden_venta)
+                            if ov.is_valid():
+                                id_ov = ov.save()
+                            
+                        data_articulo = {
+                            'cod_articulo': value['n_articulo'],
+                            'descripcion': value['descripcion']
+                        }
+                        articulo_exists = Articulo.objects.filter(cod_articulo= value['n_articulo']).exists()
+                        if articulo_exists:
+                            id_art = Articulo.objects.get(cod_articulo= value['n_articulo'])
+                        elif not articulo_exists:
+                            articulo = ArticuloForm(data=data_articulo)
+                            id_art = articulo.save()
+                        else:
+                            data = {
+                                'error': True,
+                                'detalles': 'Error al crear Articulo' + str(articulo.errors.values())
+                            }                    
+                            return render(request,'planificacion/planificacion.html',data)
+                        
+                        data_transporte = {
+                            'ot': value['ot'],
+                            'empresa': value['transporte']
+                        }
+                        transporte = TransporteForm(data=data_transporte)
+                        if transporte.is_valid():
+                            id_tsp = transporte.save()
+                        else:
+                            data = {
+                                'error': True,
+                                'detalles': 'Error al crear Transporte' + str(transporte.errors.values())
+                            }                    
+                            return render(request,'planificacion/planificacion.html',data)
+                        data_despacho = {
+                            'direccion': value['direccion'],
+                            'guia_despacho': value['guia'],
+                            'transporte': id_tsp.pk
+                        }
+                        despacho = DespachoForm(data=data_despacho)
+                        if despacho.is_valid():
+                            id_despacho = despacho.save()
+                        else:
+                            data = {
+                                'error': True,
+                                'detalles': 'Error al crear Despacho' + str(despacho.errors.values())
+                            }                    
+                            return render(request,'planificacion/planificacion.html',data)
+                        
+                        data_linea = {
+                            'num_linea': value['linea'],
+                            'cantidad': value['cantidad'],
+                            'estado': value['solicitud_material'],
+                            'valor': 250*int(value['cantidad']),
+                            'orden_venta': id_ov.pk,
+                            'articulo': id_art.pk,
+                            'despacho': id_despacho.pk
+                        }                        
+                        print(data_linea)
+                        linea = LineaForm(data=data_linea)
+                        if linea.is_valid():
+                            linea.save()
+                        else:
+                            data = {
+                                'error': True,
+                                'detalles': 'Error al crear Línea' + str(linea.errors.values())
+                            }                    
+                            return render(request,'planificacion/planificacion.html',data)
+
+                        data_planificacion = {
+                            'llave_busqueda': value['key'],
+                            'fecha_planificacion': request.POST['fecha_planificacion'],
+                            'orden_venta': id_ov.pk
+                        }
+                        pl = PlanificacionForm(data=data_planificacion)
+                        if pl.is_valid():
+                            pl.save()
+                        else:
+                            data = {
+                                'error': True,
+                                'detalles': 'Error al crear Planificación' + str(pl.errors.values())
+                            }                    
+                            return render(request,'planificacion/planificacion.html',data)
+                        data['guardado'] = True
+                        
+        except Exception as e:
+            if hasattr(e, 'message'):
+                print(e.message)
+                data = {'error': True, 'detalles': e.message}
+                return render(request,'planificacion/planificacion.html',data)
+            else:
+                print(e)
     return render(request,'planificacion/planificacion.html',data)
 
+@login_required(login_url='/auth/login_user')
 def tracking(request):
     if('id_ov' in request.GET):
         try:
@@ -343,6 +308,16 @@ def tracking(request):
                 # list_tipo_venta.append(str(l.tipo_venta))
             
             despacho = Despacho.objects.get(id_despacho=desp)
+            
+            despacho_existe = Despacho.objects.filter(id_despacho=desp)
+            if despacho_existe.exists():
+                transporte = Transporte.objects.filter(id_transporte=despacho_existe.values_list('transporte_id',flat=True).first())
+                if transporte.exists():
+                    ot = transporte.values_list('ot',flat=True).first()
+                    if ot == '':
+                        ot = '-'
+                else:
+                    ot = '-'
         
             cita_valida = DetalleRetiro.objects.filter(orden_venta=request.GET['id_ov'])
             if cita_valida.exists():
@@ -360,7 +335,8 @@ def tracking(request):
                 'despacho': despacho,
                 'lineas': lineas,
                 'tipo_despacho': ov.tipo_despacho,
-                'cita': cita_pl
+                'cita': cita_pl,
+                'ot': ot
             }
             
 
@@ -377,7 +353,7 @@ def tracking(request):
         return render(request,'tracking/tracking.html')
 
 
-
+@login_required(login_url='/auth/login_user')
 def indicadores(request):
     lineas = Linea.objects.all()
     
@@ -391,16 +367,7 @@ def indicadores(request):
             despach = getLineaTipoDespacho(val)
             progreso = getProgresoDiarioTipoDespacho(val)
             despachos.append(despach)
-            progreso_despachos.append(progreso)
-        # datos_despacho_directo = getLineaTipoDespacho('DESPACHO DIRECTO')
-        # # Traspaso entre sucursales
-        # datos_despacho_traspaso = getLineaTipoDespacho('TRASPASO ENTRE SUCURSALES')
-        # # Embalaje
-        # datos_despacho_embalaje = getLineaTipoDespacho('EMBALAJE')
-        # # Exportaciones
-        # datos_despacho_exportaciones = getLineaTipoDespacho('EXPORTACIONES')
-        # # Retira cliente
-        # datos_despacho_retira = getLineaTipoDespacho('RETIRA CLIENTE')        
+            progreso_despachos.append(progreso)     
         
         # Lineas a despachar segun tipo de venta
         # 1STOCK_R
@@ -455,19 +422,6 @@ def indicadores(request):
 
         # Progreso diario de despachos - Total
         progreso_total = getTotalProgresoDiario()
-        # Progreso diario de despachos - Tipo de despacho
-        # DESPACHO DIRECTO
-        # Lineas a despachar segun tipo de despacho
-        # Despacho directo
-        # progreso_despacho_directo = getProgresoDiarioTipoDespacho('DESPACHO DIRECTO')
-        # # TRASPASO ENTRE SUCURSALES
-        # progreso_despacho_traspaso = getProgresoDiarioTipoDespacho('TRASPASO ENTRE SUCURSALES')
-        # # EMBALAJE
-        # progreso_despacho_embalaje = getProgresoDiarioTipoDespacho('EMBALAJE')
-        # # EXPORTACIONES
-        # progreso_despacho_exportaciones = getProgresoDiarioTipoDespacho('EXPORTACIONES')
-        # # RETIRA CLIENTE
-        # progreso_despacho_retira = getProgresoDiarioTipoDespacho('RETIRA CLIENTE')
         
         # Progreso diario de despachos - Tipo de venta
         # 1STOCK_R
@@ -507,12 +461,7 @@ def indicadores(request):
 
             # Progreso diario - Tipo de despacho
             'datos_progreso': progreso_despachos,
-            # 'progreso_despacho_directo' : progreso_despacho_directo,
-            # 'progreso_despacho_traspaso' : progreso_despacho_traspaso,
-            # 'progreso_despacho_embalaje' : progreso_despacho_embalaje,
-            # 'progreso_despacho_exportaciones' : progreso_despacho_exportaciones,
-            # 'progreso_despacho_retira' : progreso_despacho_retira,
-            
+
             # Progreso diario - Tipo de venta
             'progreso_total' : progreso_total,
             'progreso_stock_r' : progreso_stock_r,
@@ -527,7 +476,7 @@ def indicadores(request):
     
     return render(request,'indicadores/indicadores.html')
 
-
+@login_required(login_url='/auth/login_user')
 def reporteGrafico(request):
     if request.is_ajax and request.method == 'GET':
         tipo = request.GET.get('tipo',None)
@@ -695,6 +644,7 @@ def reporteGrafico(request):
             
     return JsonResponse({}, status = 400)
 
+@login_required(login_url='/auth/login_user')
 def agendarRetiro(request):
     if request.method == 'POST':
         list_ov = []
@@ -748,6 +698,7 @@ def agendarRetiro(request):
             # file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
 
             for item in data:  
+                print(data)
                 data_det = {
                     'orden_venta' : item[0],
                     'linea' : item[1],
@@ -759,19 +710,20 @@ def agendarRetiro(request):
                 det_retiro = DetalleRetiroForm(data=data_det)
                 if det_retiro.is_valid():
                     det_retiro.save()
+                    
                     data_plan = {
                         'llave_busqueda': item[0]+item[1],
                         'fecha_planificacion':request.POST['fecha-retiro'],
                         'orden_venta': item[0]
                     }
-                        
+
                     pl = PlanificacionForm(data=data_plan)
                     if pl.is_valid():
                         pl.save()
                     else:
                         data = {
                             'error': True,
-                            'detalles': 'Error al crear la planificación'
+                            'detalles': 'Error al crear la planificación'+ str(pl.errors.as_data())
                         }
                         return render(request,'agenda-retiro/agendar.html',data)
                 else:
@@ -796,7 +748,7 @@ def agendarRetiro(request):
             return render(request,'agenda-retiro/agendar.html',data)   
     return render(request,'agenda-retiro/agendar.html')   
 
-
+@login_required(login_url='/auth/login_user')
 def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     pdf = PDF()
     pdf.add_page()
@@ -827,6 +779,7 @@ def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     pdf.output("pdf/CITA"+id_retiro+".pdf",'F')
     return FileResponse(open("pdf/CITA"+id_retiro+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
+@login_required(login_url='/auth/login_user')
 def validarOrdenVentaRetiro(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
@@ -860,7 +813,7 @@ def validarOrdenVentaRetiro(request):
                 else:
                     return JsonResponse({'valid':False}, status=400)
 
-
+@login_required(login_url='/auth/login_user')
 def visualizarRetiros(request):
     if request.method == 'GET':
         data = {'res' : ''}
@@ -901,6 +854,7 @@ def visualizarRetiros(request):
             return render(request,'agenda-retiro/buscar-retiro.html') 
     return render(request,'agenda-retiro/buscar-retiro.html') 
 
+@login_required(login_url='/auth/login_user')
 def buscarRetiroPDF(request):
     # if request.is_ajax and request.method == 'POST':
     if request.GET.get('retiro',None):
@@ -937,6 +891,7 @@ def buscarRetiroPDF(request):
     # else:
     #     return JsonResponse({'valid':False},status=400)
     
+@login_required(login_url='/auth/login_user')    
 def generarReporteRetiros(request):
 
     # if request.is_ajax and request.method == 'POST':
@@ -987,6 +942,7 @@ def generarReporteRetiros(request):
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
     return response
 
+@login_required(login_url='/auth/login_user')
 def anularRetiro(request):
     if request.is_ajax and request.method == 'PUT':
         put = QueryDict(request.body)
@@ -1000,32 +956,33 @@ def anularRetiro(request):
         else:
             return JsonResponse({'valid': False})
         
-        
-# def login_user(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username', '')
-#         password = request.POST.get('password', '')
-#         print(username)
-#         user = auth.authenticate(username=username, password=password)
+      
+def login_user(request):
+    print('TEST')
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = auth.authenticate(username=username, password=password)
 
-#         if user is not None and user.is_active:
-#             auth.login(request, user)
-#             return HttpResponseRedirect('/')
-#         else:
-#             return HttpResponse("Invalid login. Please try again.")
-#     return render(request, "registration/login.html")
+        if user is not None and user.is_active:
+            auth.login(request, user)
+            return redirect('planificacion')
+        else:
+            messages.error(request,'Nombre de usuario y/o contraseña incorrectos')
+            return redirect('login')
+            # return HttpResponse("Invalid login. Please try again.")
+    return render(request, 'auth/login_user.html')
 
 def registro(request):
     data = {
         'form': CustomUserCreationForm()
     }
-    print(data)
     if request.method == 'POST':
         formulario = CustomUserCreationForm(data=request.POST)
 
         if formulario.is_valid():
             formulario.save()
 
-            return redirect(to='/accounts/login?register=true')
+            return redirect(to='/auth/login_user?register=true')
         data['form'] = formulario
-    return render(request,'registration/registro.html',data) 
+    return render(request,'auth/registro.html',data) 

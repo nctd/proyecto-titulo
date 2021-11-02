@@ -42,8 +42,8 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown"
                             aria-label="Open user menu">
-                            <span class="avatar avatar-sm"
-                                style="background-image: url(../static/img/logo2.svg)"></span>
+                            <span
+                                class="avatar avatar-sm avatar-rounded">{{user.first_name|make_list|first}}{{user.last_name|make_list|first}}</span>
                             <div class="d-none d-xl-block ps-2">
                                 <div>{{user.first_name}} {{user.last_name}}</div>
                                 <div class="mt-1 small text-muted">Tipo usuario</div>

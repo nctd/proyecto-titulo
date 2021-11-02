@@ -249,7 +249,7 @@
                         d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
                 </svg>
                 <h3>Alerta</h3>
-                <div class="text-muted">Error al guardar la planificación</div>
+                <div class="text-muted" id="content-error-planificacion">Error al guardar la planificación</div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
@@ -495,8 +495,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#modal-error-planificacion").modal('show');
-        var a = "{{detalles}}";
-        alert(a)
+        $('#content-error-planificacion').text('{{detalles}}')
     });
 </script>
 {% endif %}

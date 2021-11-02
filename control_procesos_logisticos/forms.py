@@ -31,6 +31,7 @@ class PlanificacionForm(forms.ModelForm):
                     'type': 'text',
                     'id':'datepicker-icon-prepend',
                     'placeholder': 'Fecha',
+                    'autocomplete': 'off' 
                 },)
         }
         
@@ -87,7 +88,8 @@ class CustomUserCreationForm(UserCreationForm):
     password2 = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'type':'password','id':'password2'}),
     )
-
+    first_name = forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class': 'form-control','type': 'text','id':'first_name'}))
+    last_name = forms.CharField(max_length=50,widget=forms.TextInput(attrs={'class': 'form-control','type': 'text','id':'last_name'})) 
 
 
     class Meta:
@@ -101,7 +103,7 @@ class CustomUserCreationForm(UserCreationForm):
                 forms.TextInput(attrs={
                     'class': 'form-control',
                     'type': 'text',
-                    'id':'username','error_messages' : {'required': 'error message here'}
+                    'id':'username'
                 },),
             'email':
                 forms.TextInput(attrs={
@@ -109,19 +111,5 @@ class CustomUserCreationForm(UserCreationForm):
                     'type': 'email',
                     'id':'email',
                 },),
-            'first_name':
-                forms.TextInput(attrs={
-                    'class': 'form-control',
-                    'type': 'text',
-                    'id':'first_name',
-                },),
-            'last_name':
-                forms.TextInput(attrs={
-                    'class': 'form-control',
-                    'type': 'text',
-                    'id':'last_name',
-                },),
-
-            
-                
+                            
         }
