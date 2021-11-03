@@ -59,6 +59,7 @@ def crearPlanificacion(ov,linea):
                 'descripcion': value['descripcion']
             }
             articulo_exists = Articulo.objects.filter(cod_articulo= value['n_articulo']).exists()
+            articulo = ''
             if articulo_exists:
                 id_art = Articulo.objects.get(cod_articulo= value['n_articulo'])
             elif not articulo_exists:
@@ -118,5 +119,9 @@ def crearPlanificacion(ov,linea):
                     'detalles': 'Error al crear Línea' + str(linea.errors.values())
                 }                    
                 return data
-            return id_ov.pk
+            data = {
+                'error': False,
+                'id_ov':id_ov.pk
+            }
+            return data
 

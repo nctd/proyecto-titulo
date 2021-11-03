@@ -257,7 +257,7 @@ def planificacion(request):
                             'articulo': id_art.pk,
                             'despacho': id_despacho.pk
                         }                        
-                        print(data_linea)
+
                         linea = LineaForm(data=data_linea)
                         if linea.is_valid():
                             linea.save()
@@ -307,6 +307,9 @@ def tracking(request):
                 # list_tipo_venta.append(str(l.tipo_venta))
             
             despacho = Despacho.objects.get(id_despacho=desp)
+            guia_despacho = Despacho.objects.filter(id_despacho=despacho.id_despacho).values_list('guia_despacho',flat=True).first()
+            if guia_despacho == '':
+                guia_despacho = '-'
             
             despacho_existe = Despacho.objects.filter(id_despacho=desp)
             if despacho_existe.exists():
@@ -332,6 +335,7 @@ def tracking(request):
                 'tipo_despacho': ov.tipo_despacho,
                 'canal_venta': ov.canal_venta,
                 'despacho': despacho,
+                'guia_despacho': guia_despacho,
                 'lineas': lineas,
                 'tipo_despacho': ov.tipo_despacho,
                 'cita': cita_pl,
@@ -354,124 +358,132 @@ def tracking(request):
 
 @login_required(login_url='/auth/login_user')
 def indicadores(request):
-    lineas = Linea.objects.all()
-    
-    if lineas.count() > 0:
-        tipos_despacho = OrdenVenta.objects.all().values_list('tipo_despacho',flat=True).distinct()
-        # Lineas a despachar segun tipo de despacho
-        # Despacho directo
-        despachos = []
-        progreso_despachos = []
-        for val in tipos_despacho:
-            despach = getLineaTipoDespacho(val)
-            progreso = getProgresoDiarioTipoDespacho(val)
-            despachos.append(despach)
-            progreso_despachos.append(progreso)     
+    try:
+        lineas = Linea.objects.all()
         
-        # Lineas a despachar segun tipo de venta
-        # 1STOCK_R
-        datos_stock_r = getLineaTipoVenta('1STOCK_R')
-        # 1STOCK
-        datos_stock =  getLineaTipoVenta('1STOCK')
-        # 2CALZADO
-        datos_calzado =  getLineaTipoVenta('2CALZADO')       
-        # 2LIQUIDA
-        datos_liquida =  getLineaTipoVenta('2LIQUIDA')
-        # 2PROYECT
-        datos_proyect = getLineaTipoVenta('2PROYECT')
-        # OS
-        datos_os = getLineaTipoVenta('OS')
+        if lineas.count() > 0:
+            tipos_despacho = OrdenVenta.objects.all().values_list('tipo_despacho',flat=True).distinct()
+            # Lineas a despachar segun tipo de despacho
+            # Despacho directo
+            despachos = []
+            progreso_despachos = []
+            for val in tipos_despacho:
+                despach = getLineaTipoDespacho(val)
+                progreso = getProgresoDiarioTipoDespacho(val)
+                despachos.append(despach)
+                progreso_despachos.append(progreso)     
+            
+            # Lineas a despachar segun tipo de venta
+            # 1STOCK_R
+            datos_stock_r = getLineaTipoVenta('1STOCK_R')
+            # 1STOCK
+            datos_stock =  getLineaTipoVenta('1STOCK')
+            # 2CALZADO
+            datos_calzado =  getLineaTipoVenta('2CALZADO')       
+            # 2LIQUIDA
+            datos_liquida =  getLineaTipoVenta('2LIQUIDA')
+            # 2PROYECT
+            datos_proyect = getLineaTipoVenta('2PROYECT')
+            # OS
+            datos_os = getLineaTipoVenta('OS')
 
 
-        # Estado de carga por tarea
-        datos_no_liberada = getEstadoCargaTarea('NO LIBERADA')
-        datos_picking = getEstadoCargaTarea('EN PICKING')
-        datos_embalaje = getEstadoCargaTarea('ENVIADA')
-        datos_reparto = getEstadoCargaTarea('REPARTO')
-        
-        data_no_liberada = Linea.objects.filter(estado='NO LIBERADA')
-        data_picking = Linea.objects.filter(estado='EN PICKING')
-        data_embalaje = Linea.objects.filter(estado='ENVIADA')
-        data_reparto = Linea.objects.filter(estado='REPARTO')
-        
-        list_no_liberada = []
-        list_picking = []
-        list_embalaje = []
-        list_reparto = []
-        count = 1 
-        
-        for linea in data_no_liberada:
-            list_no_liberada.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
-            count +=1
-        count = 1
-        
-        for linea in data_picking:
-            list_picking.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
-            count +=1
-        count = 1
-        
-        for linea in data_embalaje:
-            list_embalaje.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
-            count +=1
-        count = 1
-        
-        for linea in data_reparto:
-            list_reparto.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
-            count +=1
-
-        # Progreso diario de despachos - Total
-        progreso_total = getTotalProgresoDiario()
-        
-        # Progreso diario de despachos - Tipo de venta
-        # 1STOCK_R
-        progreso_stock_r = getProgresoDiarioTipoVenta('1STOCK_R')
-        # 1STOCK
-        progreso_stock =  getProgresoDiarioTipoVenta('1STOCK')
-        # 2CALZADO
-        progreso_calzado =  getProgresoDiarioTipoVenta('2CALZADO')       
-        # 2LIQUIDA
-        progreso_liquida =  getProgresoDiarioTipoVenta('2LIQUIDA')
-        # 2PROYECT
-        progreso_proyect = getProgresoDiarioTipoVenta('2PROYECT')
-        # OS
-        progreso_os = getProgresoDiarioTipoVenta('OS')
-        
-        data = {
             # Estado de carga por tarea
-            'datos_no_liberada' : datos_no_liberada,
-            'datos_picking' : datos_picking,
-            'datos_embalaje' : datos_embalaje,
-            'datos_reparto' : datos_reparto,
-            'list_no_liberada':list_no_liberada,
-            'list_picking':list_picking,
-            'list_embalaje':list_embalaje,
-            'list_reparto':list_reparto,
+            datos_no_liberada = getEstadoCargaTarea('NO LIBERADA')
+            datos_picking = getEstadoCargaTarea('EN PICKING')
+            datos_embalaje = getEstadoCargaTarea('ENVIADA')
+            datos_reparto = getEstadoCargaTarea('REPARTO')
             
-            # Tipo de despacho
-            'datos_despacho': despachos,
+            data_no_liberada = Linea.objects.filter(estado='NO LIBERADA')
+            data_picking = Linea.objects.filter(estado='EN PICKING')
+            data_embalaje = Linea.objects.filter(estado='ENVIADA')
+            data_reparto = Linea.objects.filter(estado='REPARTO')
             
-            # Tipo de venta
-            'datos_stock' : datos_stock,
-            'datos_stock_r' : datos_stock_r,
-            'datos_calzado' : datos_calzado,
-            'datos_liquida' : datos_liquida,
-            'datos_proyect' : datos_proyect,
-            'datos_os' : datos_os,
+            list_no_liberada = []
+            list_picking = []
+            list_embalaje = []
+            list_reparto = []
+            count = 1 
+            
+            for linea in data_no_liberada:
+                list_no_liberada.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+                count +=1
+            count = 1
+            
+            for linea in data_picking:
+                list_picking.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+                count +=1
+            count = 1
+            
+            for linea in data_embalaje:
+                list_embalaje.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+                count +=1
+            count = 1
+            
+            for linea in data_reparto:
+                list_reparto.append(str(count)+') '+ str(linea.orden_venta) + ' - Linea '+ str(linea.num_linea) + ' - ' + linea.articulo.descripcion + ' - ' + str(linea.cantidad))
+                count +=1
 
-            # Progreso diario - Tipo de despacho
-            'datos_progreso': progreso_despachos,
+            # Progreso diario de despachos - Total
+            progreso_total = getTotalProgresoDiario()
+            
+            # Progreso diario de despachos - Tipo de venta
+            # 1STOCK_R
+            progreso_stock_r = getProgresoDiarioTipoVenta('1STOCK_R')
+            # 1STOCK
+            progreso_stock =  getProgresoDiarioTipoVenta('1STOCK')
+            # 2CALZADO
+            progreso_calzado =  getProgresoDiarioTipoVenta('2CALZADO')       
+            # 2LIQUIDA
+            progreso_liquida =  getProgresoDiarioTipoVenta('2LIQUIDA')
+            # 2PROYECT
+            progreso_proyect = getProgresoDiarioTipoVenta('2PROYECT')
+            # OS
+            progreso_os = getProgresoDiarioTipoVenta('OS')
+            
+            data = {
+                # Estado de carga por tarea
+                'datos_no_liberada' : datos_no_liberada,
+                'datos_picking' : datos_picking,
+                'datos_embalaje' : datos_embalaje,
+                'datos_reparto' : datos_reparto,
+                'list_no_liberada':list_no_liberada,
+                'list_picking':list_picking,
+                'list_embalaje':list_embalaje,
+                'list_reparto':list_reparto,
+                
+                # Tipo de despacho
+                'datos_despacho': despachos,
+                
+                # Tipo de venta
+                'datos_stock' : datos_stock,
+                'datos_stock_r' : datos_stock_r,
+                'datos_calzado' : datos_calzado,
+                'datos_liquida' : datos_liquida,
+                'datos_proyect' : datos_proyect,
+                'datos_os' : datos_os,
 
-            # Progreso diario - Tipo de venta
-            'progreso_total' : progreso_total,
-            'progreso_stock_r' : progreso_stock_r,
-            'progreso_stock' : progreso_stock,
-            'progreso_calzado' : progreso_calzado,
-            'progreso_liquida' : progreso_liquida,
-            'progreso_proyect' : progreso_proyect,
-            'progreso_os' : progreso_os,
-        }
+                # Progreso diario - Tipo de despacho
+                'datos_progreso': progreso_despachos,
 
-        return render(request,'indicadores/indicadores.html',data)
+                # Progreso diario - Tipo de venta
+                'progreso_total' : progreso_total,
+                'progreso_stock_r' : progreso_stock_r,
+                'progreso_stock' : progreso_stock,
+                'progreso_calzado' : progreso_calzado,
+                'progreso_liquida' : progreso_liquida,
+                'progreso_proyect' : progreso_proyect,
+                'progreso_os' : progreso_os,
+            }
+ 
+            return render(request,'indicadores/indicadores.html',data)
+    except Exception as e:
+        if hasattr(e, 'message'):
+            print(e.message)
+            data = {'error': True, 'detalles': e.message}
+            return render(request,'planificacion/planificacion.html',data)
+        else:
+            print(e)        
     
     return render(request,'indicadores/indicadores.html')
 
@@ -590,7 +602,7 @@ def reporteGrafico(request):
                 list_fecha_tipo_venta = [0]
             return JsonResponse({
                 'valid':False,
-                'lista_fechas': 'No hay fechas',
+                'lista_fechas': 'No hay fechas para crear el gráfico',
                 },
                 status = 200)
             
@@ -684,6 +696,7 @@ def agendarRetiro(request):
         if valido.exists():
             for value in valido:
                 existe = DetalleRetiro.objects.filter(retiro=value.id_retiro,activo=0,orden_venta=ov.split('-')[0],linea=ov.split('-')[1])
+                print(existe)
                 if existe.exists():
                     data = {
                         'error': True,
@@ -697,7 +710,7 @@ def agendarRetiro(request):
             # file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
 
             for item in data:  
-
+                print(item)
                 data_det = {
                     'orden_venta' : item[0],
                     'linea' : item[1],
@@ -711,23 +724,27 @@ def agendarRetiro(request):
                     det_retiro.save()
                     
                     orden_venta = crearPlanificacion(item[0],item[1])
-
-                    data_plan = {
-                        'llave_busqueda': item[0]+item[1],
-                        'fecha_planificacion': datetime.strptime(request.POST['fecha-retiro'], "%d/%m/%Y").date(),
-                        # 'orden_venta': item[0]
-                        'orden_venta': orden_venta
-                    }
-                    # print(data_plan)
-                    pl = PlanificacionForm(data=data_plan)
-                    if pl.is_valid():
-                        pl.save()
+                    print(orden_venta)
+                    if orden_venta['error']:
+                        print('ERRORORORRO')
+                        return render(request,'agenda-retiro/agendar.html',orden_venta)
                     else:
-                        data = {
-                            'error': True,
-                            'detalles': 'Error al crear la planificació1n'+ str(pl.errors.as_data())
+                        data_plan = {
+                            'llave_busqueda': item[0]+item[1],
+                            'fecha_planificacion': datetime.strptime(request.POST['fecha-retiro'], "%d/%m/%Y").date(),
+                            # 'orden_venta': item[0]
+                            'orden_venta': orden_venta['id_ov']
                         }
-                        return render(request,'agenda-retiro/agendar.html',data)
+                        # print(data_plan)
+                        pl = PlanificacionForm(data=data_plan)
+                        if pl.is_valid():
+                            pl.save()
+                        else:
+                            data = {
+                                'error': True,
+                                'detalles': 'Error al crear la planificación'+ str(pl.errors.as_data())
+                            }
+                            return render(request,'agenda-retiro/agendar.html',data)
                 else:
                     data = {
                         'error': True, 
