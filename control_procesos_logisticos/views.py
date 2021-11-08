@@ -1011,3 +1011,17 @@ def packingList(request):
         'form_detalle': DetallePackingListForm(),
     }
     return render(request,'packing-list/packing-list.html',data)
+
+
+def validarOrdenVentaPL(request):
+    if request.is_ajax and request.method == 'GET':
+        orden_venta = request.GET.get('orden_venta',None)
+        
+        response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+            'ov': orden_venta,
+            'linea': 0
+        })
+        if response.json()['resultado'] == 0:
+            for value in response.json()['data']:
+                print(value)
+        
