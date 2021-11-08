@@ -10,3 +10,12 @@
 .tooltip-text {
   line-height: 10px;
 }
+
+.form-control {
+  background-color: #fff !important;
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: #f1f5f9 !important;
+}

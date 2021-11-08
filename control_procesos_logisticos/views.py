@@ -14,8 +14,8 @@ from django.contrib import auth,messages
 from django.contrib.auth.decorators import login_required, permission_required
 
 
-from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, DetalleRetiroForm,\
-                                              LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TemporalLineaForm, TransporteForm
+from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, DetallePackingListForm, DetalleRetiroForm,\
+                                              LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TransporteForm
 
 from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte,TemporalLinea
 from datetime import date,datetime,timedelta
@@ -977,7 +977,6 @@ def anularRetiro(request):
         
       
 def login_user(request):
-    print('TEST')
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -1005,3 +1004,10 @@ def registro(request):
             return redirect(to='/auth/login_user?register=true')
         data['form'] = formulario
     return render(request,'auth/registro.html',data) 
+
+
+def packingList(request):
+    data = {
+        'form_detalle': DetallePackingListForm(),
+    }
+    return render(request,'packing-list/packing-list.html',data)

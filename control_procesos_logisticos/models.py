@@ -112,7 +112,10 @@ class TemporalLinea(models.Model):
 
 class Bulto(models.Model):
     id_bulto = models.AutoField(primary_key=True)
-    linea = models.ForeignKey(Linea,on_delete=PROTECT)
+    linea = models.CharField(max_length=10,blank=False,null=False)
+    orden_venta = models.CharField(max_length=40,blank=False,null=False)
+    # linea = models.ForeignKey(Linea,on_delete=PROTECT)
+    # orden_venta = models.ForeignKey(OrdenVenta,on_delete=PROTECT)
     activo   = models.BooleanField(default=False)
     
     class Meta:
@@ -121,6 +124,7 @@ class Bulto(models.Model):
 
 class DetalleBulto(models.Model):
     id_detalle_bulto    = models.AutoField(primary_key=True)
+    tipo_bulto = models.CharField(max_length=10,blank=False,null=False)
     cantidad   = models.IntegerField()
     largo      = models.IntegerField()
     ancho      = models.DecimalField(max_digits=10, decimal_places=5)

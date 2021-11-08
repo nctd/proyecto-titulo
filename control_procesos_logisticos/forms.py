@@ -4,17 +4,10 @@ from django.db.models import fields
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Articulo, Cliente, Despacho, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
+from .models import Articulo, Bulto, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
 
 class OrdenVentaForm(forms.ModelForm):
     
-    # def validate_ov(self):
-    #     ov = self.cleaned_data['orden_venta']
-    #     exists = OrdenVenta.objects.filter(rut__iexact=ov).exists()
-        
-    #     if exists:
-    #         print('Esta orden de venta ya tiene una planificación registrada')
-    #     return ov    
     class Meta:
         model = OrdenVenta
         fields = '__all__'
@@ -113,3 +106,49 @@ class CustomUserCreationForm(UserCreationForm):
                 },),
                             
         }
+
+        
+class DetallePackingListForm(forms.ModelForm):
+    class Meta:
+        model = DetalleBulto
+        fields = ['tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto']
+        widgets = {
+            'tipo_bulto':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'tipo_bulto'
+                },),
+            'largo':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_largo',
+                },),
+            'ancho':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_ancho',
+                },),
+            'volumen':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_volumen',
+                },),
+            'peso_bruto':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_peso_bruto',
+                },),
+            'peso_neto':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_peso_neto',
+                },),
+                            
+        }
+        

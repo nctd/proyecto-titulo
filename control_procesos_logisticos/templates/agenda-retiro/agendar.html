@@ -140,6 +140,9 @@
                                                     style="width: 200px;">
                                                     LÍNEA
                                                 </th>
+                                                <th class=" gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
+                                                    style="width: 100px;">
+                                                </th>
                                             </tr>
                                         </thead>
                                         <tbody class=" gridjs-tbody" style="text-align: center;">
@@ -303,8 +306,21 @@
 </script>
 <script>
     var list_ov = []
-    $("#btn-agregar-ov").on('click', function (e) {
 
+    function eliminarFila(ov, linea) {
+        if (list_ov.includes(ov + linea)) {
+            alert('eixste')
+            var index = list_ov.indexOf(ov + linea);
+            if (index !== -1) {
+                list_ov.splice(index, 1);
+            }
+        }
+        var td = event.target.parentNode;
+        var tr = td.parentNode;
+        tr.parentNode.removeChild(tr);
+    }
+
+    $("#btn-agregar-ov").on('click', function (e) {
         var ov = 'OV' + document.getElementById('ov_input').value
         var linea = document.getElementById('linea_input').value
         var cliente = document.getElementById('cliente_input').value
@@ -339,12 +355,27 @@
                     if (list_ov.includes(ov + linea)) {
                         $('#content-error-validar').text('La orden de venta/línea ingresada ya existe en la tabla')
                         $("#modal-error-validar").modal('show');
-
-                        // alert('EXISTE')
                     } else if (response['valid']) {
                         if (ov !== '' && linea !== '') {
                             list_ov.push(ov + linea)
-                            $("#tabla-ov").append(`<tr class="gridjs-tr"><td class="gridjs-td"><input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td><td class="gridjs-td">${linea}</td></tr>`);
+                            $("#tabla-ov").append(`<tr class="gridjs-tr">
+                                <td class="gridjs-td">
+                                <input type="hidden" name="${ov}-${linea}" value="${ov}-${linea}" id='${ov}-${linea}'>${ov}</td>
+                                <td class="gridjs-td">${linea}</td>
+                                <td class="gridjs-td">
+                                    <a class="btn btn-danger" onclick="eliminarFila('${ov}','${linea}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                    <line x1="4" y1="7" x2="20" y2="7"></line>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                    <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                    <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                    </svg>
+                                    Borrar
+                                    </a>
+                                </td>
+                                </tr>`);
                             document.getElementById("cliente_input").value = response['cliente']
                             $('#ov_input').removeClass("is-invalid");
                             $('#linea_input').removeClass("is-invalid");
