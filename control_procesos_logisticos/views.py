@@ -1005,18 +1005,18 @@ def registro(request):
         data['form'] = formulario
     return render(request,'auth/registro.html',data) 
 
-
+@login_required(login_url='/auth/login_user')
 def packingList(request):
     data = {
         'form_detalle': DetallePackingListForm(),
     }
     return render(request,'packing-list/packing-list.html',data)
 
-
+@login_required(login_url='/auth/login_user')
 def validarOrdenVentaPL(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
-        
+        print(orden_venta)
         response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
             'ov': orden_venta,
             'linea': 0
@@ -1024,4 +1024,25 @@ def validarOrdenVentaPL(request):
         if response.json()['resultado'] == 0:
             for value in response.json()['data']:
                 print(value)
+            return JsonResponse({'valid':True}, status=200)
         
+        else:
+            return JsonResponse({'valid':False}, status=400)
+        
+@login_required(login_url='/auth/login_user')
+def lineaObtenerArticuloPL(request):
+    if request.is_ajax and request.method == 'GET':
+        orden_venta = request.GET.get('orden_venta',None)
+        linea = request.GET.get('linea',None)
+        response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+            'ov': orden_venta,
+            'linea': linea
+        })
+        if response.json()['resultado'] == 0:
+            for value in response.json()['data']:
+                codigo = value['n_articulo']
+                descripcion = value['descripcion']
+            return JsonResponse({'valid':True,'codigo':codigo,'descripcion':descripcion}, status=200)
+        
+        else:
+            return JsonResponse({'valid':False,'codigo':'N/A','descripcion':'N/A'}, status=400)

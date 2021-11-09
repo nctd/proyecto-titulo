@@ -1,5 +1,5 @@
 from os import name
-from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, home, packingList, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaPL,\
+from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, home, lineaObtenerArticuloPL, packingList, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaPL,\
     validarOrdenVentaRetiro, visualizarRetiros,generarReporteRetiros,registro
 from django.urls import path
 
@@ -19,5 +19,6 @@ urlpatterns = [
     path('put/agendar/anular-retiro',anularRetiro,name='anular_retiro'),
     path('packing-list/',packingList,name='packing_list'),
     path('get/packing-list/validar-ov-pl',validarOrdenVentaPL,name='validar_orden_pl'),
+    path('get/packing-list/obtener-articulo-pl',lineaObtenerArticuloPL,name='obtener_articulo_pl'),
     # path('/login',login_user,name='login'),
 ]
