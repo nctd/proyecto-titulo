@@ -1010,20 +1010,21 @@ def packingList(request):
     data = {
         'form_detalle': DetallePackingListForm(),
     }
+    
     return render(request,'packing-list/packing-list.html',data)
 
 @login_required(login_url='/auth/login_user')
 def validarOrdenVentaPL(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
-        print(orden_venta)
+        # print(orden_venta)
         response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
             'ov': orden_venta,
             'linea': 0
         })
         if response.json()['resultado'] == 0:
-            for value in response.json()['data']:
-                print(value)
+            # for value in response.json()['data']:
+            #     print(value)
             return JsonResponse({'valid':True}, status=200)
         
         else:
@@ -1046,3 +1047,21 @@ def lineaObtenerArticuloPL(request):
         
         else:
             return JsonResponse({'valid':False,'codigo':'N/A','descripcion':'N/A'}, status=400)
+        
+
+def finalizarBultoPL(request):
+    if request.is_ajax and request.method == 'POST':
+        # list_ov = []
+        # for value in request.POST:
+        #     print(value)
+        orden_venta = request.POST.get('orden_venta',None)
+        # lineas = request.POST.get('lineas',None)
+        # for value in data:
+        #     print(value)
+        # print(lineas)
+        
+            
+    return JsonResponse({'valid':True,'data':orden_venta}, status=200)
+            # if value.startswith('OV'):
+                # list_ov.append(value)
+                

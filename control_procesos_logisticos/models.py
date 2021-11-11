@@ -114,6 +114,8 @@ class Bulto(models.Model):
     id_bulto = models.AutoField(primary_key=True)
     linea = models.CharField(max_length=10,blank=False,null=False)
     orden_venta = models.CharField(max_length=40,blank=False,null=False)
+    codigo = models.CharField(max_length=60,blank=False,null=False)
+    articulo = models.CharField(max_length=120,blank=False,null=False)
     # linea = models.ForeignKey(Linea,on_delete=PROTECT)
     # orden_venta = models.ForeignKey(OrdenVenta,on_delete=PROTECT)
     activo   = models.BooleanField(default=False)

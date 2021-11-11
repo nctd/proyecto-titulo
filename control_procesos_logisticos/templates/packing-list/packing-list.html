@@ -23,7 +23,7 @@
                     <div class='card-header'>
                         <h3 class="card-title">Datos bulto</h3>
                     </div>
-                    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" enctype="multipart/form-data" id="form-pl">
                         {% csrf_token %}
                         <div class="card-body">
                             <div class="row">
@@ -188,7 +188,7 @@
 
                             <div class="row">
                                 <div class="col-xl-3 mb-3">
-                                    <button class="btn btn-primary w-100" type="button">
+                                    <button class="btn btn-primary w-100" type="button" id="btn-finalizar-bulto">
                                         <svg xmlns="http://www.w3.org/2000/svg"
                                             class="icon icon-tabler icon-tabler-list-check" width="24" height="24"
                                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -318,7 +318,11 @@
 <script>
     const e = document.getElementById('nav-item-packing')
     e.classList.add('active')
-
+    $(function () {
+        jQuery("input, button")
+            .not("#bulto_ov").attr("disabled", "disabled")
+        document.getElementById('btn-agregar-ov').disabled = false;
+    })
 </script>
 
 <script>
@@ -336,9 +340,13 @@
                     alert('ANTES DE ENVIAR')
                 },
                 success: function (response) {
+                    jQuery("input, button").removeAttr("disabled", "disabled")
                     document.getElementById('bulto_ov').disabled = true;
+                    document.getElementById('btn-agregar-ov').disabled = true;
+                    document.getElementById('bulto_codigo').disabled = true;
+                    document.getElementById('bulto_descripcion').disabled = true;
                     $('#modal-ov-valida').modal('show')
-                    alert('VALIDO')
+                    // alert('VALIDO')
                 }
             })
         } else {
@@ -349,7 +357,6 @@
 </script>
 <script>
     $("#bulto_linea").on('change', function (e) {
-        alert('a')
         var ov = 'OV' + document.getElementById('bulto_ov').value
         var linea = document.getElementById('bulto_linea').value
         $.ajax({
@@ -409,10 +416,10 @@
             } else {
                 lista_lineas.push(linea)
                 $("#tabla-bulto").append(`<tr class="gridjs-tr">
-                        <td class="gridjs-td">${linea}</td>
-                        <td class="gridjs-td">${codigo}</td>
-                        <td class="gridjs-td">${descripcion}</td>
-                        <td class="gridjs-td">${cantidad}</td>
+                        <td class="gridjs-td"><input type="hidden" value="${linea}" id='linea-${linea}'>${linea}</td>
+                        <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
+                        <td class="gridjs-td"><input type="hidden" name="descripcion-${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
+                        <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
                         <td class="gridjs-td">
                             <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -437,6 +444,10 @@
     })
 </script>
 <script>
+    $("#bulto_ov").on('click', function (e) {
+        event.stopPropagation();
+        $('#bulto_ov').removeClass("is-invalid");
+    })
     $("#bulto_linea").on('click', function (e) {
         event.stopPropagation();
         $('#bulto_linea').removeClass("is-invalid");
@@ -448,5 +459,24 @@
 </script>
 <script>
 
+    $("#btn-finalizar-bulto").on('click', function (e) {
+        // $("#form-pl").submit(function (e) {
+        alert('FINALIZAR BULTO')
+        // e.preventDefault()
+        var ov = 'OV' + document.getElementById('bulto_ov').value
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'finalizar_bulto_pl' %}",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            data: {
+                'orden_venta': ov,
+            },
+            dataType: "json",
+            success: function (response) {
+                alert(response)
+            }
+        })
+    })
 </script>
 {% endblock %}
