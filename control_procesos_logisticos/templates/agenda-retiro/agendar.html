@@ -93,7 +93,8 @@
                                             <span class="input-group-text">
                                                 OV
                                             </span>
-                                            <input type="text" class="form-control" name="ov_input" id="ov_input">
+                                            <input type="text" class="form-control" name="ov_input" id="ov_input"
+                                                placeholder="EJ: 244174">
                                         </div>
                                         <!-- <input type="text" class="form-control" name="ov_input" id="ov_input"
                                             placeholder="EJ: OV243266"> -->
@@ -372,7 +373,7 @@
                                     <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
                                     <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
                                     </svg>
-                                    Borrar
+                                    Eliminar
                                     </a>
                                 </td>
                                 </tr>`);
@@ -474,6 +475,27 @@
 </script>
 {% endif %}
 
+<script>
+    function setInputFilter(textbox, inputFilter) {
+        ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+            textbox.addEventListener(event, function () {
+                if (inputFilter(this.value)) {
+                    this.oldValue = this.value;
+                    this.oldSelectionStart = this.selectionStart;
+                    this.oldSelectionEnd = this.selectionEnd;
+                } else if (this.hasOwnProperty("oldValue")) {
+                    this.value = this.oldValue;
+                    this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                } else {
+                    this.value = "";
+                }
+            });
+        });
+    }
+    setInputFilter(document.getElementById("linea_input"), function (value) {
+        return /^\d*$/.test(value);
+    });
+</script>
 
 
 

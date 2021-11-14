@@ -1,5 +1,6 @@
 import io
 import json
+from json.decoder import JSONDecodeError
 import pandas as pd
 import requests
 import cx_Oracle
@@ -1062,6 +1063,9 @@ def finalizarBultoPL(request):
         print(lineas)
         lineas.pop(0)
         
+        if len(lineas) < 1:
+            return JsonResponse({'valid':False,'detalles': 'No hay lineas en el bulto'}, status=400)
+        
         data_bulto = {
             'orden_venta': orden_venta,
             'tipo_bulto': tipo_bulto,
@@ -1076,11 +1080,7 @@ def finalizarBultoPL(request):
         if bul.is_valid():
             id_bul = bul.save()
         else:
-            data = {
-                # 'error': True,
-                'detalles': 'Error al crear bulto'+ str(bul.errors.as_data())
-            }
-            return JsonResponse({'valid':False,'detalles':data}, status=400)
+            return JsonResponse({'valid':False,'detalles': 'Error al crear bulto'+ str(bul.errors.as_data())}, status=400)
         
                 
         for val in lineas:
@@ -1101,10 +1101,7 @@ def finalizarBultoPL(request):
                     if det_bulto.is_valid():
                         det_bulto.save()
                     else:
-                        data = {
-                            'detalles': 'Error al crear detalle de bulto'+ str(det_bulto.errors.as_data())
-                        }
-                        return JsonResponse({'valid':False,'detalles':data}, status=400)       
+                        return JsonResponse({'valid':False,'detalles':'Error al crear detalle de bulto'+ str(det_bulto.errors.as_data())}, status=400)       
             else:
                 return JsonResponse({'valid':False}, status=400)
         # Bulto.objects.filter(id_bulto=id_bul.pk).update(activo=0)
