@@ -73,6 +73,11 @@ class DetalleRetiroForm(forms.ModelForm):
         model = DetalleRetiro
         fields = '__all__'
         
+class DetalleBultoForm(forms.ModelForm):
+    class Meta:
+        model = DetalleBulto
+        fields = '__all__'
+        
         
 class CustomUserCreationForm(UserCreationForm):
     password1 = forms.CharField(
@@ -108,11 +113,18 @@ class CustomUserCreationForm(UserCreationForm):
         }
 
         
-class DetallePackingListForm(forms.ModelForm):
+class BultoPackingListForm(forms.ModelForm):
     class Meta:
-        model = DetalleBulto
-        fields = ['tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto']
+        model = Bulto
+        fields = ['orden_venta','tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto','activo']
         widgets = {
+            'orden_venta':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_ov',
+                    'name': 'bulto_ov'
+                },),
             'tipo_bulto':
                 forms.TextInput(attrs={
                     'class': 'form-control',
@@ -148,7 +160,6 @@ class DetallePackingListForm(forms.ModelForm):
                     'class': 'form-control',
                     'type': 'text',
                     'id':'bulto_peso_neto',
-                },),
-                            
+                },),          
         }
         

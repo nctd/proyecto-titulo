@@ -112,12 +112,18 @@ class TemporalLinea(models.Model):
 
 class Bulto(models.Model):
     id_bulto = models.AutoField(primary_key=True)
-    linea = models.CharField(max_length=10,blank=False,null=False)
+    # linea = models.CharField(max_length=10,blank=False,null=False)
     orden_venta = models.CharField(max_length=40,blank=False,null=False)
-    codigo = models.CharField(max_length=60,blank=False,null=False)
-    articulo = models.CharField(max_length=120,blank=False,null=False)
+    # codigo = models.CharField(max_length=60,blank=False,null=False)
+    # articulo = models.CharField(max_length=120,blank=False,null=False)
     # linea = models.ForeignKey(Linea,on_delete=PROTECT)
     # orden_venta = models.ForeignKey(OrdenVenta,on_delete=PROTECT)
+    tipo_bulto = models.CharField(max_length=10,blank=False,null=False)
+    largo      = models.IntegerField()
+    ancho      = models.DecimalField(max_digits=10, decimal_places=5)
+    volumen    = models.DecimalField(max_digits=10, decimal_places=5)
+    peso_bruto = models.DecimalField(max_digits=10, decimal_places=5)
+    peso_neto  = models.DecimalField(max_digits=10, decimal_places=5)
     activo   = models.BooleanField(default=False)
     
     class Meta:
@@ -125,14 +131,11 @@ class Bulto(models.Model):
         db_table     = 'BULTO'
 
 class DetalleBulto(models.Model):
-    id_detalle_bulto    = models.AutoField(primary_key=True)
-    tipo_bulto = models.CharField(max_length=10,blank=False,null=False)
+    id_detalle_bulto = models.AutoField(primary_key=True)
+    linea = models.CharField(max_length=10,blank=False,null=False)
+    codigo = models.CharField(max_length=60,blank=False,null=False)
+    articulo = models.CharField(max_length=120,blank=False,null=False)
     cantidad   = models.IntegerField()
-    largo      = models.IntegerField()
-    ancho      = models.DecimalField(max_digits=10, decimal_places=5)
-    volumen    = models.DecimalField(max_digits=10, decimal_places=5)
-    peso_bruto = models.DecimalField(max_digits=10, decimal_places=5)
-    peso_neto  = models.DecimalField(max_digits=10, decimal_places=5)
     bulto      = models.ForeignKey(Bulto, on_delete=PROTECT)
     
     class Meta:

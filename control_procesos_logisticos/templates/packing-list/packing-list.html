@@ -35,7 +35,7 @@
                                                 OV
                                             </span>
 
-                                            <input type="text" class="form-control" name="bulto_ov" id="bulto_ov">
+                                            {{form_bulto.orden_venta}}
                                         </div>
 
 
@@ -63,37 +63,37 @@
                                     <div class="mb-3">
                                         <label class="form-label">Tipo de bulto</label>
                                         <!-- <input type="text" class="form-control" name="bulto_input" id="bulto_input"> -->
-                                        {{form_detalle.tipo_bulto}}
+                                        {{form_bulto.tipo_bulto}}
                                     </div>
                                 </div>
                                 <div class="col-lg-1">
                                     <div class="mb-3">
                                         <label class="form-label">Largo (mt)</label>
-                                        {{form_detalle.largo}}
+                                        {{form_bulto.largo}}
                                     </div>
                                 </div>
                                 <div class="col-lg-1">
                                     <div class="mb-3">
                                         <label class="form-label">Ancho (mt)</label>
-                                        {{form_detalle.ancho}}
+                                        {{form_bulto.ancho}}
                                     </div>
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="mb-3">
                                         <label class="form-label">Volumen (mt)</label>
-                                        {{form_detalle.volumen}}
+                                        {{form_bulto.volumen}}
                                     </div>
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="mb-3">
                                         <label class="form-label">Peso bruto (kg)</label>
-                                        {{form_detalle.peso_bruto}}
+                                        {{form_bulto.peso_bruto}}
                                     </div>
                                 </div>
                                 <div class="col-lg-2">
                                     <div class="mb-3">
                                         <label class="form-label">Peso neto (kg)</label>
-                                        {{form_detalle.peso_neto}}
+                                        {{form_bulto.peso_neto}}
                                     </div>
                                 </div>
 
@@ -389,7 +389,6 @@
         var tr = td.parentNode;
         tr.parentNode.removeChild(tr);
     }
-
     $("#btn-agregar-linea").on('click', function (e) {
         if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
             alert('SIN DATOS')
@@ -416,7 +415,7 @@
             } else {
                 lista_lineas.push(linea)
                 $("#tabla-bulto").append(`<tr class="gridjs-tr">
-                        <td class="gridjs-td"><input type="hidden" value="${linea}" id='linea-${linea}'>${linea}</td>
+                        <td class="gridjs-td"><input type="hidden" class="lineaTabla" name="linea-${linea}" value="${linea}" id='linea-tabla'>${linea}</td>
                         <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
                         <td class="gridjs-td"><input type="hidden" name="descripcion-${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
                         <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
@@ -458,12 +457,23 @@
     })
 </script>
 <script>
-
     $("#btn-finalizar-bulto").on('click', function (e) {
-        // $("#form-pl").submit(function (e) {
         alert('FINALIZAR BULTO')
-        // e.preventDefault()
+
+        var lineas = [];
+        $('#tabla-bulto tr').each(function () {
+            var linea = $(this).find("td:nth-child(1)").text()
+            var cantidad = $(this).find("td:nth-child(4)").text()
+            lineas.push(linea + "-" + cantidad);
+        });
+
         var ov = 'OV' + document.getElementById('bulto_ov').value
+        var tipo_bulto = document.getElementById('tipo_bulto').value
+        var bulto_largo = document.getElementById('bulto_largo').value
+        var bulto_ancho = document.getElementById('bulto_ancho').value
+        var bulto_volumen = document.getElementById('bulto_volumen').value
+        var bulto_peso_bruto = document.getElementById('bulto_peso_bruto').value
+        var bulto_peso_neto = document.getElementById('bulto_peso_neto').value
 
         $.ajax({
             type: 'POST',
@@ -471,6 +481,13 @@
             headers: { 'X-CSRFToken': '{{ csrf_token }}' },
             data: {
                 'orden_venta': ov,
+                'lineas': lineas,
+                'tipo_bulto': tipo_bulto,
+                'bulto_largo': bulto_largo,
+                'bulto_ancho': bulto_ancho,
+                'bulto_volumen': bulto_volumen,
+                'bulto_peso_bruto': bulto_peso_bruto,
+                'bulto_peso_neto': bulto_peso_neto
             },
             dataType: "json",
             success: function (response) {
