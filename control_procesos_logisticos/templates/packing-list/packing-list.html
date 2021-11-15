@@ -23,7 +23,7 @@
                     <div class='card-header'>
                         <h3 class="card-title">Datos bulto</h3>
                     </div>
-                    <form method="POST" enctype="multipart/form-data" id="form-pl">
+                    <form method="POST" enctype="multipart/form-data" id="form-pl" action="">
                         {% csrf_token %}
                         <div class="card-body">
                             <div class="row">
@@ -34,7 +34,6 @@
                                             <span class="input-group-text">
                                                 OV
                                             </span>
-
                                             {{form_bulto.orden_venta}}
                                         </div>
 
@@ -109,7 +108,7 @@
                                 <div class="col-lg-1">
                                     <div class="mb-3">
                                         <label class="form-label">Línea</label>
-                                        <input type="text" class="form-control" name="bulto_linea" id="bulto_linea">
+                                        <input type="text" class="form-control" id="bulto_linea">
                                     </div>
                                 </div>
 
@@ -131,8 +130,7 @@
                                 <div class="col-lg-1">
                                     <div class="mb-3">
                                         <label class="form-label">Cantidad</label>
-                                        <input type="text" class="form-control" name="bulto_cantidad"
-                                            id="bulto_cantidad">
+                                        <input type="text" class="form-control" id="bulto_cantidad">
                                     </div>
                                 </div>
 
@@ -485,9 +483,9 @@
             } else {
                 lista_lineas.push(linea)
                 $("#tabla-bulto").append(`<tr class="gridjs-tr">
-                        <td class="gridjs-td"><input type="hidden" class="lineaTabla" name="linea-${linea}" value="${linea}" id='linea-tabla'>${linea}</td>
+                        <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
                         <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
-                        <td class="gridjs-td"><input type="hidden" name="descripcion-${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
+                        <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
                         <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
                         <td class="gridjs-td">
                             <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
@@ -551,12 +549,14 @@
     })
 </script>
 <script>
-    $("#btn-finalizar-bulto").on('click', function (e) {
+    // $("#btn-finalizar-bulto").on('click', function (e) {
+    $("#btn-guardar-pl").on('click', function (e) {
         alert('FINALIZAR BULTO')
 
         if (document.getElementById('tipo_bulto').value == '' || document.getElementById('bulto_largo').value == '' ||
             document.getElementById('bulto_ancho').value == '' || document.getElementById('bulto_volumen').value == '' ||
             document.getElementById('bulto_peso_bruto').value == '' || document.getElementById('bulto_peso_neto').value == '') {
+            e.preventDefault()
             if ($('#tipo_bulto').val() == '') {
                 $('#tipo_bulto').addClass('is-invalid');
             }
@@ -585,6 +585,7 @@
             });
             if (lineas.length < 2) {
                 $("#modal-error-lineas-bulto").modal('show');
+                e.preventDefault()
             } else {
                 var ov = 'OV' + document.getElementById('bulto_ov').value
                 var tipo_bulto = document.getElementById('tipo_bulto').value
@@ -594,34 +595,34 @@
                 var bulto_peso_bruto = document.getElementById('bulto_peso_bruto').value
                 var bulto_peso_neto = document.getElementById('bulto_peso_neto').value
 
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'finalizar_bulto_pl' %}",
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                    data: {
-                        'orden_venta': ov,
-                        'lineas': lineas,
-                        'tipo_bulto': tipo_bulto,
-                        'bulto_largo': bulto_largo,
-                        'bulto_ancho': bulto_ancho,
-                        'bulto_volumen': bulto_volumen,
-                        'bulto_peso_bruto': bulto_peso_bruto,
-                        'bulto_peso_neto': bulto_peso_neto
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        alert(response)
-                        if (response['valid']) {
-                            alert('BULTO FINALIZADO')
-                        } else {
-                            alert('OCURRIO UN ERROR AL FINALIZAR EL BULTO')
-                        }
-                    },
-                    error: function (response) {
-                        data = JSON.parse(response.responseText)
-                        alert(data['detalles'])
-                    }
-                })
+                // $.ajax({
+                //     type: 'POST',
+                //     url: "{% url 'finalizar_bulto_pl' %}",
+                //     headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                //     data: {
+                //         'orden_venta': ov,
+                //         'lineas': lineas,
+                //         'tipo_bulto': tipo_bulto,
+                //         'bulto_largo': bulto_largo,
+                //         'bulto_ancho': bulto_ancho,
+                //         'bulto_volumen': bulto_volumen,
+                //         'bulto_peso_bruto': bulto_peso_bruto,
+                //         'bulto_peso_neto': bulto_peso_neto
+                //     },
+                //     dataType: "json",
+                //     success: function (response) {
+                //         alert(response)
+                //         if (response['valid']) {
+                //             alert('BULTO FINALIZADO')
+                //         } else {
+                //             alert('OCURRIO UN ERROR AL FINALIZAR EL BULTO')
+                //         }
+                //     },
+                //     error: function (response) {
+                //         data = JSON.parse(response.responseText)
+                //         alert(data['detalles'])
+                //     }
+                // })
             }
         }
     })
@@ -695,6 +696,12 @@
             '</div>' +
             '</div>'
     })
+</script>
+
+<script>
+    $('#form-pl').submit(function () {
+        $("#bulto_ov").removeAttr('disabled');
+    });
 </script>
 
 <script>

@@ -117,13 +117,14 @@ class BultoPackingListForm(forms.ModelForm):
     class Meta:
         model = Bulto
         fields = ['orden_venta','tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto','activo']
+        # fields = ['orden_venta','tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto']
         widgets = {
             'orden_venta':
                 forms.TextInput(attrs={
                     'class': 'form-control',
                     'type': 'text',
                     'id':'bulto_ov',
-                    'name': 'bulto_ov'
+                    # 'name': 'bulto_ov'
                 },),
             'tipo_bulto':
                 forms.TextInput(attrs={

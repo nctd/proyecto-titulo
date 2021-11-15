@@ -118,7 +118,7 @@ class Bulto(models.Model):
     # articulo = models.CharField(max_length=120,blank=False,null=False)
     # linea = models.ForeignKey(Linea,on_delete=PROTECT)
     # orden_venta = models.ForeignKey(OrdenVenta,on_delete=PROTECT)
-    tipo_bulto = models.CharField(max_length=10,blank=False,null=False)
+    tipo_bulto = models.CharField(max_length=80,blank=False,null=False)
     largo      = models.IntegerField()
     ancho      = models.DecimalField(max_digits=10, decimal_places=5)
     volumen    = models.DecimalField(max_digits=10, decimal_places=5)
