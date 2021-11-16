@@ -380,6 +380,37 @@
     </div>
 </div>
 
+
+<div class="modal modal-blur fade" id="modal-select-bulto-linea" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Seleccione el bulto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <div class="form-label">Bulto</div>
+                    <select class="form-select">
+                        <option value="1">Bulto 1 </option>
+                        <option value="2">Bulto 2</option>
+                        <option value="3">Bulto 3</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btn-cancel-bulto" class="btn me-auto" data-bs-dismiss="modal">
+                    Cancelar
+                </button>
+                <button id="btn-select-bulto" class="btn btn-primary ms-auto">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     const e = document.getElementById('nav-item-packing')
     e.classList.add('active')
@@ -457,6 +488,7 @@
         var tr = td.parentNode;
         tr.parentNode.removeChild(tr);
     }
+
     $("#btn-agregar-linea").on('click', function (e) {
         if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
             alert('SIN DATOS')
@@ -473,39 +505,50 @@
                 $('#bulto_cantidad').addClass('is-invalid');
             }
         } else {
+            $("#modal-select-bulto-linea").modal('show');
             var linea = document.getElementById('bulto_linea').value
             var codigo = document.getElementById('bulto_codigo').value
             var descripcion = document.getElementById('bulto_descripcion').value
             var cantidad = document.getElementById('bulto_cantidad').value
 
-            if (lista_lineas.includes(linea)) {
-                $("#modal-existe-linea").modal('show');
-            } else {
-                lista_lineas.push(linea)
-                $("#tabla-bulto").append(`<tr class="gridjs-tr">
-                        <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
-                        <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
-                        <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
-                        <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
-                        <td class="gridjs-td">
-                            <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <line x1="4" y1="7" x2="20" y2="7"></line>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                            </svg>
-                            Eliminar
-                            </a>
-                        </td>
-                        </tr>`);
-                document.getElementById('bulto_linea').value = ""
-                document.getElementById('bulto_codigo').value = ""
-                document.getElementById('bulto_descripcion').value = ""
-                document.getElementById('bulto_cantidad').value = ""
-            }
+            $('#modal-select-bulto-linea').on('shown.bs.modal', function (e) {
+
+                var btnConfirmar = $(this).find('#btn-select-bulto');
+
+                btnConfirmar.off('click').on('click', function () {
+                    if (lista_lineas.includes(linea)) {
+                        $("#modal-existe-linea").modal('show');
+                    } else {
+                        lista_lineas.push(linea)
+                        $("#tabla-bulto").append(`<tr class="gridjs-tr">
+                            <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
+                            <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
+                            <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
+                            <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
+                            <td class="gridjs-td">
+                                <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <line x1="4" y1="7" x2="20" y2="7"></line>
+                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                </svg>
+                                Eliminar
+                                </a>
+                            </td>
+                            </tr>`);
+                        document.getElementById('bulto_linea').value = ""
+                        document.getElementById('bulto_codigo').value = ""
+                        document.getElementById('bulto_descripcion').value = ""
+                        document.getElementById('bulto_cantidad').value = ""
+                        $('#modal-select-bulto-linea').modal('hide'); // Hide Modal
+                    }
+                })
+
+            })
+
 
         }
     })
