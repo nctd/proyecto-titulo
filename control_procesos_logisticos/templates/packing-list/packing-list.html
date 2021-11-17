@@ -95,15 +95,7 @@
                                         {{form_bulto.peso_neto}}
                                     </div>
                                 </div>
-
                             </div>
-
-                            <!-- </div> -->
-                        </div>
-                        <div class="card-header">
-                            <h3 class="card-title">Contenido bulto</h3>
-                        </div>
-                        <div class="card-body">
                             <div class="row">
                                 <div class="col-lg-1">
                                     <div class="mb-3">
@@ -149,11 +141,97 @@
                                         Agregar línea
                                     </button>
                                 </div>
+                                <div class="row">
+                                    <div class="col-xl-3 mb-3">
+                                        <button class="btn btn-primary w-100" type="button" id="btn-finalizar-bulto">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-list-check" width="24" height="24"
+                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                                stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <path d="M3.5 5.5l1.5 1.5l2.5 -2.5"></path>
+                                                <path d="M3.5 11.5l1.5 1.5l2.5 -2.5"></path>
+                                                <path d="M3.5 17.5l1.5 1.5l2.5 -2.5"></path>
+                                                <line x1="11" y1="6" x2="20" y2="6"></line>
+                                                <line x1="11" y1="12" x2="20" y2="12"></line>
+                                                <line x1="11" y1="18" x2="20" y2="18"></line>
+                                            </svg>
+                                            Finalizar bulto
+                                        </button>
+                                    </div>
+                                    <div class="col-xl-3 mb-3">
+                                        <button class="btn btn-primary w-100" type="button" id="btn-agregar-bulto">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                class="icon icon-tabler icon-tabler-layout-grid-add" width="24"
+                                                height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                                                fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                                <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+                                                <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+                                                <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+                                                <path d="M14 17h6m-3 -3v6"></path>
+                                            </svg>
+                                            Agregar bulto
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
+                            <!-- </div> -->
+                        </div>
+                        <div class="card-header">
+                            <h3 class="card-title">Contenido bulto 1</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- <div class="row">
+                                <div class="col-lg-1">
+                                    <div class="mb-3">
+                                        <label class="form-label">Línea</label>
+                                        <input type="text" class="form-control" id="bulto_linea">
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-2">
+                                    <div class="mb-3">
+                                        <label class="form-label">Código</label>
+                                        <input type="text" class="form-control" name="bulto_codigo" id="bulto_codigo"
+                                            style="background-color: #f1f5f9 !important" disabled>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Descripción</label>
+                                        <input type="text" class="form-control" name="bulto_descripcion"
+                                            id="bulto_descripcion" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-1">
+                                    <div class="mb-3">
+                                        <label class="form-label">Cantidad</label>
+                                        <input type="text" class="form-control" id="bulto_cantidad">
+                                    </div>
+                                </div>
+
+                                <div class="col-xl-4 mb-3">
+                                    <label class="form-label" style="visibility: hidden;">bt</label>
+                                    <button class="btn btn-primary w-100" id='btn-agregar-linea' type="button">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            class="icon icon-tabler icon-tabler-plus" width="24" height="24"
+                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        Agregar línea
+                                    </button>
+                                </div> -->
+
 
                             <div class="table-responsive">
                                 <div class="gridjs gridjs-container">
-                                    <table class="gridjs-table" id='tabla-bulto'>
+                                    <table class="gridjs-table" id='tabla-bulto-1'>
                                         <thead class="gridjs-thead">
                                             <tr class="gridjs-tr">
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed text-center"
@@ -182,42 +260,42 @@
                                     </table>
                                 </div>
 
-                            </div>
 
-                            <div class="row">
-                                <div class="col-xl-3 mb-3">
-                                    <button class="btn btn-primary w-100" type="button" id="btn-finalizar-bulto">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-list-check" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <path d="M3.5 5.5l1.5 1.5l2.5 -2.5"></path>
-                                            <path d="M3.5 11.5l1.5 1.5l2.5 -2.5"></path>
-                                            <path d="M3.5 17.5l1.5 1.5l2.5 -2.5"></path>
-                                            <line x1="11" y1="6" x2="20" y2="6"></line>
-                                            <line x1="11" y1="12" x2="20" y2="12"></line>
-                                            <line x1="11" y1="18" x2="20" y2="18"></line>
-                                        </svg>
-                                        Finalizar bulto
-                                    </button>
-                                </div>
-                                <div class="col-xl-3 mb-3">
-                                    <button class="btn btn-primary w-100" type="button" id="btn-agregar-bulto">
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-layout-grid-add" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <rect x="4" y="4" width="6" height="6" rx="1"></rect>
-                                            <rect x="14" y="4" width="6" height="6" rx="1"></rect>
-                                            <rect x="4" y="14" width="6" height="6" rx="1"></rect>
-                                            <path d="M14 17h6m-3 -3v6"></path>
-                                        </svg>
-                                        Agregar bulto
-                                    </button>
-                                </div>
                             </div>
+                            <!-- <div class="row">
+                            <div class="col-xl-3 mb-3">
+                                <button class="btn btn-primary w-100" type="button" id="btn-finalizar-bulto">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-list-check" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <path d="M3.5 5.5l1.5 1.5l2.5 -2.5"></path>
+                                        <path d="M3.5 11.5l1.5 1.5l2.5 -2.5"></path>
+                                        <path d="M3.5 17.5l1.5 1.5l2.5 -2.5"></path>
+                                        <line x1="11" y1="6" x2="20" y2="6"></line>
+                                        <line x1="11" y1="12" x2="20" y2="12"></line>
+                                        <line x1="11" y1="18" x2="20" y2="18"></line>
+                                    </svg>
+                                    Finalizar bulto
+                                </button>
+                            </div>
+                            <div class="col-xl-3 mb-3">
+                                <button class="btn btn-primary w-100" type="button" id="btn-agregar-bulto">
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                        class="icon icon-tabler icon-tabler-layout-grid-add" width="24" height="24"
+                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                        stroke-linecap="round" stroke-linejoin="round">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                        <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+                                        <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+                                        <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+                                        <path d="M14 17h6m-3 -3v6"></path>
+                                    </svg>
+                                    Agregar bulto
+                                </button>
+                            </div>
+                        </div> -->
                         </div>
 
                         <div id="nuevo-bulto">
@@ -391,10 +469,8 @@
             <div class="modal-body">
                 <div class="mb-3">
                     <div class="form-label">Bulto</div>
-                    <select class="form-select">
-                        <option value="1">Bulto 1 </option>
-                        <option value="2">Bulto 2</option>
-                        <option value="3">Bulto 3</option>
+                    <select class="form-select" id="select-bultos">
+
                     </select>
                 </div>
             </div>
@@ -511,7 +587,21 @@
             var descripcion = document.getElementById('bulto_descripcion').value
             var cantidad = document.getElementById('bulto_cantidad').value
 
+            var cant_bultos = $('.table-responsive').length
+            var arr_bultos = []
+            for (var i = 0; i < cant_bultos; i++) {
+                arr_bultos.push(i);
+            }
+            arr_bultos.forEach(e => {
+                var num = e + 1
+                $('#select-bultos').append($('<option>', {
+                    value: 'tabla-bulto-' + num,
+                    text: 'Bulto ' + num
+                }));
+            });
+
             $('#modal-select-bulto-linea').on('shown.bs.modal', function (e) {
+
 
                 var btnConfirmar = $(this).find('#btn-select-bulto');
 
@@ -519,8 +609,11 @@
                     if (lista_lineas.includes(linea)) {
                         $("#modal-existe-linea").modal('show');
                     } else {
+                        var select = document.getElementById("select-bultos");
+                        alert(select.value)
                         lista_lineas.push(linea)
-                        $("#tabla-bulto").append(`<tr class="gridjs-tr">
+                        // $("#tabla-bulto-1").append(`<tr class="gridjs-tr">
+                        $("#" + select.value).append(`<tr class="gridjs-tr">
                             <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
                             <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
                             <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
@@ -621,7 +714,7 @@
             $("#modal-error-finalizar-bulto").modal('show');
         } else {
             var lineas = [];
-            $('#tabla-bulto tr').each(function () {
+            $('#tabla-bulto-1 tr').each(function () {
                 var linea = $(this).find("td:nth-child(1)").text()
                 var cantidad = $(this).find("td:nth-child(4)").text()
                 lineas.push(linea + "-" + cantidad);
@@ -686,55 +779,55 @@
         tr.parentNode.removeChild(tr);
     }
 
-    function agregarLineaNuevoBulto(tabla) {
-        // $("#btn-agregar-linea").on('click', function (e) {
-        if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
-            alert('SIN DATOS')
-            if ($('#bulto_linea').val() == '') {
-                $('#bulto_linea').addClass('is-invalid');
-            }
-            if ($('#bulto_cantidad').val() == '') {
-                $('#bulto_cantidad').addClass('is-invalid');
-            }
-        } else {
-            var linea = document.getElementById('bulto_linea').value
-            var codigo = document.getElementById('bulto_codigo').value
-            var descripcion = document.getElementById('bulto_descripcion').value
-            var cantidad = document.getElementById('bulto_cantidad').value
+    // function agregarLineaNuevoBulto(tabla) {
+    //     // $("#btn-agregar-linea").on('click', function (e) {
+    //     if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
+    //         alert('SIN DATOS')
+    //         if ($('#bulto_linea').val() == '') {
+    //             $('#bulto_linea').addClass('is-invalid');
+    //         }
+    //         if ($('#bulto_cantidad').val() == '') {
+    //             $('#bulto_cantidad').addClass('is-invalid');
+    //         }
+    //     } else {
+    //         var linea = document.getElementById('bulto_linea').value
+    //         var codigo = document.getElementById('bulto_codigo').value
+    //         var descripcion = document.getElementById('bulto_descripcion').value
+    //         var cantidad = document.getElementById('bulto_cantidad').value
 
-            if (lista_lineas.includes(linea)) {
-                $("#modal-existe-linea").modal('show');
-            } else {
-                lista_lineas.push(linea)
-                $('#' + tabla).append(`<tr class="gridjs-tr">
-                        <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
-                        <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
-                        <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
-                        <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
-                        <td class="gridjs-td">
-                            <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                            <line x1="4" y1="7" x2="20" y2="7"></line>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                            </svg>
-                            Eliminar
-                            </a>
-                        </td>
-                        </tr>`);
-                document.getElementById('bulto_linea').value = ""
-                document.getElementById('bulto_codigo').value = ""
-                document.getElementById('bulto_descripcion').value = ""
-                document.getElementById('bulto_cantidad').value = ""
-            }
+    //         if (lista_lineas.includes(linea)) {
+    //             $("#modal-existe-linea").modal('show');
+    //         } else {
+    //             lista_lineas.push(linea)
+    //             $('#' + tabla).append(`<tr class="gridjs-tr">
+    //                     <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
+    //                     <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
+    //                     <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
+    //                     <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
+    //                     <td class="gridjs-td">
+    //                         <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
+    //                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    //                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    //                         <line x1="4" y1="7" x2="20" y2="7"></line>
+    //                         <line x1="10" y1="11" x2="10" y2="17"></line>
+    //                         <line x1="14" y1="11" x2="14" y2="17"></line>
+    //                         <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+    //                         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+    //                         </svg>
+    //                         Eliminar
+    //                         </a>
+    //                     </td>
+    //                     </tr>`);
+    //             document.getElementById('bulto_linea').value = ""
+    //             document.getElementById('bulto_codigo').value = ""
+    //             document.getElementById('bulto_descripcion').value = ""
+    //             document.getElementById('bulto_cantidad').value = ""
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
-    var contador = 0
+    var contador = 2
     $("#btn-agregar-bulto").on('click', function (e) {
         var tabla = 'tabla-bulto-' + contador
         const container = document.getElementById("nuevo-bulto")
@@ -803,52 +896,52 @@
             '</div>' +
             '</div>' +
             '<div class="card-header">' +
-            '<h3 class="card-title">Contenido nuevo bulto</h3>' +
+            `<h3 class="card-title">Contenido bulto ${contador}</h3>` +
             '</div >' +
             '<div class="card-body">' +
-            '<div class="row">' +
-            '<div class="col-lg-1">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Línea</label>' +
-            '<input type="text" class="form-control" id="bulto_linea">' +
-            '</div>' +
-            '</div>' +
+            // '<div class="row">' +
+            // '<div class="col-lg-1">' +
+            // '<div class="mb-3">' +
+            // '<label class="form-label">Línea</label>' +
+            // '<input type="text" class="form-control" id="bulto_linea">' +
+            // '</div>' +
+            // '</div>' +
 
-            '<div class="col-lg-2">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Código</label>' +
-            '<input type="text" class="form-control" name="bulto_codigo" id="bulto_codigo" style="background-color: #f1f5f9 !important" disabled>' +
-            '</div>' +
-            '</div>' +
-            '<div class="col-lg-4">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Descripción</label>' +
-            '<input type="text" class="form-control" name="bulto_descripcion" id="bulto_descripcion" disabled>' +
-            '</div>' +
-            '</div>' +
+            // '<div class="col-lg-2">' +
+            // '<div class="mb-3">' +
+            // '<label class="form-label">Código</label>' +
+            // '<input type="text" class="form-control" name="bulto_codigo" id="bulto_codigo" style="background-color: #f1f5f9 !important" disabled>' +
+            // '</div>' +
+            // '</div>' +
+            // '<div class="col-lg-4">' +
+            // '<div class="mb-3">' +
+            // '<label class="form-label">Descripción</label>' +
+            // '<input type="text" class="form-control" name="bulto_descripcion" id="bulto_descripcion" disabled>' +
+            // '</div>' +
+            // '</div>' +
 
-            '<div class="col-lg-1">' +
-            '<div class="mb-3">' +
-            '<label class="form-label">Cantidad</label>' +
-            '<input type="text" class="form-control" id="bulto_cantidad">' +
-            '</div>' +
-            '</div>' +
+            // '<div class="col-lg-1">' +
+            // '<div class="mb-3">' +
+            // '<label class="form-label">Cantidad</label>' +
+            // '<input type="text" class="form-control" id="bulto_cantidad">' +
+            // '</div>' +
+            // '</div>' +
 
-            '<div class="col-xl-4 mb-3">' +
-            '<label class="form-label" style="visibility: hidden;">bt</label>' +
-            `<button class="btn btn-primary w-100" id="btn-agregar-linea" type="button" onclick="agregarLineaNuevoBulto('${tabla}')">` +
-            `<svg xmlns="http://www.w3.org/2000/svg"
-                                class="icon icon-tabler icon-tabler-plus" width="24" height="24"
-                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            Agregar línea`+
-            '</button>' +
-            '</div>' +
-            '</div>' +
+            // '<div class="col-xl-4 mb-3">' +
+            // '<label class="form-label" style="visibility: hidden;">bt</label>' +
+            // `<button class="btn btn-primary w-100" id="btn-agregar-linea" type="button" onclick="agregarLineaNuevoBulto('${tabla}')">` +
+            // `<svg xmlns="http://www.w3.org/2000/svg"
+            //                     class="icon icon-tabler icon-tabler-plus" width="24" height="24"
+            //                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+            //                     stroke-linecap="round" stroke-linejoin="round">
+            //                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            //                     <line x1="12" y1="5" x2="12" y2="19"></line>
+            //                     <line x1="5" y1="12" x2="19" y2="12"></line>
+            //                 </svg>
+            //                 Agregar línea`+
+            // '</button>' +
+            // '</div>' +
+            // '</div>' +
 
             '<div class="table-responsive">' +
             '<div class="gridjs gridjs-container">' +
