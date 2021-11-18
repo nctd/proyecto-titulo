@@ -182,53 +182,6 @@
                             <h3 class="card-title">Contenido bulto 1</h3>
                         </div>
                         <div class="card-body">
-                            <!-- <div class="row">
-                                <div class="col-lg-1">
-                                    <div class="mb-3">
-                                        <label class="form-label">Línea</label>
-                                        <input type="text" class="form-control" id="bulto_linea">
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-2">
-                                    <div class="mb-3">
-                                        <label class="form-label">Código</label>
-                                        <input type="text" class="form-control" name="bulto_codigo" id="bulto_codigo"
-                                            style="background-color: #f1f5f9 !important" disabled>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">Descripción</label>
-                                        <input type="text" class="form-control" name="bulto_descripcion"
-                                            id="bulto_descripcion" disabled>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-1">
-                                    <div class="mb-3">
-                                        <label class="form-label">Cantidad</label>
-                                        <input type="text" class="form-control" id="bulto_cantidad">
-                                    </div>
-                                </div>
-
-                                <div class="col-xl-4 mb-3">
-                                    <label class="form-label" style="visibility: hidden;">bt</label>
-                                    <button class="btn btn-primary w-100" id='btn-agregar-linea' type="button">
-
-                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                            class="icon icon-tabler icon-tabler-plus" width="24" height="24"
-                                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                            stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        </svg>
-                                        Agregar línea
-                                    </button>
-                                </div> -->
-
-
                             <div class="table-responsive">
                                 <div class="gridjs gridjs-container">
                                     <table class="gridjs-table" id='tabla-bulto-1'>
@@ -259,43 +212,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-
-
                             </div>
-                            <!-- <div class="row">
-                            <div class="col-xl-3 mb-3">
-                                <button class="btn btn-primary w-100" type="button" id="btn-finalizar-bulto">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-list-check" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M3.5 5.5l1.5 1.5l2.5 -2.5"></path>
-                                        <path d="M3.5 11.5l1.5 1.5l2.5 -2.5"></path>
-                                        <path d="M3.5 17.5l1.5 1.5l2.5 -2.5"></path>
-                                        <line x1="11" y1="6" x2="20" y2="6"></line>
-                                        <line x1="11" y1="12" x2="20" y2="12"></line>
-                                        <line x1="11" y1="18" x2="20" y2="18"></line>
-                                    </svg>
-                                    Finalizar bulto
-                                </button>
-                            </div>
-                            <div class="col-xl-3 mb-3">
-                                <button class="btn btn-primary w-100" type="button" id="btn-agregar-bulto">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-layout-grid-add" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <rect x="4" y="4" width="6" height="6" rx="1"></rect>
-                                        <rect x="14" y="4" width="6" height="6" rx="1"></rect>
-                                        <rect x="4" y="14" width="6" height="6" rx="1"></rect>
-                                        <path d="M14 17h6m-3 -3v6"></path>
-                                    </svg>
-                                    Agregar bulto
-                                </button>
-                            </div>
-                        </div> -->
                         </div>
 
                         <div id="nuevo-bulto">
@@ -365,8 +282,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             <div class="modal-status bg-info"></div>
             <div class="modal-body text-center py-4">
-
-                <!-- Download SVG icon from http://tabler-icons.io/i/file-check -->
                 <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-info icon-lg" width="24" height="24"
                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                     stroke-linejoin="round">
@@ -486,6 +401,39 @@
     </div>
 </div>
 
+<div class="modal modal-blur fade" id="modal-pl-guardado" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-success"></div>
+            <div class="modal-body text-center py-4">
+
+                <!-- Download SVG icon from http://tabler-icons.io/i/file-check -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-success icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+                    <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+                    <path d="M9 15l2 2l4 -4" />
+                </svg>
+
+                <h3>Packing List ingresado</h3>
+                <div class="text-muted">Se guardo correctamente el Packing List</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+
+                        <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal">
+                                OK
+                            </a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     const e = document.getElementById('nav-item-packing')
@@ -509,7 +457,7 @@
                 },
                 dataType: "json",
                 beforeSend: function () {
-                    alert('ANTES DE ENVIAR')
+                    // alert('ANTES DE ENVIAR')
                 },
                 success: function (response) {
                     jQuery("input, button").removeAttr("disabled", "disabled")
@@ -543,13 +491,35 @@
             },
             dataType: "json",
             success: function (response) {
-                alert(response)
+                alert('Datos encontrados')
                 document.getElementById('bulto_codigo').value = response['codigo'];
                 document.getElementById('bulto_descripcion').value = response['descripcion'];
             }
         })
     })
 </script>
+
+<script>
+    var boton = document.getElementById('btn-agregar-linea')
+    boton.addEventListener("click", function () {
+        document.getElementById("select-bultos").options.length = 0;
+        var cant_bultos = $('.table-responsive').length
+        var arr_bultos = []
+        for (var i = 0; i < cant_bultos; i++) {
+            arr_bultos.push(i);
+        }
+        arr_bultos.forEach(e => {
+            var num = e + 1
+            $('#select-bultos').append($('<option>', {
+                value: 'tabla-bulto-' + num,
+                text: 'Bulto ' + num
+            }));
+        });
+
+    });
+
+</script>
+
 <script>
     var lista_lineas = []
 
@@ -587,22 +557,20 @@
             var descripcion = document.getElementById('bulto_descripcion').value
             var cantidad = document.getElementById('bulto_cantidad').value
 
-            var cant_bultos = $('.table-responsive').length
-            var arr_bultos = []
-            for (var i = 0; i < cant_bultos; i++) {
-                arr_bultos.push(i);
-            }
-            arr_bultos.forEach(e => {
-                var num = e + 1
-                $('#select-bultos').append($('<option>', {
-                    value: 'tabla-bulto-' + num,
-                    text: 'Bulto ' + num
-                }));
-            });
+            // var cant_bultos = $('.table-responsive').length
+            // var arr_bultos = []
+            // for (var i = 0; i < cant_bultos; i++) {
+            //     arr_bultos.push(i);
+            // }
+            // arr_bultos.forEach(e => {
+            //     var num = e + 1
+            //     $('#select-bultos').append($('<option>', {
+            //         value: 'tabla-bulto-' + num,
+            //         text: 'Bulto ' + num
+            //     }));
+            // });
 
             $('#modal-select-bulto-linea').on('shown.bs.modal', function (e) {
-
-
                 var btnConfirmar = $(this).find('#btn-select-bulto');
 
                 btnConfirmar.off('click').on('click', function () {
@@ -610,7 +578,7 @@
                         $("#modal-existe-linea").modal('show');
                     } else {
                         var select = document.getElementById("select-bultos");
-                        alert(select.value)
+                        // alert(select.value)
                         lista_lineas.push(linea)
                         // $("#tabla-bulto-1").append(`<tr class="gridjs-tr">
                         $("#" + select.value).append(`<tr class="gridjs-tr">
@@ -641,7 +609,6 @@
                 })
 
             })
-
 
         }
     })
@@ -687,7 +654,7 @@
 <script>
     // $("#btn-finalizar-bulto").on('click', function (e) {
     $("#btn-guardar-pl").on('click', function (e) {
-        alert('FINALIZAR BULTO')
+        // alert('FINALIZAR BULTO')
 
         if (document.getElementById('tipo_bulto').value == '' || document.getElementById('bulto_largo').value == '' ||
             document.getElementById('bulto_ancho').value == '' || document.getElementById('bulto_volumen').value == '' ||
@@ -779,53 +746,6 @@
         tr.parentNode.removeChild(tr);
     }
 
-    // function agregarLineaNuevoBulto(tabla) {
-    //     // $("#btn-agregar-linea").on('click', function (e) {
-    //     if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
-    //         alert('SIN DATOS')
-    //         if ($('#bulto_linea').val() == '') {
-    //             $('#bulto_linea').addClass('is-invalid');
-    //         }
-    //         if ($('#bulto_cantidad').val() == '') {
-    //             $('#bulto_cantidad').addClass('is-invalid');
-    //         }
-    //     } else {
-    //         var linea = document.getElementById('bulto_linea').value
-    //         var codigo = document.getElementById('bulto_codigo').value
-    //         var descripcion = document.getElementById('bulto_descripcion').value
-    //         var cantidad = document.getElementById('bulto_cantidad').value
-
-    //         if (lista_lineas.includes(linea)) {
-    //             $("#modal-existe-linea").modal('show');
-    //         } else {
-    //             lista_lineas.push(linea)
-    //             $('#' + tabla).append(`<tr class="gridjs-tr">
-    //                     <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
-    //                     <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
-    //                     <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
-    //                     <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
-    //                     <td class="gridjs-td">
-    //                         <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
-    //                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    //                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    //                         <line x1="4" y1="7" x2="20" y2="7"></line>
-    //                         <line x1="10" y1="11" x2="10" y2="17"></line>
-    //                         <line x1="14" y1="11" x2="14" y2="17"></line>
-    //                         <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-    //                         <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-    //                         </svg>
-    //                         Eliminar
-    //                         </a>
-    //                     </td>
-    //                     </tr>`);
-    //             document.getElementById('bulto_linea').value = ""
-    //             document.getElementById('bulto_codigo').value = ""
-    //             document.getElementById('bulto_descripcion').value = ""
-    //             document.getElementById('bulto_cantidad').value = ""
-    //         }
-
-    //     }
-    // }
 
     var contador = 2
     $("#btn-agregar-bulto").on('click', function (e) {
@@ -860,37 +780,43 @@
             '<div class="col-lg-4">' +
             '<div class="mb-3">' +
             '<label class="form-label">Tipo de bulto</label>' +
-            '{{form_bulto.tipo_bulto}}' +
+            // '{{form_bulto.tipo_bulto}}' +
+            `<input type="text" class="form-control" name="tipo_bulto${contador}" id="tipo_bulto${contador}">` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-1">' +
             '<div class="mb-3">' +
             '<label class="form-label">Largo (mt)</label>' +
-            '{{ form_bulto.largo }}' +
+            // '{{ form_bulto.largo }}' +
+            `<input type="text" class="form-control" name="largo${contador}" id="largo${contador}">` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-1">' +
             '<div class="mb-3">' +
             '<label class="form-label">Ancho (mt)</label>' +
-            '{{ form_bulto.ancho }}' +
+            // '{{ form_bulto.ancho }}' +
+            `<input type="text" class="form-control" name="ancho${contador}" id="ancho${contador}">` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
             '<label class="form-label">Volumen (mt)</label>' +
-            '{{ form_bulto.volumen }}' +
+            // '{{ form_bulto.volumen }}' +
+            `<input type="text" class="form-control" name="volumen${contador}" id="volumen${contador}">` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
             '<label class="form-label">Peso bruto (kg)</label>' +
-            '{{ form_bulto.peso_bruto }}' +
+            // '{{ form_bulto.peso_bruto }}' +
+            `<input type="text" class="form-control" name="peso_bruto${contador}" id="peso_bruto${contador}">` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
             '<label class="form-label">Peso neto (kg)</label>' +
-            '{{ form_bulto.peso_neto }}' +
+            // '{{ form_bulto.peso_neto }}' +
+            `<input type="text" class="form-control" name="peso_neto${contador}" id="peso_neto${contador}">` +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -899,49 +825,6 @@
             `<h3 class="card-title">Contenido bulto ${contador}</h3>` +
             '</div >' +
             '<div class="card-body">' +
-            // '<div class="row">' +
-            // '<div class="col-lg-1">' +
-            // '<div class="mb-3">' +
-            // '<label class="form-label">Línea</label>' +
-            // '<input type="text" class="form-control" id="bulto_linea">' +
-            // '</div>' +
-            // '</div>' +
-
-            // '<div class="col-lg-2">' +
-            // '<div class="mb-3">' +
-            // '<label class="form-label">Código</label>' +
-            // '<input type="text" class="form-control" name="bulto_codigo" id="bulto_codigo" style="background-color: #f1f5f9 !important" disabled>' +
-            // '</div>' +
-            // '</div>' +
-            // '<div class="col-lg-4">' +
-            // '<div class="mb-3">' +
-            // '<label class="form-label">Descripción</label>' +
-            // '<input type="text" class="form-control" name="bulto_descripcion" id="bulto_descripcion" disabled>' +
-            // '</div>' +
-            // '</div>' +
-
-            // '<div class="col-lg-1">' +
-            // '<div class="mb-3">' +
-            // '<label class="form-label">Cantidad</label>' +
-            // '<input type="text" class="form-control" id="bulto_cantidad">' +
-            // '</div>' +
-            // '</div>' +
-
-            // '<div class="col-xl-4 mb-3">' +
-            // '<label class="form-label" style="visibility: hidden;">bt</label>' +
-            // `<button class="btn btn-primary w-100" id="btn-agregar-linea" type="button" onclick="agregarLineaNuevoBulto('${tabla}')">` +
-            // `<svg xmlns="http://www.w3.org/2000/svg"
-            //                     class="icon icon-tabler icon-tabler-plus" width="24" height="24"
-            //                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-            //                     stroke-linecap="round" stroke-linejoin="round">
-            //                     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            //                     <line x1="12" y1="5" x2="12" y2="19"></line>
-            //                     <line x1="5" y1="12" x2="19" y2="12"></line>
-            //                 </svg>
-            //                 Agregar línea`+
-            // '</button>' +
-            // '</div>' +
-            // '</div>' +
 
             '<div class="table-responsive">' +
             '<div class="gridjs gridjs-container">' +
@@ -962,6 +845,39 @@
             '</div>' +
             '</div>' +
             '</div>'
+
+        function setInputFilter(textbox, inputFilter) {
+            ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
+                textbox.addEventListener(event, function () {
+                    if (inputFilter(this.value)) {
+                        this.oldValue = this.value;
+                        this.oldSelectionStart = this.selectionStart;
+                        this.oldSelectionEnd = this.selectionEnd;
+                    } else if (this.hasOwnProperty("oldValue")) {
+                        this.value = this.oldValue;
+                        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                    } else {
+                        this.value = "";
+                    }
+                });
+            });
+        }
+
+        setInputFilter(document.getElementById(`largo${contador}`), function (value) {
+            return /^-?\d*[.,]?\d*$/.test(value);
+        });
+        setInputFilter(document.getElementById(`ancho${contador}`), function (value) {
+            return /^-?\d*[.,]?\d*$/.test(value);
+        });
+        setInputFilter(document.getElementById(`volumen${contador}`), function (value) {
+            return /^-?\d*[.,]?\d*$/.test(value);
+        });
+        setInputFilter(document.getElementById(`peso_bruto${contador}`), function (value) {
+            return /^-?\d*[.,]?\d*$/.test(value);
+        });
+        setInputFilter(document.getElementById(`peso_neto${contador}`), function (value) {
+            return /^-?\d*[.,]?\d*$/.test(value);
+        });
         contador = contador + 1
     })
 </script>
@@ -989,6 +905,7 @@
             });
         });
     }
+
     setInputFilter(document.getElementById("bulto_largo"), function (value) {
         return /^-?\d*[.,]?\d*$/.test(value);
     });
@@ -1011,4 +928,13 @@
         return /^\d*$/.test(value);
     });
 </script>
+
+{% if guardado %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modal-pl-guardado").modal('show');
+    });
+</script>
+{% endif %}
+
 {% endblock %}

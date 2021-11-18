@@ -1017,9 +1017,14 @@ def packingList(request):
         list_cantidad = []
         list_codigo = []
         list_descripcion = []
+        list_tp_bulto = []
+        list_largo = []
+        list_ancho = []
+        list_volumen = []
+        list_peso_bruto = []
+        list_peso_neto = []
         for value in request.POST:
             if value.startswith('l-'):
-                print(value.split('-'))
                 list_lineas.append(value.split('-')[1])
                 list_cantidad.append(value.split('-')[2])
 
@@ -1027,61 +1032,62 @@ def packingList(request):
                 list_codigo.append(value.split('-')[1])
             if value.startswith('desc!'):
                 list_descripcion.append(value.split('-')[1])
-        print(request.POST)
-            
-        data_bulto = {
-            'orden_venta': 'OV'+request.POST['orden_venta'],
-            'tipo_bulto': request.POST['tipo_bulto'],
-            'largo': request.POST['largo'],
-            'ancho': request.POST['ancho'],
-            'volumen': request.POST['volumen'],
-            'peso_bruto': request.POST['peso_bruto'],
-            'peso_neto': request.POST['peso_neto'],
-            'activo': True
-        }
-        form = BultoPackingListForm(data=data_bulto)
-        if form.is_valid():
-            id_bulto = form.save()
-            
-            item = 0
-            for linea in list_lineas:
-                print(list_cantidad)
-                detalle_bulto = {
-                    'linea': linea,
-                    'codigo' : list_codigo[item],
-                    'articulo' : list_descripcion[item],
-                    'cantidad': list_cantidad[item],
-                    # 'bulto': id_bulto.pk
-                }            
-                item +=1
-                print(detalle_bulto)
-                ## Agregar control  de errores
-                
-                
-                # response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
-                #     'ov': 'OV'+request.POST['orden_venta'],
-                #     'linea': val
-                # })
-                # if response.json()['resultado'] == 0 and response.status_code == 200:
-                #     for value in response.json()['data']:
-                #         data_det_bulto = {
-                #             'linea': val.split('-')[0],
-                #             'codigo' : value['n_articulo'],
-                #             'articulo' : value['descripcion'],
-                #             'cantidad': val.split('-')[1],
-                #             'bulto': id_bulto.pk
-                #         }                        
-                #         det_bulto = DetalleBultoForm(data=data_det_bulto)
-                #         if det_bulto.is_valid():
-                #             det_bulto.save()
-                #         else:
-                #             return JsonResponse({'valid':False,'detalles':'Error al crear detalle de bulto'+ str(det_bulto.errors.as_data())}, status=400)       
-            
-        else:
-            print(str(form.errors.as_data()))
-            
+            if value.startswith('tipo_bulto'):
+                list_tp_bulto.append(request.POST[value])
+            if value.startswith('largo'):
+                list_largo.append(request.POST[value])
+            if value.startswith('ancho'):
+                list_ancho.append(request.POST[value])
+            if value.startswith('volumen'):
+                list_volumen.append(request.POST[value])
+            if value.startswith('peso_bruto'):
+                list_peso_bruto.append(request.POST[value])
+            if value.startswith('peso_neto'):
+                list_peso_neto.append(request.POST[value])
         
-    
+        lista_bultos = []
+        contador = 0
+        for val in list_tp_bulto:
+            data_bulto = {
+                'orden_venta': 'OV'+request.POST['orden_venta'],
+                'tipo_bulto': val,
+                'largo': list_largo[contador],
+                'ancho': list_ancho[contador],
+                'volumen': list_volumen[contador],
+                'peso_bruto': list_peso_bruto[contador],
+                'peso_neto': list_peso_neto[contador],
+                'activo': True
+            }
+            lista_bultos.append(data_bulto)
+            contador += 1
+            
+        i = 1
+        bultos_id = []
+        for val in lista_bultos:
+            form = BultoPackingListForm(data=val)
+            if form.is_valid():
+                id_bulto = form.save()
+                # bulto = {'id': id_bulto,
+                #              'num_bulto': i}
+                bultos_id.append(id_bulto)
+            else:
+                print(str(form.errors.as_data()))
+                # i+= 1
+        item = 0
+        for linea in list_lineas:
+            detalle_bulto = {
+                'linea': linea,
+                'codigo' : list_codigo[item],
+                'articulo' : list_descripcion[item],
+                'cantidad': list_cantidad[item],
+                'bulto': bultos_id[item]
+            }            
+            item +=1
+            form_detalle = DetalleBultoForm(data=detalle_bulto)
+            if form_detalle.is_valid():
+                form_detalle.save()
+        data['guardado'] = True
+
     return render(request,'packing-list/packing-list.html',data)
 
 @login_required(login_url='/auth/login_user')
