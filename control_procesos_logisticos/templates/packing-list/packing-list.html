@@ -308,7 +308,7 @@
     </div>
 </div>
 
-
+<iframe id="my_iframe" style="display:none;"></iframe>
 <div class="modal modal-blur fade" id="modal-error-finalizar-bulto" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -582,7 +582,7 @@
                         lista_lineas.push(linea)
                         // $("#tabla-bulto-1").append(`<tr class="gridjs-tr">
                         $("#" + select.value).append(`<tr class="gridjs-tr">
-                            <td class="gridjs-td"><input type="hidden" name="l-${linea}-${cantidad}" value="${linea}" id='linea-tabla'>${linea}</td>
+                            <td class="gridjs-td"><input type="hidden" name="linea-${linea}-${cantidad}-${select.value}" value="${linea}" id='linea-tabla'>${linea}</td>
                             <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
                             <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
                             <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
@@ -933,6 +933,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $("#modal-pl-guardado").modal('show');
+        document.getElementById('my_iframe').src = `{% url 'pl_pdf' %}`
     });
 </script>
 {% endif %}

@@ -1,6 +1,8 @@
 import io
 import json
 from json.decoder import JSONDecodeError
+import os
+from django.conf import settings
 import pandas as pd
 import requests
 import cx_Oracle
@@ -14,7 +16,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.contrib import auth,messages
 from django.contrib.auth.decorators import login_required, permission_required
-
+# from django.templatetags.static import static
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, BultoPackingListForm, DetalleRetiroForm,\
                                               LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TransporteForm,DetalleBultoForm
@@ -709,7 +712,6 @@ def agendarRetiro(request):
         retiro = RetiroForm(data=data_retiro)
         if retiro.is_valid():
             id_retiro = retiro.save()
-            # file = retiroGenerarPDF(request,data_retiro,data,str(id_retiro.pk))
 
             for item in data:  
                 print(item)
@@ -905,7 +907,6 @@ def buscarRetiroPDF(request):
                     det.tipo_embalaje]
                 data_detalle.append(detalle)
 
-        # retiroGenerarPDF(request,data_retiro,data_detalle,request.POST['retiro'])
         return retiroGenerarPDF(request,data_retiro,data_detalle,request.GET.get('retiro',None))
         
     #     return JsonResponse({'valid':True},status=200)
@@ -1023,11 +1024,12 @@ def packingList(request):
         list_volumen = []
         list_peso_bruto = []
         list_peso_neto = []
+        list_bultos_linea = []
         for value in request.POST:
-            if value.startswith('l-'):
+            if value.startswith('linea-'):
                 list_lineas.append(value.split('-')[1])
                 list_cantidad.append(value.split('-')[2])
-
+                list_bultos_linea.append(value.split('-')[5])
             if value.startswith('codigo-'):
                 list_codigo.append(value.split('-')[1])
             if value.startswith('desc!'):
@@ -1074,13 +1076,14 @@ def packingList(request):
                 print(str(form.errors.as_data()))
                 # i+= 1
         item = 0
+
         for linea in list_lineas:
             detalle_bulto = {
                 'linea': linea,
                 'codigo' : list_codigo[item],
                 'articulo' : list_descripcion[item],
                 'cantidad': list_cantidad[item],
-                'bulto': bultos_id[item]
+                'bulto': bultos_id[int(list_bultos_linea[item])-1]
             }            
             item +=1
             form_detalle = DetalleBultoForm(data=detalle_bulto)
@@ -1184,4 +1187,36 @@ def finalizarBultoPL(request):
         return JsonResponse({'valid':True}, status=200)
         
     return JsonResponse({'valid':False}, status=400)
-                
+
+def packingListGenerarPDF(request):
+    pdf = PDF()
+    pdf.add_page()
+    file_path = os.path.join(settings.STATIC_ROOT, 'img/logo_ksb.svg')
+ 
+
+    # pdf.set_font("Arial", size = 15)
+    # static('img/logo_ksb.svg')
+    pdf.image(file_path)
+    pdf.titles('PACKING LIST')
+    pdf.linea()
+    # pdf.texto('Fecha: ',14,10)
+    # pdf.texto(data_retiro['fecha'],45,10)
+    
+    # pdf.texto('Hora inicio: ',14,20)
+    # pdf.texto(data_retiro['hora_inicio'],45,20)
+    
+    # pdf.texto('Hora fin: ',14,30)
+    # pdf.texto(data_retiro['hora_fin'],45,30)
+    
+    # pdf.texto('Cliente: ',14,40)
+    # pdf.texto(data_retiro['cliente'],45,40)
+    
+    # pdf.texto('Dirección de retiro: ',14,50)
+    # pdf.texto(data_retiro['direccion'],45,50)    
+
+    # headers = ['Orden de venta','Línea OV','Descripción','Cantidad','Tipo Embalaje']
+
+    # pdf.tabla(headers,[])
+    
+    pdf.output("pdf/PL-TEST.pdf",'F')
+    return FileResponse(open("pdf/PL-TEST.pdf", 'rb'), as_attachment=True, content_type='application/pdf')

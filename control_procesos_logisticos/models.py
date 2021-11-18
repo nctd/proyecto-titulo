@@ -147,7 +147,7 @@ class Retiro(models.Model):
     fecha       = models.DateField()
     hora_inicio = models.CharField(max_length=10)
     hora_fin    = models.CharField(max_length=10)
-    cliente     = models.CharField(max_length=40)
+    cliente     = models.CharField(max_length=120)
     # despacho    = models.ForeignKey(Despacho,on_delete=PROTECT)
     direccion   = models.CharField(max_length=120)
     activo      = models.BooleanField(default=False)
