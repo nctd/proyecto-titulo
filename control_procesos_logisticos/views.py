@@ -1,8 +1,5 @@
 import io
 import json
-from json.decoder import JSONDecodeError
-import os
-from django.conf import settings
 import pandas as pd
 import requests
 import cx_Oracle
@@ -16,13 +13,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection
 from django.contrib import auth,messages
 from django.contrib.auth.decorators import login_required, permission_required
-# from django.templatetags.static import static
+
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, BultoPackingListForm, DetalleRetiroForm,\
                                               LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TransporteForm,DetalleBultoForm
 
-from .models import Articulo, Bulto, Cliente, Despacho, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte,TemporalLinea
+from .models import Articulo, Bulto, Cliente, Despacho, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
@@ -1191,12 +1188,11 @@ def finalizarBultoPL(request):
 def packingListGenerarPDF(request):
     pdf = PDF()
     pdf.add_page()
-    file_path = os.path.join(settings.STATIC_ROOT, 'img/logo_ksb.svg')
  
 
     # pdf.set_font("Arial", size = 15)
     # static('img/logo_ksb.svg')
-    pdf.image(file_path)
+    pdf.image("static/img/logo_pdf.png",160, 6, 33)
     pdf.titles('PACKING LIST')
     pdf.linea()
     # pdf.texto('Fecha: ',14,10)
