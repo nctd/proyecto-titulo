@@ -125,6 +125,7 @@ class Bulto(models.Model):
     peso_bruto = models.DecimalField(max_digits=10, decimal_places=5)
     peso_neto  = models.DecimalField(max_digits=10, decimal_places=5)
     activo   = models.BooleanField(default=False)
+    fecha_creacion = models.DateField(auto_now=True)
     
     class Meta:
         verbose_name = 'Bulto'
@@ -137,6 +138,7 @@ class DetalleBulto(models.Model):
     articulo = models.CharField(max_length=120,blank=False,null=False)
     cantidad   = models.IntegerField()
     bulto      = models.ForeignKey(Bulto, on_delete=PROTECT)
+    fecha_creacion = models.DateField(auto_now=True)
     
     class Meta:
         verbose_name = 'Detalle_Bulto'

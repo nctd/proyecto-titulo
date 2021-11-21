@@ -1,5 +1,6 @@
 import io
 import json
+from typing import List
 import pandas as pd
 import requests
 import cx_Oracle
@@ -19,7 +20,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from control_procesos_logisticos.forms import ArticuloForm, ClienteForm, CustomUserCreationForm, DespachoForm, BultoPackingListForm, DetalleRetiroForm,\
                                               LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TransporteForm,DetalleBultoForm
 
-from .models import Articulo, Bulto, Cliente, Despacho, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
+from .models import Articulo, Bulto, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
@@ -711,7 +712,6 @@ def agendarRetiro(request):
             id_retiro = retiro.save()
 
             for item in data:  
-                print(item)
                 data_det = {
                     'orden_venta' : item[0],
                     'linea' : item[1],
@@ -725,7 +725,6 @@ def agendarRetiro(request):
                     det_retiro.save()
                     
                     orden_venta = crearPlanificacion(item[0],item[1])
-                    print(orden_venta)
                     if orden_venta['error']:
                         print('ERRORORORRO')
                         return render(request,'agenda-retiro/agendar.html',orden_venta)
@@ -774,8 +773,9 @@ def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     pdf.add_page()
     
     # pdf.set_font("Arial", size = 15)
-    
+    pdf.image("static/img/logo_pdf.png",160, 6, 33)
     pdf.titles('CITA NRO '+id_retiro)
+    
     pdf.linea()
     pdf.texto('Fecha: ',14,10)
     pdf.texto(data_retiro['fecha'],45,10)
@@ -1030,7 +1030,7 @@ def packingList(request):
             if value.startswith('codigo-'):
                 list_codigo.append(value.split('-')[1])
             if value.startswith('desc!'):
-                list_descripcion.append(value.split('-')[1])
+                list_descripcion.append(request.POST[value])
             if value.startswith('tipo_bulto'):
                 list_tp_bulto.append(request.POST[value])
             if value.startswith('largo'):
@@ -1055,25 +1055,28 @@ def packingList(request):
                 'volumen': list_volumen[contador],
                 'peso_bruto': list_peso_bruto[contador],
                 'peso_neto': list_peso_neto[contador],
-                'activo': True
+                'activo': False
             }
             lista_bultos.append(data_bulto)
             contador += 1
             
-        i = 1
+        # i = 1
         bultos_id = []
         for val in lista_bultos:
             form = BultoPackingListForm(data=val)
             if form.is_valid():
                 id_bulto = form.save()
-                # bulto = {'id': id_bulto,
-                #              'num_bulto': i}
                 bultos_id.append(id_bulto)
             else:
+                data = {
+                    'error': True,
+                    'detalles': 'Error al crear el Packing List'+ str(form.errors.as_data()),
+                    'form_bulto': BultoPackingListForm(),
+                    }
                 print(str(form.errors.as_data()))
-                # i+= 1
-        item = 0
+                return render(request,'packing-list/packing-list.html',data)
 
+        item = 0
         for linea in list_lineas:
             detalle_bulto = {
                 'linea': linea,
@@ -1082,12 +1085,29 @@ def packingList(request):
                 'cantidad': list_cantidad[item],
                 'bulto': bultos_id[int(list_bultos_linea[item])-1]
             }            
+            print(detalle_bulto)
+            print(list_descripcion[item])
             item +=1
             form_detalle = DetalleBultoForm(data=detalle_bulto)
             if form_detalle.is_valid():
                 form_detalle.save()
+            else:
+                data = {
+                    'error': True,
+                    'detalles': 'Error al crear el Packing List'+ str(form_detalle.errors.as_data()),
+                    'form_bulto': BultoPackingListForm(),
+                    }
+                print(str(form_detalle.errors.as_data()))
+                return render(request,'packing-list/packing-list.html',data)
+                
+        list_id_pdf = []
+        for val in bultos_id:
+            list_id_pdf.append(int(val.pk))
+            
         data['guardado'] = True
+        data['pl'] = json.dumps(list_id_pdf)
 
+        
     return render(request,'packing-list/packing-list.html',data)
 
 @login_required(login_url='/auth/login_user')
@@ -1186,33 +1206,108 @@ def finalizarBultoPL(request):
     return JsonResponse({'valid':False}, status=400)
 
 def packingListGenerarPDF(request):
-    pdf = PDF()
-    pdf.add_page()
- 
+    if request.GET.get('pl',None):
+        # bultos = json.loads(request.GET.getlist('pl[]',None))
+        bultos = request.GET.get('pl',None)
+        arr_tabla = []
+        if ',' in bultos:
+            for row in bultos.split(','):
+                print(row)
+                bulto = Bulto.objects.filter(id_bulto=row, activo=0)
+                row_tabla = []
+                for value in bulto:
+                    orden_venta = value.orden_venta
+                    detalles = DetalleBulto.objects.filter(bulto=row)
+                    for val in detalles:
+                        row_tabla = [
+                            value.tipo_bulto,
+                            str(val.cantidad),
+                            val.articulo,
+                            format(value.largo,'.2f')+' mt',
+                            format(value.ancho,'.2f')+' mt',
+                            format(value.volumen,'.2f')+' mt',
+                            format(value.peso_bruto,'.2f')+' mt',
+                            format(value.peso_neto,'.2f')+' mt',
+                        ]
+                        linea = val.linea
+                        arr_tabla.append(row_tabla)
+        else:
+            bulto = Bulto.objects.filter(id_bulto=bultos, activo=0)
+            row_tabla = []
+            for value in bulto:
+                orden_venta = value.orden_venta
+                detalles = DetalleBulto.objects.filter(bulto=bultos)
+                for val in detalles:
+                    row_tabla = [
+                        value.tipo_bulto,
+                        str(val.cantidad),
+                        val.articulo,
+                        format(value.largo,'.2f')+' mt',
+                        format(value.ancho,'.2f')+' mt',
+                        format(value.volumen,'.2f')+' m3',
+                        format(value.peso_bruto,'.2f')+' mt',
+                        format(value.peso_neto,'.2f')+' mt',
+                    ]
+                    linea = val.linea
+                    arr_tabla.append(row_tabla)
+        
+        
+        response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+            'ov': orden_venta,
+            'linea': linea
+        })
+        if response.json()['resultado'] == 0:
+            for value in response.json()['data']:
+                cliente = value['cliente']
+                direccion = value['direccion']
+                contacto = 'N/A'
+                correo_contacto = value['correo_contacto']
+                clausula = value['clausula']
+                orden_compra = value['orden_compra']
+        else:
+            cliente = 'N/A'
+            direccion = 'N/A'
+            contacto = 'N/A'
+            correo_contacto = 'N/A'
+            clausula = 'N/A'
+            orden_compra = 'N/A'
+        
+        pdf = PDF()
+        pdf.add_page()
+    
 
-    # pdf.set_font("Arial", size = 15)
-    # static('img/logo_ksb.svg')
-    pdf.image("static/img/logo_pdf.png",160, 6, 33)
-    pdf.titles('PACKING LIST')
-    pdf.linea()
-    # pdf.texto('Fecha: ',14,10)
-    # pdf.texto(data_retiro['fecha'],45,10)
-    
-    # pdf.texto('Hora inicio: ',14,20)
-    # pdf.texto(data_retiro['hora_inicio'],45,20)
-    
-    # pdf.texto('Hora fin: ',14,30)
-    # pdf.texto(data_retiro['hora_fin'],45,30)
-    
-    # pdf.texto('Cliente: ',14,40)
-    # pdf.texto(data_retiro['cliente'],45,40)
-    
-    # pdf.texto('Dirección de retiro: ',14,50)
-    # pdf.texto(data_retiro['direccion'],45,50)    
+        # pdf.set_font("Arial", size = 15)
+        # static('img/logo_ksb.svg')
+        pdf.image("static/img/logo_pdf.png",160, 6, 33)
+        pdf.titles('PACKING LIST')
+        pdf.linea()
+        pdf.texto('Cliente: ',14,10)
+        pdf.texto(cliente,45,10)
+        
+        pdf.texto('Orden de venta: ',130,10)
+        pdf.texto(orden_venta,160,10)
+        
+        pdf.texto('Orden de compra: ',130,20)
+        pdf.texto(orden_compra,160,20)
+        
+        pdf.texto('Dirección: ',14,20)
+        pdf.texto(direccion,45,20)
+        
+        pdf.texto('Contacto: ',14,30)
+        pdf.texto(contacto,45,30)
+        
+        pdf.texto('E-mail: ',14,40)
+        pdf.texto(correo_contacto,45,40)
+        
+        pdf.texto('Clausula: ',14,50)
+        pdf.texto(clausula,45,50)    
 
-    # headers = ['Orden de venta','Línea OV','Descripción','Cantidad','Tipo Embalaje']
+        
+        headers = ['N° de bulto','Cantidad','Detalle','Largo','Ancho','Volumen','Peso bruto','Peso neto']
+        pdf.tabla_PL(headers,arr_tabla)
+        
+        date_save = datetime.now().strftime("%Y%m%d-%H%M%S")
+        
+        pdf.output("pdf/PL-"+date_save+".pdf",'F')
+        return FileResponse(open("pdf/PL-"+date_save+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
-    # pdf.tabla(headers,[])
-    
-    pdf.output("pdf/PL-TEST.pdf",'F')
-    return FileResponse(open("pdf/PL-TEST.pdf", 'rb'), as_attachment=True, content_type='application/pdf')

@@ -357,7 +357,38 @@
                         d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
                 </svg>
                 <h3>Alerta</h3>
-                <div class="text-muted" id='content-error-finalizar-bulto'>Debe agregar una linea al bulto</div>
+                <div class="text-muted" id='content-error-lineas-bulto'>Debe agregar una linea al bulto</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+
+                        <div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                OK
+                            </a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal modal-blur fade" id="modal-linea-not-found" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
+
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path
+                        d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <h3>Alerta</h3>
+                <div class="text-muted" id='content-error-linea'>No se encontraron datos para la línea</div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
@@ -435,6 +466,8 @@
     </div>
 </div>
 
+
+
 <script>
     const e = document.getElementById('nav-item-packing')
     e.classList.add('active')
@@ -480,6 +513,8 @@
 </script>
 <script>
     $("#bulto_linea").on('change', function (e) {
+        document.getElementById('bulto_codigo').value = '';
+        document.getElementById('bulto_descripcion').value = '';
         var ov = 'OV' + document.getElementById('bulto_ov').value
         var linea = document.getElementById('bulto_linea').value
         $.ajax({
@@ -494,7 +529,12 @@
                 alert('Datos encontrados')
                 document.getElementById('bulto_codigo').value = response['codigo'];
                 document.getElementById('bulto_descripcion').value = response['descripcion'];
+            },
+            error: function (response) {
+                $('#content-error-linea').text('No se encontraron datos para la línea')
+                $('#modal-linea-not-found').modal('show')
             }
+
         })
     })
 </script>
@@ -537,7 +577,8 @@
 
     $("#btn-agregar-linea").on('click', function (e) {
         if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
-            alert('SIN DATOS')
+            $('#content-error-linea').text('Verifique que todos los campos de la línea esten completos ')
+            $('#modal-linea-not-found').modal('show')
             if ($('#bulto_linea').val() == '') {
                 $('#bulto_linea').addClass('is-invalid');
             }
@@ -557,18 +598,6 @@
             var descripcion = document.getElementById('bulto_descripcion').value
             var cantidad = document.getElementById('bulto_cantidad').value
 
-            // var cant_bultos = $('.table-responsive').length
-            // var arr_bultos = []
-            // for (var i = 0; i < cant_bultos; i++) {
-            //     arr_bultos.push(i);
-            // }
-            // arr_bultos.forEach(e => {
-            //     var num = e + 1
-            //     $('#select-bultos').append($('<option>', {
-            //         value: 'tabla-bulto-' + num,
-            //         text: 'Bulto ' + num
-            //     }));
-            // });
 
             $('#modal-select-bulto-linea').on('shown.bs.modal', function (e) {
                 var btnConfirmar = $(this).find('#btn-select-bulto');
@@ -614,39 +643,39 @@
     })
 </script>
 <script>
-    $("#bulto_ov").on('click', function (e) {
+    $("#bulto_ov").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_ov').removeClass("is-invalid");
     })
-    $("#bulto_linea").on('click', function (e) {
+    $("#bulto_linea").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_linea').removeClass("is-invalid");
     })
-    $("#bulto_cantidad").on('click', function (e) {
+    $("#bulto_cantidad").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_cantidad').removeClass("is-invalid");
     })
-    $("#tipo_bulto").on('click', function (e) {
+    $("#tipo_bulto").on('focus', function (e) {
         event.stopPropagation();
         $('#tipo_bulto').removeClass("is-invalid");
     })
-    $("#bulto_largo").on('click', function (e) {
+    $("#bulto_largo").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_largo').removeClass("is-invalid");
     })
-    $("#bulto_ancho").on('click', function (e) {
+    $("#bulto_ancho").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_ancho').removeClass("is-invalid");
     })
-    $("#bulto_volumen").on('click', function (e) {
+    $("#bulto_volumen").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_volumen').removeClass("is-invalid");
     })
-    $("#bulto_peso_bruto").on('click', function (e) {
+    $("#bulto_peso_bruto").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_peso_bruto').removeClass("is-invalid");
     })
-    $("#bulto_peso_neto").on('click', function (e) {
+    $("#bulto_peso_neto").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_peso_neto').removeClass("is-invalid");
     })
@@ -655,6 +684,9 @@
     // $("#btn-finalizar-bulto").on('click', function (e) {
     $("#btn-guardar-pl").on('click', function (e) {
         // alert('FINALIZAR BULTO')
+        // const tipo_bulto = document.querySelectorAll("[name*=tipo_bulto]");
+
+        // alert(tipo_bulto)
 
         if (document.getElementById('tipo_bulto').value == '' || document.getElementById('bulto_largo').value == '' ||
             document.getElementById('bulto_ancho').value == '' || document.getElementById('bulto_volumen').value == '' ||
@@ -681,6 +713,30 @@
             $("#modal-error-finalizar-bulto").modal('show');
         } else {
             var lineas = [];
+            const tablas = document.querySelectorAll("[id*=tabla-bulto-]");
+            var valido = true
+            var num_bulto = ''
+            tablas.forEach(element => {
+                let len_tablas = []
+                alert(element.id)
+                $('#' + element.id + ' tr').each(function () {
+                    var linea = $(this).find("td:nth-child(1)").text()
+                    var cantidad = $(this).find("td:nth-child(4)").text()
+                    len_tablas.push(linea + "-" + cantidad);
+                });
+                if (len_tablas.length < 2) {
+                    e.preventDefault()
+                    valido = false
+                    num_bulto = element.id
+                } else {
+                    valido = true
+                }
+            });
+            if (valido == false) {
+                $("#modal-error-lineas-bulto").modal('show');
+                $('#content-error-lineas-bulto').text('Debe agregar una linea al bulto número ' + num_bulto.slice(num_bulto.length - 1))
+                e.preventDefault()
+            }
             $('#tabla-bulto-1 tr').each(function () {
                 var linea = $(this).find("td:nth-child(1)").text()
                 var cantidad = $(this).find("td:nth-child(4)").text()
@@ -688,15 +744,16 @@
             });
             if (lineas.length < 2) {
                 $("#modal-error-lineas-bulto").modal('show');
+                $('#content-error-lineas-bulto').text('Debe agregar una linea al bulto número 1')
                 e.preventDefault()
             } else {
-                var ov = 'OV' + document.getElementById('bulto_ov').value
-                var tipo_bulto = document.getElementById('tipo_bulto').value
-                var bulto_largo = document.getElementById('bulto_largo').value
-                var bulto_ancho = document.getElementById('bulto_ancho').value
-                var bulto_volumen = document.getElementById('bulto_volumen').value
-                var bulto_peso_bruto = document.getElementById('bulto_peso_bruto').value
-                var bulto_peso_neto = document.getElementById('bulto_peso_neto').value
+                // var ov = 'OV' + document.getElementById('bulto_ov').value
+                // var tipo_bulto = document.getElementById('tipo_bulto').value
+                // var bulto_largo = document.getElementById('bulto_largo').value
+                // var bulto_ancho = document.getElementById('bulto_ancho').value
+                // var bulto_volumen = document.getElementById('bulto_volumen').value
+                // var bulto_peso_bruto = document.getElementById('bulto_peso_bruto').value
+                // var bulto_peso_neto = document.getElementById('bulto_peso_neto').value
 
                 // $.ajax({
                 //     type: 'POST',
@@ -748,16 +805,21 @@
 
 
     var contador = 2
+    function eliminarBulto(bulto) {
+        alert('test')
+        $('#nuevo-bulto-' + bulto).remove();
+    }
     $("#btn-agregar-bulto").on('click', function (e) {
         var tabla = 'tabla-bulto-' + contador
         const container = document.getElementById("nuevo-bulto")
         container.innerHTML +=
-            '<div class="card-header">' +
-            '<h3 class="card-title">Nuevo bulto</h3>' +
+            `<div id="nuevo-bulto-${contador}">` +
+            `<div class="card-header">` +
+            `<h3 class="card-title">Bulto ${contador}</h3>` +
             '<div class="col-auto ms-auto">' +
             '<div class="btn-list">' +
             '<span class="d-none d-sm-inline">' +
-            '<a class="btn btn-danger">' +
+            `<a class="btn btn-danger" onclick="eliminarBulto('${contador}')">` +
             `<svg xmlns="http://www.w3.org/2000/svg"
                             class="icon icon-tabler icon-tabler-trash" width="24" height="24"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
@@ -781,42 +843,42 @@
             '<div class="mb-3">' +
             '<label class="form-label">Tipo de bulto</label>' +
             // '{{form_bulto.tipo_bulto}}' +
-            `<input type="text" class="form-control" name="tipo_bulto${contador}" id="tipo_bulto${contador}">` +
+            `<input type="text" class="form-control" name="tipo_bulto${contador}" id="tipo_bulto${contador}" required>` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-1">' +
             '<div class="mb-3">' +
             '<label class="form-label">Largo (mt)</label>' +
             // '{{ form_bulto.largo }}' +
-            `<input type="text" class="form-control" name="largo${contador}" id="largo${contador}">` +
+            `<input type="text" class="form-control" name="largo${contador}" id="largo${contador}" required>` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-1">' +
             '<div class="mb-3">' +
             '<label class="form-label">Ancho (mt)</label>' +
             // '{{ form_bulto.ancho }}' +
-            `<input type="text" class="form-control" name="ancho${contador}" id="ancho${contador}">` +
+            `<input type="text" class="form-control" name="ancho${contador}" id="ancho${contador}" required>` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
             '<label class="form-label">Volumen (mt)</label>' +
             // '{{ form_bulto.volumen }}' +
-            `<input type="text" class="form-control" name="volumen${contador}" id="volumen${contador}">` +
+            `<input type="text" class="form-control" name="volumen${contador}" id="volumen${contador}" required>` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
             '<label class="form-label">Peso bruto (kg)</label>' +
             // '{{ form_bulto.peso_bruto }}' +
-            `<input type="text" class="form-control" name="peso_bruto${contador}" id="peso_bruto${contador}">` +
+            `<input type="text" class="form-control" name="peso_bruto${contador}" id="peso_bruto${contador}" required>` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
             '<label class="form-label">Peso neto (kg)</label>' +
             // '{{ form_bulto.peso_neto }}' +
-            `<input type="text" class="form-control" name="peso_neto${contador}" id="peso_neto${contador}">` +
+            `<input type="text" class="form-control" name="peso_neto${contador}" id="peso_neto${contador}" required>` +
             '</div>' +
             '</div>' +
             '</div>' +
@@ -828,7 +890,7 @@
 
             '<div class="table-responsive">' +
             '<div class="gridjs gridjs-container">' +
-            `<table class="gridjs-table" id='${tabla}'>` +
+            `<table class="gridjs-table" id='${tabla}' name='${tabla}'>` +
             '<thead class="gridjs-thead">' +
             '<tr class="gridjs-tr">' +
             '<th class="gridjs-th gridjs-th-sort gridjs-th-fixed text-center" style="width: 50px;">LÍNEA</th>' +
@@ -844,7 +906,10 @@
             '</table>' +
             '</div>' +
             '</div>' +
+            '</div>' +
             '</div>'
+
+
 
         function setInputFilter(textbox, inputFilter) {
             ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function (event) {
@@ -932,9 +997,11 @@
 {% if guardado %}
 <script type="text/javascript">
     $(document).ready(function () {
+
+        let pl = JSON.parse("{{pl}}")
         $("#modal-pl-guardado").modal('show');
-        document.getElementById('my_iframe').src = `{% url 'pl_pdf' %}`
-    });
+        document.getElementById('my_iframe').src = `{% url 'pl_pdf' %}?pl=${pl}`
+    })
 </script>
 {% endif %}
 
