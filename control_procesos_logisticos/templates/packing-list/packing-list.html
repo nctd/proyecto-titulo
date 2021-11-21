@@ -466,7 +466,37 @@
     </div>
 </div>
 
+<div class="modal modal-blur fade" id="modal-error-guardar-pl" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-status bg-danger"></div>
+            <div class="modal-body text-center py-4">
 
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon mb-2 text-danger icon-lg" width="24" height="24"
+                    viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M12 9v2m0 4v.01" />
+                    <path
+                        d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
+                </svg>
+                <h3>Alerta</h3>
+                <div class="text-muted" id='content-error-guardar-pl'>404</div>
+            </div>
+            <div class="modal-footer">
+                <div class="w-100">
+                    <div class="row">
+
+                        <div class="col"><a href="#" class="btn btn-danger w-100" data-bs-dismiss="modal">
+                                OK
+                            </a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
     const e = document.getElementById('nav-item-packing')
@@ -499,10 +529,10 @@
                     document.getElementById('bulto_codigo').disabled = true;
                     document.getElementById('bulto_descripcion').disabled = true;
                     $('#modal-ov-valida').modal('show')
-                    // alert('VALIDO')
                 },
                 error: function (response) {
-                    alert('ERROR OV')
+                    $("#modal-error-guardar-pl").modal('show');
+                    $('#content-error-guardar-pl').text('No se encontraron datos para la orden de venta ingresada')
                 }
             })
         } else {
@@ -526,7 +556,7 @@
             },
             dataType: "json",
             success: function (response) {
-                alert('Datos encontrados')
+                // alert('Datos encontrados')
                 document.getElementById('bulto_codigo').value = response['codigo'];
                 document.getElementById('bulto_descripcion').value = response['descripcion'];
             },
@@ -591,52 +621,74 @@
             if ($('#bulto_cantidad').val() == '') {
                 $('#bulto_cantidad').addClass('is-invalid');
             }
+            e.preventDefault()
         } else {
-            $("#modal-select-bulto-linea").modal('show');
             var linea = document.getElementById('bulto_linea').value
-            var codigo = document.getElementById('bulto_codigo').value
-            var descripcion = document.getElementById('bulto_descripcion').value
-            var cantidad = document.getElementById('bulto_cantidad').value
+            var ov = 'OV' + document.getElementById('bulto_ov').value
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'validar_linea_pl' %}",
+                data: {
+                    'orden_venta': ov,
+                    'linea': linea,
+                },
+                dataType: "json",
+                success: function (response) {
+                    if (response['valid']) {
+                        $("#modal-select-bulto-linea").modal('show')
+                        var linea = document.getElementById('bulto_linea').value
+                        var codigo = document.getElementById('bulto_codigo').value
+                        var descripcion = document.getElementById('bulto_descripcion').value
+                        var cantidad = document.getElementById('bulto_cantidad').value
 
 
-            $('#modal-select-bulto-linea').on('shown.bs.modal', function (e) {
-                var btnConfirmar = $(this).find('#btn-select-bulto');
+                        $('#modal-select-bulto-linea').on('shown.bs.modal', function (e) {
+                            var btnConfirmar = $(this).find('#btn-select-bulto');
 
-                btnConfirmar.off('click').on('click', function () {
-                    if (lista_lineas.includes(linea)) {
-                        $("#modal-existe-linea").modal('show');
-                    } else {
-                        var select = document.getElementById("select-bultos");
-                        // alert(select.value)
-                        lista_lineas.push(linea)
-                        // $("#tabla-bulto-1").append(`<tr class="gridjs-tr">
-                        $("#" + select.value).append(`<tr class="gridjs-tr">
-                            <td class="gridjs-td"><input type="hidden" name="linea-${linea}-${cantidad}-${select.value}" value="${linea}" id='linea-tabla'>${linea}</td>
-                            <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
-                            <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
-                            <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
-                            <td class="gridjs-td">
-                                <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                <line x1="4" y1="7" x2="20" y2="7"></line>
-                                <line x1="10" y1="11" x2="10" y2="17"></line>
-                                <line x1="14" y1="11" x2="14" y2="17"></line>
-                                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
-                                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
-                                </svg>
-                                Eliminar
-                                </a>
-                            </td>
-                            </tr>`);
-                        document.getElementById('bulto_linea').value = ""
-                        document.getElementById('bulto_codigo').value = ""
-                        document.getElementById('bulto_descripcion').value = ""
-                        document.getElementById('bulto_cantidad').value = ""
-                        $('#modal-select-bulto-linea').modal('hide'); // Hide Modal
+                            btnConfirmar.off('click').on('click', function () {
+                                if (lista_lineas.includes(linea)) {
+                                    $("#modal-existe-linea").modal('show');
+                                } else {
+                                    var select = document.getElementById("select-bultos");
+                                    // alert(select.value)
+                                    lista_lineas.push(linea)
+                                    // $("#tabla-bulto-1").append(`<tr class="gridjs-tr">
+                                    $("#" + select.value).append(`<tr class="gridjs-tr">
+                                        <td class="gridjs-td"><input type="hidden" name="linea-${linea}-${cantidad}-${select.value}" value="${linea}" id='linea-tabla'>${linea}</td>
+                                        <td class="gridjs-td"><input type="hidden" name="codigo-${codigo}" value="${codigo}" id='codigo-${codigo}'>${codigo}</td>
+                                        <td class="gridjs-td"><input type="hidden" name="desc!${descripcion}" value="${descripcion}" id='descripcion-${descripcion}'>${descripcion}</td>
+                                        <td class="gridjs-td"><input type="hidden" name="cantidad-${cantidad}" value="${cantidad}" id='cantidad-${cantidad}'>${cantidad}</td>
+                                        <td class="gridjs-td">
+                                            <a class="btn btn-danger" onclick="eliminarFila('${linea}')">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                            <line x1="4" y1="7" x2="20" y2="7"></line>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                            <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                            </svg>
+                                            Eliminar
+                                            </a>
+                                        </td>
+                                        </tr>`);
+                                    document.getElementById('bulto_linea').value = ""
+                                    document.getElementById('bulto_codigo').value = ""
+                                    document.getElementById('bulto_descripcion').value = ""
+                                    document.getElementById('bulto_cantidad').value = ""
+                                    $('#modal-select-bulto-linea').modal('hide'); // Hide Modal
+                                }
+                            })
+
+                        })
                     }
-                })
 
+                },
+                error: function (response) {
+                    data = JSON.parse(response.responseText)
+                    $("#modal-error-guardar-pl").modal('show');
+                    $('#content-error-guardar-pl').text(data['detalles'])
+                }
             })
 
         }
@@ -683,7 +735,7 @@
 <script>
     // $("#btn-finalizar-bulto").on('click', function (e) {
     $("#btn-guardar-pl").on('click', function (e) {
-        // alert('FINALIZAR BULTO')
+
         // const tipo_bulto = document.querySelectorAll("[name*=tipo_bulto]");
 
         // alert(tipo_bulto)
@@ -718,7 +770,6 @@
             var num_bulto = ''
             tablas.forEach(element => {
                 let len_tablas = []
-                alert(element.id)
                 $('#' + element.id + ' tr').each(function () {
                     var linea = $(this).find("td:nth-child(1)").text()
                     var cantidad = $(this).find("td:nth-child(4)").text()
@@ -746,43 +797,6 @@
                 $("#modal-error-lineas-bulto").modal('show');
                 $('#content-error-lineas-bulto').text('Debe agregar una linea al bulto número 1')
                 e.preventDefault()
-            } else {
-                // var ov = 'OV' + document.getElementById('bulto_ov').value
-                // var tipo_bulto = document.getElementById('tipo_bulto').value
-                // var bulto_largo = document.getElementById('bulto_largo').value
-                // var bulto_ancho = document.getElementById('bulto_ancho').value
-                // var bulto_volumen = document.getElementById('bulto_volumen').value
-                // var bulto_peso_bruto = document.getElementById('bulto_peso_bruto').value
-                // var bulto_peso_neto = document.getElementById('bulto_peso_neto').value
-
-                // $.ajax({
-                //     type: 'POST',
-                //     url: "{% url 'finalizar_bulto_pl' %}",
-                //     headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                //     data: {
-                //         'orden_venta': ov,
-                //         'lineas': lineas,
-                //         'tipo_bulto': tipo_bulto,
-                //         'bulto_largo': bulto_largo,
-                //         'bulto_ancho': bulto_ancho,
-                //         'bulto_volumen': bulto_volumen,
-                //         'bulto_peso_bruto': bulto_peso_bruto,
-                //         'bulto_peso_neto': bulto_peso_neto
-                //     },
-                //     dataType: "json",
-                //     success: function (response) {
-                //         alert(response)
-                //         if (response['valid']) {
-                //             alert('BULTO FINALIZADO')
-                //         } else {
-                //             alert('OCURRIO UN ERROR AL FINALIZAR EL BULTO')
-                //         }
-                //     },
-                //     error: function (response) {
-                //         data = JSON.parse(response.responseText)
-                //         alert(data['detalles'])
-                //     }
-                // })
             }
         }
     })
@@ -806,7 +820,6 @@
 
     var contador = 2
     function eliminarBulto(bulto) {
-        alert('test')
         $('#nuevo-bulto-' + bulto).remove();
     }
     $("#btn-agregar-bulto").on('click', function (e) {
@@ -1002,6 +1015,15 @@
         $("#modal-pl-guardado").modal('show');
         document.getElementById('my_iframe').src = `{% url 'pl_pdf' %}?pl=${pl}`
     })
+</script>
+{% endif %}
+
+{% if error %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modal-error-guardar-pl").modal('show');
+        $('#content-error-guardar-pl').text('{{detalles}}')
+    });
 </script>
 {% endif %}
 

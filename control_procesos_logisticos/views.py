@@ -1046,6 +1046,26 @@ def packingList(request):
         
         lista_bultos = []
         contador = 0
+        
+        ## Validar que la linea ya no tenga un PL
+        # for lin in list_lineas:
+        #     bul_existe = Bulto.objects.filter(orden_venta='OV'+request.POST['orden_venta'],activo=0)
+        #     if bul_existe.exists():
+        #         for val in bul_existe:
+        #             print(val)
+        #             print(lin)
+        #             det_bul_existe = DetalleBulto.objects.filter(bulto_id=val, linea=lin)
+        #             print(det_bul_existe)
+        #             if det_bul_existe.exists():
+        #                 data = {
+        #                     'error': True,
+        #                     'detalles': 'Ya existe un Packing List creado para esta orden de venta y línea ('+lin+')',
+        #                     'form_bulto': BultoPackingListForm(),
+        #                     }
+        #                 return render(request,'packing-list/packing-list.html',data)
+                    
+                    
+        
         for val in list_tp_bulto:
             data_bulto = {
                 'orden_venta': 'OV'+request.POST['orden_venta'],
@@ -1107,7 +1127,7 @@ def packingList(request):
         data['guardado'] = True
         data['pl'] = json.dumps(list_id_pdf)
 
-        
+
     return render(request,'packing-list/packing-list.html',data)
 
 @login_required(login_url='/auth/login_user')
@@ -1146,70 +1166,77 @@ def lineaObtenerArticuloPL(request):
             return JsonResponse({'valid':False,'codigo':'N/A','descripcion':'N/A'}, status=400)
         
 
-def finalizarBultoPL(request):
-    if request.is_ajax and request.method == 'POST':
-        orden_venta = request.POST.get('orden_venta',None)
-        tipo_bulto = request.POST.get('tipo_bulto',None)
-        bulto_largo = request.POST.get('bulto_largo',None)
-        bulto_ancho = request.POST.get('bulto_ancho',None)
-        bulto_volumen = request.POST.get('bulto_volumen',None)
-        bulto_peso_bruto = request.POST.get('bulto_peso_bruto',None)
-        bulto_peso_neto = request.POST.get('bulto_peso_neto',None)
-        lineas = request.POST.getlist('lineas[]',None)
-        print(lineas)
-        lineas.pop(0)
+# def finalizarBultoPL(request):
+#     if request.is_ajax and request.method == 'POST':
+#         orden_venta = request.POST.get('orden_venta',None)
+#         tipo_bulto = request.POST.get('tipo_bulto',None)
+#         bulto_largo = request.POST.get('bulto_largo',None)
+#         bulto_ancho = request.POST.get('bulto_ancho',None)
+#         bulto_volumen = request.POST.get('bulto_volumen',None)
+#         bulto_peso_bruto = request.POST.get('bulto_peso_bruto',None)
+#         bulto_peso_neto = request.POST.get('bulto_peso_neto',None)
+#         lineas = request.POST.getlist('lineas[]',None)
+#         print(lineas)
+#         lineas.pop(0)
         
-        if len(lineas) < 1:
-            return JsonResponse({'valid':False,'detalles': 'No hay lineas en el bulto'}, status=400)
+#         if len(lineas) < 1:
+#             return JsonResponse({'valid':False,'detalles': 'No hay lineas en el bulto'}, status=400)
         
-        data_bulto = {
-            'orden_venta': orden_venta,
-            'tipo_bulto': tipo_bulto,
-            'largo': bulto_largo,
-            'ancho': bulto_ancho,
-            'volumen': bulto_volumen,
-            'peso_bruto': bulto_peso_bruto,
-            'peso_neto': bulto_peso_neto,
-            'activo': True
-        }
-        bul = BultoPackingListForm(data=data_bulto)
-        if bul.is_valid():
-            id_bul = bul.save()
-        else:
-            return JsonResponse({'valid':False,'detalles': 'Error al crear bulto'+ str(bul.errors.as_data())}, status=400)
+#         data_bulto = {
+#             'orden_venta': orden_venta,
+#             'tipo_bulto': tipo_bulto,
+#             'largo': bulto_largo,
+#             'ancho': bulto_ancho,
+#             'volumen': bulto_volumen,
+#             'peso_bruto': bulto_peso_bruto,
+#             'peso_neto': bulto_peso_neto,
+#             'activo': True
+#         }
+#         bul = BultoPackingListForm(data=data_bulto)
+#         if bul.is_valid():
+#             id_bul = bul.save()
+#         else:
+#             return JsonResponse({'valid':False,'detalles': 'Error al crear bulto'+ str(bul.errors.as_data())}, status=400)
         
                 
-        for val in lineas:
-            response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
-                'ov': orden_venta,
-                'linea': val.split('-')[0]
-            })
-            if response.json()['resultado'] == 0 and response.status_code == 200:
-                for value in response.json()['data']:
-                    data_det_bulto = {
-                        'linea': val.split('-')[0],
-                        'codigo' : value['n_articulo'],
-                        'articulo' : value['descripcion'],
-                        'cantidad': val.split('-')[1],
-                        'bulto': id_bul.pk
-                    }                        
-                    det_bulto = DetalleBultoForm(data=data_det_bulto)
-                    if det_bulto.is_valid():
-                        det_bulto.save()
-                    else:
-                        return JsonResponse({'valid':False,'detalles':'Error al crear detalle de bulto'+ str(det_bulto.errors.as_data())}, status=400)       
-            else:
-                return JsonResponse({'valid':False}, status=400)
-        # Bulto.objects.filter(id_bulto=id_bul.pk).update(activo=0)
-        return JsonResponse({'valid':True}, status=200)
+#         for val in lineas:
+#             response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+#                 'ov': orden_venta,
+#                 'linea': val.split('-')[0]
+#             })
+#             if response.json()['resultado'] == 0 and response.status_code == 200:
+#                 for value in response.json()['data']:
+#                     data_det_bulto = {
+#                         'linea': val.split('-')[0],
+#                         'codigo' : value['n_articulo'],
+#                         'articulo' : value['descripcion'],
+#                         'cantidad': val.split('-')[1],
+#                         'bulto': id_bul.pk
+#                     }                        
+#                     det_bulto = DetalleBultoForm(data=data_det_bulto)
+#                     if det_bulto.is_valid():
+#                         det_bulto.save()
+#                     else:
+#                         return JsonResponse({'valid':False,'detalles':'Error al crear detalle de bulto'+ str(det_bulto.errors.as_data())}, status=400)       
+#             else:
+#                 return JsonResponse({'valid':False}, status=400)
+#         # Bulto.objects.filter(id_bulto=id_bul.pk).update(activo=0)
+#         return JsonResponse({'valid':True}, status=200)
         
-    return JsonResponse({'valid':False}, status=400)
+#     return JsonResponse({'valid':False}, status=400)
 
 def packingListGenerarPDF(request):
     if request.GET.get('pl',None):
         # bultos = json.loads(request.GET.getlist('pl[]',None))
         bultos = request.GET.get('pl',None)
         arr_tabla = []
+        arr_totales = []
+        cant_bultos = 0
+        cant_articulos = 0
+        cant_volumen = 0
+        cant_peso_bruto = 0
+        cant_peso_neto = 0
+        
         if ',' in bultos:
             for row in bultos.split(','):
                 print(row)
@@ -1231,6 +1258,11 @@ def packingListGenerarPDF(request):
                         ]
                         linea = val.linea
                         arr_tabla.append(row_tabla)
+                        cant_bultos +=1 
+                        cant_articulos += val.cantidad
+                        cant_volumen += value.volumen
+                        cant_peso_bruto += value.peso_bruto
+                        cant_peso_neto += value.peso_neto
         else:
             bulto = Bulto.objects.filter(id_bulto=bultos, activo=0)
             row_tabla = []
@@ -1250,7 +1282,13 @@ def packingListGenerarPDF(request):
                     ]
                     linea = val.linea
                     arr_tabla.append(row_tabla)
+                    cant_bultos +=1 
+                    cant_articulos += val.cantidad
+                    cant_volumen += value.volumen
+                    cant_peso_bruto += value.peso_bruto
+                    cant_peso_neto += value.peso_neto
         
+        arr_totales = [str(cant_bultos),str(cant_articulos),format(cant_volumen,'.2f'),format(cant_peso_bruto,'.2f'),format(cant_peso_neto,'.2f')]
         
         response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
             'ov': orden_venta,
@@ -1304,10 +1342,24 @@ def packingListGenerarPDF(request):
 
         
         headers = ['N° de bulto','Cantidad','Detalle','Largo','Ancho','Volumen','Peso bruto','Peso neto']
-        pdf.tabla_PL(headers,arr_tabla)
+        pdf.tabla_PL(headers,arr_tabla,arr_totales)
         
         date_save = datetime.now().strftime("%Y%m%d-%H%M%S")
         
         pdf.output("pdf/PL-"+date_save+".pdf",'F')
         return FileResponse(open("pdf/PL-"+date_save+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
+
+def validarLineaPL(request):
+    if request.is_ajax and request.method == 'GET':
+        print('AAA')
+        orden_venta = request.GET.get('orden_venta',None)
+        linea = request.GET.get('linea',None)
+        print('linea'+linea)
+        bul_existe = Bulto.objects.filter(orden_venta=orden_venta,activo=0)
+        for val in bul_existe:
+            det_bul_existe = DetalleBulto.objects.filter(bulto_id=val, linea=linea)
+            if det_bul_existe.exists():
+                print('existe')
+                return JsonResponse({'valid':False,'detalles': 'Ya existe un Packing List creado para esta orden de venta y línea ('+linea+')'}, status=400)
+        return JsonResponse({'valid':True}, status=200)
