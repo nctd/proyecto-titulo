@@ -1,5 +1,6 @@
-from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, home, lineaObtenerArticuloPL, packingList, \
-                                              packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaPL,\
+from os import name
+from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, despachoAgendamiento, home, lineaObtenerArticuloPL, packingList, \
+                                              packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaCita, validarOrdenVentaPL,\
                                               validarOrdenVentaRetiro, visualizarRetiros,generarReporteRetiros,registro,validarLineaPL
 from django.urls import path
 
@@ -21,7 +22,9 @@ urlpatterns = [
     path('get/packing-list/validar-ov-pl',validarOrdenVentaPL,name='validar_orden_pl'),
     path('get/packing-list/obtener-articulo-pl',lineaObtenerArticuloPL,name='obtener_articulo_pl'),
     path('get/packing-list/pdf-pl',packingListGenerarPDF,name='pl_pdf'),
-    path('get/packing-list/validar-linea-pl',validarLineaPL,name='validar_linea_pl')
-    # path('post/packing-list/finalizar-bulto-pl',finalizarBultoPL,name='finalizar_bulto_pl'),
-    # path('/login',login_user,name='login'),
+    path('get/packing-list/validar-linea-pl',validarLineaPL,name='validar_linea_pl'),
+    path('despacho-agendamiento',despachoAgendamiento,name='despacho_agendamiento'),
+    path('get/despacho-agendamiento/validar-ov',validarOrdenVentaCita,name='validar_ov_cita')
+    
+
 ]

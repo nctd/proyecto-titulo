@@ -201,8 +201,9 @@
                                     </span>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/">
+                            <li class="nav-item dropdown" id='nav-item-despacho'>
+                                <a class="nav-link dropdown-toggle" href="#navbar-layout" data-bs-toggle="dropdown"
+                                    role="button" aria-expanded="false">
                                     <span class="nav-link-icon d-md-none d-lg-inline-block">
                                         <!-- Download SVG icon from http://tabler-icons.io/i/package -->
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
@@ -220,6 +221,19 @@
                                         Despacho con agendamiento
                                     </span>
                                 </a>
+                                <div class="dropdown-menu">
+                                    <div class="dropdown-menu-columns">
+                                        <div class="dropdown-menu-column">
+                                            <a class="dropdown-item" href="{% url 'despacho_agendamiento' %}">
+                                                Despacho
+                                            </a>
+                                            <a class="dropdown-item" href=#>
+                                                Buscar
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
                             </li>
                         </ul>
                     </div>

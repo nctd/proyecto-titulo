@@ -4,7 +4,7 @@ from django.db.models import fields
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Articulo, Bulto, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
+from .models import Articulo, Bulto, Cita, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
 
 class OrdenVentaForm(forms.ModelForm):
     
@@ -163,4 +163,37 @@ class BultoPackingListForm(forms.ModelForm):
                     'id':'bulto_peso_neto',
                 },),          
         }
-        
+
+class CitaForm(forms.ModelForm):
+    class Meta:
+        model = Cita
+        fields = '__all__'
+        widgets = {
+            'num_cita':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'num_cita',
+                },),      
+            'operador_logistico':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'operador_logistico',
+                },),      
+            'fecha_cita':
+                forms.TextInput(attrs={
+                    'class':'form-control',
+                    'type': 'text',
+                    'id':'fecha_cita',
+                    'placeholder': 'Fecha',
+                    'autocomplete': 'off' 
+                },),
+            'hora_cita':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'time',
+                    'id':'hora_cita',
+                },),     
+
+        }
