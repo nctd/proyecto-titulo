@@ -20,7 +20,7 @@ from django.contrib.staticfiles.storage import staticfiles_storage
 from control_procesos_logisticos.forms import ArticuloForm, CitaForm, ClienteForm, CustomUserCreationForm, DespachoForm, BultoPackingListForm, DetalleRetiroForm,\
                                               LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TransporteForm,DetalleBultoForm
 
-from .models import Articulo, Bulto, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
+from .models import Articulo, Bulto, Cita, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
@@ -800,7 +800,7 @@ def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     return FileResponse(open("pdf/CITA"+id_retiro+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
 @login_required(login_url='/auth/login_user')
-def validarOrdenVentaRetiro(request):
+def validarOrdenVenta(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
         linea = request.GET.get('linea',None)
@@ -1309,21 +1309,48 @@ def despachoAgendamiento(request):
         'form_cita': CitaForm(),
     }
     if request.method == 'POST':
-        for val in request.POST:
-            print(val)
+        list_ov = []
+        for value in request.POST:
+            print(value) 
+            if value.startswith('OV'):
+                list_ov.append(value)
+        
+        arr_detalles = []
+        data_cita = {}
+        data_cita_detalle = []
+        for ov in list_ov:
+            response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
+                'ov': ov.split('-')[0],
+                'linea' : ov.split('-')[1]
+            })
+            if response.json()['resultado'] == 0 and response.status_code == 200:
+                data_cita = {
+                    'num_cita': request.POST['num_cita'],
+                    'operador_logistico': request.POST['operador_logistico'],
+                    'fecha_cita': request.POST['fecha_cita'],
+                    'hora_cita': request.POST['hora_cita'],
+                }
+                for value in response.json()['data']:
+                    data_cita_detalle = [value['ov'],
+                                    value['linea'],
+                                    value['descripcion'],
+                                    value['cantidad'],
+                                    value['solicitud_material']]
+                    
+                    arr_detalles.append(data_cita_detalle)
+            else:
+                data = {
+                    'error': True,
+                    'form_cita': CitaForm(),
+                }
+                render(request,'despacho/despacho.html',data)
+        ## Controlar si ya existe un despacho con agendamiento
+        
+        cita = CitaForm(data=data_cita)
+        if cita.is_valid():
+            id_cita = cita.save()
+         
+            
     return render(request,'despacho/despacho.html',data)
 
-def validarOrdenVentaCita(request):
-    if request.is_ajax and request.method == 'GET':
-        orden_venta = request.GET.get('orden_venta',None)
-        linea = request.GET.get('linea',None)
-
-        
-        response = requests.post('http://webservices.gruposentte.cl/DUOC/planificaciones.php', data={
-            'ov': orden_venta,
-            'linea' : linea
-        })                    
-        if response.json()['resultado'] == 0 and response.status_code == 200:
-            return JsonResponse({'valid':True}, status=200)
-        return JsonResponse({'valid':False}, status=400)
     

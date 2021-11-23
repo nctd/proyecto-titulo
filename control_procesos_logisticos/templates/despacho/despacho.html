@@ -93,6 +93,9 @@
                                         <input type="text" class="form-control" name="cita_linea" id="cita_linea"
                                             placeholder="EJ: 1">
                                     </div>
+                                    <div class="mb-3" style="display:none">
+                                        <input type="text" class="form-control" name="cliente_input" id="cliente_input">
+                                    </div>
                                 </div>
                                 <div class="col-xl-5 mb-3">
                                     <label class="form-label" style="visibility: hidden;">bt</label>
@@ -246,6 +249,7 @@
     $("#btn-agregar-ov").on('click', function (e) {
         var ov = 'OV' + document.getElementById('cita_ov').value
         var linea = document.getElementById('cita_linea').value
+        var cliente = document.getElementById('cliente_input').value
         if ($('#cita_linea').val() == '' || $('#cita_ov').val() == '') {
             e.preventDefault();
 
@@ -266,10 +270,11 @@
         } else {
             $.ajax({
                 type: 'GET',
-                url: "{% url 'validar_ov_cita' %}",
+                url: "{% url 'validar_orden' %}",
                 data: {
                     'orden_venta': ov,
                     'linea': linea,
+                    'cliente': cliente
                 },
                 dataType: "json",
                 success: function (response) {
@@ -298,6 +303,7 @@
                                 </td>
                                 </tr>`);
 
+                            document.getElementById("cliente_input").value = response['cliente']
                             $('#cita_ov').removeClass("is-invalid");
                             $('#cita_linea').removeClass("is-invalid");
 
@@ -306,9 +312,17 @@
                         }
                     } else {
                         var texto = response['detalles']
-                        $("#modal-error-validar").modal('show');
-                        $('#ov_input').addClass('is-invalid');
-                        $('#linea_input').addClass('is-invalid');
+                        if (!response['cliente']) {
+                            // alert('texto')
+                            $('#content-error-validar').text(texto)
+                            $("#modal-error-validar").modal('show');
+                            $('#cita_ov').addClass('is-invalid');
+                            $('#cita_linea').addClass('is-invalid');
+                        } else {
+                            $("#modal-error-validar").modal('show');
+                            $('#cita_ov').addClass('is-invalid');
+                            $('#cita_linea').addClass('is-invalid');
+                        }
                     }
                 },
                 error: function (response) {

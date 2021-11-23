@@ -4,7 +4,7 @@ from django.db.models import fields
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Articulo, Bulto, Cita, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
+from .models import Articulo, Bulto, Cita, Cliente, Despacho, DetalleBulto, DetalleCita, DetalleRetiro, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Transporte ,TemporalLinea, Retiro
 
 class OrdenVentaForm(forms.ModelForm):
     
@@ -197,3 +197,8 @@ class CitaForm(forms.ModelForm):
                 },),     
 
         }
+        
+class DetalleCitaForm(forms.ModelForm):
+    class Meta:
+        model = DetalleCita
+        fields = '__all__'

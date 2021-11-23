@@ -1,7 +1,7 @@
 from os import name
 from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, despachoAgendamiento, home, lineaObtenerArticuloPL, packingList, \
-                                              packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaCita, validarOrdenVentaPL,\
-                                              validarOrdenVentaRetiro, visualizarRetiros,generarReporteRetiros,registro,validarLineaPL
+                                              packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaPL,\
+                                              validarOrdenVenta, visualizarRetiros,generarReporteRetiros,validarLineaPL
 from django.urls import path
 
 
@@ -13,7 +13,7 @@ urlpatterns = [
     path('get/reporte/obtenerfechas', reporteGrafico, name='reporte_grafico'),
     path('agendar-retiro',agendarRetiro,name='agendar_retiro'),
     path('get/agendar/generar-retiro',retiroGenerarPDF,name='generar_pdf_retiro'),
-    path('get/agendar/validar-ov',validarOrdenVentaRetiro,name='validar_orden'),
+    path('get/validar-ov',validarOrdenVenta,name='validar_orden'),
     path('buscar-retiro',visualizarRetiros,name='buscar_retiro'),
     path('get/agendar/buscar-retiro-pdf',buscarRetiroPDF,name='buscar_retiro_pdf'),
     path('get/agendar/reporte-retiros',generarReporteRetiros,name='reporte_retiros'),
@@ -23,8 +23,5 @@ urlpatterns = [
     path('get/packing-list/obtener-articulo-pl',lineaObtenerArticuloPL,name='obtener_articulo_pl'),
     path('get/packing-list/pdf-pl',packingListGenerarPDF,name='pl_pdf'),
     path('get/packing-list/validar-linea-pl',validarLineaPL,name='validar_linea_pl'),
-    path('despacho-agendamiento',despachoAgendamiento,name='despacho_agendamiento'),
-    path('get/despacho-agendamiento/validar-ov',validarOrdenVentaCita,name='validar_ov_cita')
-    
-
+    path('despacho-agendamiento',despachoAgendamiento,name='despacho_agendamiento'),    
 ]
