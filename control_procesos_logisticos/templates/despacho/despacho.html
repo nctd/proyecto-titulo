@@ -94,7 +94,7 @@
                                             placeholder="EJ: 1">
                                     </div>
                                     <div class="mb-3" style="display:none">
-                                        <input type="text" class="form-control" name="cliente_input" id="cliente_input">
+                                        <input type="text" class="form-control" name="cita_cliente" id="cita_cliente">
                                     </div>
                                 </div>
                                 <div class="col-xl-5 mb-3">
@@ -169,6 +169,8 @@
         </div>
     </div>
 </div>
+
+<iframe id="my_iframe" style="display:none;"></iframe>
 
 <div class="modal modal-blur fade" id="modal-error-validar" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
@@ -249,7 +251,7 @@
     $("#btn-agregar-ov").on('click', function (e) {
         var ov = 'OV' + document.getElementById('cita_ov').value
         var linea = document.getElementById('cita_linea').value
-        var cliente = document.getElementById('cliente_input').value
+        var cliente = document.getElementById('cita_cliente').value
         if ($('#cita_linea').val() == '' || $('#cita_ov').val() == '') {
             e.preventDefault();
 
@@ -303,7 +305,7 @@
                                 </td>
                                 </tr>`);
 
-                            document.getElementById("cliente_input").value = response['cliente']
+                            document.getElementById("cita_cliente").value = response['cliente']
                             $('#cita_ov').removeClass("is-invalid");
                             $('#cita_linea').removeClass("is-invalid");
 
@@ -389,5 +391,15 @@
     })
 
 </script>
+
+{% if guardado %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#modal-cita-guardado").modal('show');
+        document.getElementById('my_iframe').src = `{% url 'cita_pdf' %}?cita={{cita}}`
+
+    });
+</script>
+{% endif %}
 
 {% endblock %}

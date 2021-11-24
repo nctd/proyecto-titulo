@@ -17,10 +17,10 @@ from django.contrib.auth.decorators import login_required, permission_required
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 
-from control_procesos_logisticos.forms import ArticuloForm, CitaForm, ClienteForm, CustomUserCreationForm, DespachoForm, BultoPackingListForm, DetalleRetiroForm,\
+from control_procesos_logisticos.forms import ArticuloForm, CitaForm, ClienteForm, CustomUserCreationForm, DespachoForm, BultoPackingListForm, DetalleCitaForm, DetalleRetiroForm,\
                                               LineaForm, OrdenVentaForm, PlanificacionForm, RetiroForm, TransporteForm,DetalleBultoForm
 
-from .models import Articulo, Bulto, Cita, Cliente, Despacho, DetalleBulto, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
+from .models import Articulo, Bulto, Cita, Cliente, Despacho, DetalleBulto, DetalleCita, DetalleRetiro, IndicadorDespacho, IndicadorTipoVenta, Linea, OrdenVenta, Planificacion, Retiro,Transporte
 from datetime import date,datetime,timedelta
 
 from .crearPDF import PDF
@@ -1165,7 +1165,7 @@ def lineaObtenerArticuloPL(request):
         else:
             return JsonResponse({'valid':False,'codigo':'N/A','descripcion':'N/A'}, status=400)
         
-
+@login_required(login_url='/auth/login_user')
 def packingListGenerarPDF(request):
     if request.GET.get('pl',None):
         # bultos = json.loads(request.GET.getlist('pl[]',None))
@@ -1290,7 +1290,7 @@ def packingListGenerarPDF(request):
         pdf.output("pdf/PL-"+date_save+".pdf",'F')
         return FileResponse(open("pdf/PL-"+date_save+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')
 
-
+@login_required(login_url='/auth/login_user')
 def validarLineaPL(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
@@ -1303,7 +1303,7 @@ def validarLineaPL(request):
         return JsonResponse({'valid':True}, status=200)
     
     
-    
+@login_required(login_url='/auth/login_user')    
 def despachoAgendamiento(request):
     data = {
         'form_cita': CitaForm(),
@@ -1324,20 +1324,25 @@ def despachoAgendamiento(request):
                 'linea' : ov.split('-')[1]
             })
             if response.json()['resultado'] == 0 and response.status_code == 200:
+                print(request.POST['hora_cita'])
                 data_cita = {
                     'num_cita': request.POST['num_cita'],
                     'operador_logistico': request.POST['operador_logistico'],
                     'fecha_cita': request.POST['fecha_cita'],
                     'hora_cita': request.POST['hora_cita'],
+                    # 'cliente': request.POST['cliente']
                 }
                 for value in response.json()['data']:
                     data_cita_detalle = [value['ov'],
                                     value['linea'],
+                                    value['n_articulo'],
                                     value['descripcion'],
                                     value['cantidad'],
                                     value['solicitud_material']]
-                    
+                    data_cita['cliente'] = value['cliente']
+                
                     arr_detalles.append(data_cita_detalle)
+                print(data_cita)
             else:
                 data = {
                     'error': True,
@@ -1349,8 +1354,96 @@ def despachoAgendamiento(request):
         cita = CitaForm(data=data_cita)
         if cita.is_valid():
             id_cita = cita.save()
-         
             
+            for item in arr_detalles:
+                data_cd = {
+                    'orden_venta': item[0],
+                    'linea': item[1],
+                    'codigo_articulo': item[2],
+                    'descripcion': item[3],
+                    'cantidad': item[4],
+                    'tipo_embalaje': item[5],
+                    'cita': id_cita.pk
+                }
+                det_cita = DetalleCitaForm(data=data_cd)
+                if det_cita.is_valid():
+                    det_cita.save()
+                else:
+                    data = {
+                        'error': True, 
+                        'detalles': 'Error al registrar detalles de cita' + str(det_cita.errors.as_data()),
+                        'form_cita': CitaForm()
+                    }
+                    return render(request,'despacho/despacho.html',data)
+            data = {
+                'guardado': True,
+                'cita': str(id_cita.pk),
+                'form_cita': CitaForm()
+            }
+            return render(request,'despacho/despacho.html',data)
+        else:
+            data = {
+                'error': True,
+                'detalles': 'Error al registrar la cita' + str(cita.errors.values()),
+                'form_cita': CitaForm(),
+            }
+            return render(request,'despacho/despacho.html ',data)   
     return render(request,'despacho/despacho.html',data)
 
-    
+def despachoGenerarPDF(request):
+    if request.GET.get('cita', None):
+        cita = request.GET.get('cita',None)
+        arr_tabla = []
+        cita_existe = Cita.objects.filter(id_cita=cita, activo=0)
+        row_tabla = []
+        if cita_existe.exists():
+            for value in cita_existe:
+                num_cita = value.num_cita
+                operador_logistico = value.operador_logistico
+                fecha = str(value.fecha_cita)
+                hora = value.hora_cita
+                cliente = value.cliente
+                
+                detalles = DetalleCita.objects.filter(cita=cita)
+                for val in detalles:
+                    row_tabla = [
+                        val.orden_venta,
+                        val.linea,
+                        val.codigo_articulo,
+                        val.descripcion,
+                        str(val.cantidad)             
+                    ]
+                    arr_tabla.append(row_tabla)
+                    
+            pdf = PDF()
+            pdf.add_page()
+        
+
+            # pdf.set_font("Arial", size = 15)
+            # static('img/logo_ksb.svg')
+            pdf.image("static/img/logo_pdf.png",160, 6, 33)
+            pdf.titles('DETALLES DE CITA')
+            pdf.linea()
+            pdf.texto('N° de cita: ',14,10)
+            pdf.texto(num_cita,45,10)
+            
+            pdf.texto('Operador logístico: ',14,20)
+            pdf.texto(operador_logistico,45,20)
+            
+            pdf.texto('Fecha: ',14,30)
+            pdf.texto(fecha,45,30)
+            
+            pdf.texto('Hora: ',14,40)
+            pdf.texto(hora,45,40)
+            
+            pdf.texto('Cliente: ',14,50)
+            pdf.texto(cliente,45,50) 
+             
+            
+            headers = ['Orden de venta','Línea OV','Código Articulo','Descripción','Cantidad']
+            pdf.tablaCita(headers,arr_tabla)
+            
+            date_save = datetime.now().strftime("%Y%m%d-%H%M%S")
+            
+            pdf.output("pdf/DETALLE_CITA-"+date_save+".pdf",'F')
+            return FileResponse(open("pdf/DETALLE_CITA-"+date_save+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')       

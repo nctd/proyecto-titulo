@@ -177,8 +177,9 @@ class Cita(models.Model):
     id_cita            = models.AutoField(primary_key=True)
     num_cita           = models.CharField(max_length=40)
     fecha_cita         = models.DateField()
-    hora_cita          = models.TimeField()
+    hora_cita          = models.CharField(max_length=10)
     operador_logistico = models.CharField(max_length=120)
+    cliente = models.CharField(max_length=120)
     # despacho = models.ForeignKey(Despacho,on_delete=PROTECT)
     activo             = models.BooleanField(default=False)
     
@@ -190,6 +191,7 @@ class DetalleCita(models.Model):
     id_detalle_cita    = models.AutoField(primary_key=True)
     orden_venta = models.CharField(max_length=40)
     linea = models.CharField(max_length=40)
+    codigo_articulo = models.CharField(max_length=80)
     descripcion = models.CharField(max_length=120)
     cantidad = models.IntegerField()
     tipo_embalaje = models.CharField(max_length=120)
