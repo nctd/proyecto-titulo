@@ -223,7 +223,7 @@
                 </svg>
 
                 <h3>Despacho agendado</h3>
-                <div class="text-muted">Cita creada correctamente</div>
+                <div class="text-muted">Despacho agendado correctamente</div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
@@ -275,6 +275,10 @@
             var index = list_ov.indexOf(ov + linea);
             if (index !== -1) {
                 list_ov.splice(index, 1);
+            }
+
+            if (list_ov.length == 0) {
+                document.getElementById("cita_cliente").value = ''
             }
         }
         var td = event.target.parentNode;

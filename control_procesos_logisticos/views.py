@@ -815,7 +815,7 @@ def validarOrdenVenta(request):
         })
         
         if response.json()['resultado'] == 1:
-            return JsonResponse({'valid':False})
+            return JsonResponse({'valid':False,'detalles':'No se encontraron datos para la línea ingresada'})
         else:
             for value in response.json()['data']:
                 validar = value['cliente']
@@ -953,7 +953,7 @@ def generarReporteRetiros(request):
 
 
     output.seek(0)
-    filename = 'reporte_'+str(date.today())+'.xlsx'
+    filename = 'reporte_retiros'+str(fec_desde)+'_'+str(fec_hasta)+'.xlsx'
     response = HttpResponse(
         output,
         content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
@@ -969,7 +969,7 @@ def anularRetiro(request):
         linea = put.get('linea')
         # retiro = Retiro.objects.filter(id_retiro=retiro)
         anular = DetalleRetiro.objects.filter(retiro_id=retiro,linea=linea).update(activo=1)
-        print(anular)
+        #Deberia borrar de las tablas de planificacion
         if anular > 0:
             return JsonResponse({'valid': True})
         else:
@@ -1390,6 +1390,7 @@ def despachoAgendamiento(request):
             return render(request,'despacho/despacho.html ',data)   
     return render(request,'despacho/despacho.html',data)
 
+@login_required(login_url='/auth/login_user')    
 def despachoGenerarPDF(request):
     if request.GET.get('cita', None):
         cita = request.GET.get('cita',None)
@@ -1447,3 +1448,99 @@ def despachoGenerarPDF(request):
             
             pdf.output("pdf/DETALLE_CITA-"+date_save+".pdf",'F')
             return FileResponse(open("pdf/DETALLE_CITA-"+date_save+".pdf", 'rb'), as_attachment=True, content_type='application/pdf')       
+        
+@login_required(login_url='/auth/login_user')    
+def visualizarDespachoAgendamiento(request):
+    if request.method == 'GET':
+        try:
+            if('fecha-desde' and 'fecha-hasta' in request.GET):
+                val1 = request.GET['fecha-desde']
+                val2 = request.GET['fecha-hasta']
+                fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
+                fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
+                citas = Cita.objects.filter(fecha_creacion__range=[fec_desde,fec_hasta],activo=0)  
+                
+                list_detalles = []
+                for value in citas:
+                    if DetalleCita.objects.filter(cita=value.id_cita).exists():
+                        detalles = DetalleCita.objects.filter(cita=value.id_cita)
+                        for val in detalles:
+                            fila = {
+                                'num_cita': value.num_cita,
+                                'operador_logistico': value.operador_logistico,
+                                'fecha_cita': value.fecha_cita,
+                                'hora_cita': value.hora_cita,
+                                'orden_venta': val.orden_venta,
+                                'linea': val.linea,
+                                'cliente': value.cliente,
+                                'cod_articulo': val.codigo_articulo,
+                                'cantidad_articulo': val.cantidad,
+                                'descripcion_articulo': val.descripcion,
+                                'cita': value.id_cita
+                            }
+                            list_detalles.append(fila)
+                data = {
+                    'detalle_citas': list_detalles,
+                    'fec_inicio': val1,
+                    'fec_hasta': val2
+                }
+                return render(request,'despacho/buscar-despacho.html',data) 
+        except:
+            return render(request,'despacho/buscar-despacho.html') 
+        
+    
+    return render(request,'despacho/buscar-despacho.html') 
+
+@login_required(login_url='/auth/login_user')    
+def generarReporteCitas(request):
+    fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
+    fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
+    output = io.BytesIO()
+
+    workbook = xlsxwriter.Workbook(output)
+    worksheet = workbook.add_worksheet()
+    
+    columns = ['N° DE CITA','OPERADOR LOGISTICO',
+               'FECHA CITA', 'HORA CITA',
+               'ORDEN DE VENTA', 'LÍNEA',
+               'CLIENTE', 'CÓDIGO ARTÍCULO',
+               'CANTIDAD','DESCRIPCION']
+    row_num = 0
+    cell_format = workbook.add_format({'bold': True})
+    # Write some test data.
+    for col_num in range(len(columns)):
+            worksheet.set_column(0,3,20)
+            worksheet.set_column(4,5,40)
+            worksheet.set_column(6,7,20)
+            worksheet.write(row_num, col_num, columns[col_num],cell_format)
+            
+    filas = Cita.objects.filter(fecha_creacion__range=[fec_desde,fec_hasta])  
+
+    list_detalles = []
+    for cita in filas:
+        if DetalleCita.objects.filter(cita=cita.id_cita).exists():
+            detalles = DetalleCita.objects.filter(cita=cita.id_cita)
+            for det in detalles:
+                fila = [cita.num_cita,cita.operador_logistico,
+                        datetime.strptime(str(cita.fecha_cita), '%Y-%m-%d').strftime('%d-%m-%y'),
+                        cita.hora_cita,
+                        det.orden_venta,det.linea,
+                        cita.cliente,det.codigo_articulo,
+                        det.cantidad,det.descripcion]
+                list_detalles.append(fila)
+    for fila in list_detalles:
+        row_num += 1
+        for col_num in range(len(fila)):
+            worksheet.write(row_num, col_num, fila[col_num])
+
+    workbook.close()
+
+
+    output.seek(0)
+    filename = 'reporte_citas_'+str(fec_desde)+'_'+str(fec_hasta)+'.xlsx'
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+    return response

@@ -7,7 +7,7 @@
         <div class="row align-items-center">
             <div class="col">
                 <h2 class="page-title">
-                    Agenda retiro clientes
+                    Despacho con agendamiento
                 </h2>
             </div>
         </div>
@@ -21,7 +21,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class='card-header'>
-                        <h3 class="card-title">Buscar retiros</h3>
+                        <h3 class="card-title">Buscar agendamientos</h3>
                     </div>
                     <div class="card-body">
                         <form method="GET">
@@ -76,7 +76,7 @@
                                     </div>
                                     <div class="col-xl-4 mb-3">
                                         <label class="form-label" style="visibility: hidden;">bt</label>
-                                        <button class="btn btn-primary w-100" id='btn-buscar-retiro' type="submit">
+                                        <button class="btn btn-primary w-100" id='btn-buscar-despacho' type="submit">
                                             <!-- Download SVG icon from http://tabler-icons.io/i/chart-infographic -->
                                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
                                                 viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -105,35 +105,40 @@
                         <div class="table-responsive">
                             <div class="gridjs gridjs-container">
                                 <form method="POST">
-                                    <table class="gridjs-table" id="retiros-table">
+                                    <table class="gridjs-table" id="citas-table">
                                         <thead class="gridjs-thead">
                                             <tr class="gridjs-tr">
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">FECHA</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">RANGO HORARIO
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">N° DE CITA</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">OPERADOR LOGISTICO
                                                 </th>
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">
-                                                    ORDEN DE VENTA
+                                                    FECHA CITA
                                                 </th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LÍNEA OV</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">HORA CITA</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">ORDEN DE VENTA</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LÍNEA</th>
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CLIENTE</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCIÓN</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CÓDIGO ARTÍCULO
+                                                </th>
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CANTIDAD</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">TIPO EMBALAJE</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCION</th>
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"></th>
                                             </tr>
                                         </thead>
                                         <tbody class="gridjs-tbody" style="text-align: center;">
-                                            {% if detalle_retiros %}
-                                            {% for det in detalle_retiros %}
+                                            {% if detalle_citas %}
+                                            {% for det in detalle_citas %}
                                             <tr class="gridjs-tr">
-                                                <td class="gridjs-td">{{det.fecha | date:"d-m-Y"}}</td>
-                                                <td class="gridjs-td">{{det.rango_horario}}</td>
-                                                <td class="gridjs-td">{{det.orden_venta}} </td>
+                                                <td class="gridjs-td">{{det.num_cita}}</td>
+                                                <td class="gridjs-td">{{det.operador_logistico}} </td>
+                                                <td class="gridjs-td">{{det.fecha_cita | date:"d-m-Y"}}</td>
+                                                <td class="gridjs-td">{{det.hora_cita}}</td>
+                                                <td class="gridjs-td">{{det.orden_venta}}</td>
                                                 <td class="gridjs-td">{{det.linea}}</td>
                                                 <td class="gridjs-td">{{det.cliente}}</td>
-                                                <td class="gridjs-td">{{det.descripcion}}</td>
-                                                <td class="gridjs-td">{{det.cantidad}}</td>
-                                                <td class="gridjs-td">{{det.tipo_embalaje}}</td>
+                                                <td class="gridjs-td">{{det.cod_articulo}}</td>
+                                                <td class="gridjs-td">{{det.cantidad_articulo}}</td>
+                                                <td class="gridjs-td">{{det.descripcion_articulo}}</td>
                                                 <td class="gridjs-td">
 
 
@@ -142,12 +147,8 @@
                                                             data-bs-boundary="viewport"
                                                             data-bs-toggle="dropdown">Acciones</button>
                                                         <div class="dropdown-menu dropdown-menu-end">
-                                                            <!-- <button class="dropdown-item" id="generar-pdf" type="button"
-                                                                onclick="generarPDF('{{det.retiro}}')">
-                                                                Generar PDF
-                                                            </button> -->
                                                             <a class="dropdown-item" id="generar-pdf" type="button"
-                                                                href="{% url 'buscar_retiro_pdf' %}?retiro={{det.retiro}}">
+                                                                href="{% url 'cita_pdf' %}?cita={{det.cita}}">
                                                                 Generar PDF
                                                             </a>
                                                             <button class="dropdown-item" id="anular-retiro"
@@ -172,7 +173,7 @@
                         <div class="card-footer text-start">
                             <div class="r-flex">
                                 <a class="btn btn-success ms-auto" id="btn-generar-reporte"
-                                    href="{% url 'reporte_retiros' %}?fecha_desde={{fec_inicio}}&fecha_hasta={{fec_hasta}}">
+                                    href="{% url 'reporte_citas' %}?fecha_desde={{fec_inicio}}&fecha_hasta={{fec_hasta}}">
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         class="icon icon-tabler icon-tabler-file-download" width="24" height="24"
                                         viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
@@ -267,7 +268,7 @@
 </div>
 
 <script>
-    const e = document.getElementById('nav-item-agenda')
+    const e = document.getElementById('nav-item-despacho')
     e.classList.add('active')
 
 </script>
@@ -298,7 +299,7 @@
             },
 
         });
-        $("table#retiros-table").Grid({
+        $("table#citas-table").Grid({
             search: true,
             autoWidth: true,
             pagination: {
@@ -346,7 +347,7 @@
 
 
 <script>
-    $("#btn-buscar-retiro").on('click', function (e) {
+    $("#btn-buscar-despacho").on('click', function (e) {
         if ($('#fecha-desde').val() == '' || $('#fecha-hasta').val() == '') {
             e.preventDefault()
             if ($('#fecha-desde').val() == '') {
@@ -371,31 +372,6 @@
     })
 </script>
 
-<script>
-    function anularRetiro(retiro, linea) {
-        // e.preventDefault();
-        $.ajax({
-            type: 'PUT',
-            url: "{% url 'anular_retiro' %}",
-            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-            data: {
-                'retiro': retiro,
-                'linea': linea
-            },
-            // dataType: 'json',
-            success: function (response) {
-                if (response['valid']) {
-                    $("#modal-retiro-anulado").modal('show');
-                    // location.reload()
-                    $('#bt-retiro-anulado').on('click', function (e) {
-                        location.reload()
-                        return false;
-                    })
-                }
-            }
-        })
-    }
-</script>
 
 
 {% endblock %}

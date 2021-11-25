@@ -310,14 +310,22 @@
 
     function eliminarFila(ov, linea) {
         if (list_ov.includes(ov + linea)) {
+            alert(list_ov.length)
             var index = list_ov.indexOf(ov + linea);
+
             if (index !== -1) {
                 list_ov.splice(index, 1);
             }
+
+            if (list_ov.length == 0) {
+                document.getElementById("cliente_input").value = ''
+            }
+
         }
         var td = event.target.parentNode;
         var tr = td.parentNode;
         tr.parentNode.removeChild(tr);
+
     }
 
     $("#btn-agregar-ov").on('click', function (e) {

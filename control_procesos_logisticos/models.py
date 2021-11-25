@@ -182,6 +182,7 @@ class Cita(models.Model):
     cliente = models.CharField(max_length=120)
     # despacho = models.ForeignKey(Despacho,on_delete=PROTECT)
     activo             = models.BooleanField(default=False)
+    fecha_creacion     = models.DateField(auto_now=True)
     
     class Meta:
         verbose_name = 'Cita'
