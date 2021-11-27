@@ -47,7 +47,7 @@ class PDF(FPDF, HTMLMixin):
             # fill = not fill
         self.cell(sum(col_widths), 0, "", "T")
         
-    def tabla_PL(self, headings, rows,totales, col_widths=(30, 15, 60, 15, 15,15,18,18)):
+    def tabla_PL(self, headings, rows,totales, col_widths=(25, 15, 55, 15, 15,15,15,15,15)):
         # Colors, line width and bold font: 
         self.set_y(80)
         self.set_fill_color(217, 226, 243)
@@ -72,6 +72,7 @@ class PDF(FPDF, HTMLMixin):
             self.cell(col_widths[5], 6, row[5], "TLRB", 0, "C", fill)
             self.cell(col_widths[6], 6, row[6], "TLRB", 0, "C", fill)
             self.cell(col_widths[7], 6, row[7], "TLRB", 0, "C", fill)
+            self.cell(col_widths[8], 6, row[8], "TLRB", 0, "C", fill)
             self.ln()
             # fill = not fill
         self.cell(sum(col_widths), 0, "", "T")
@@ -79,7 +80,7 @@ class PDF(FPDF, HTMLMixin):
         self.set_fill_color(217, 226, 243)
         self.cell(col_widths[0], 6, "TOTAL "+totales[0], "TLRB",0, "C", fill)
         self.cell(col_widths[1], 6, totales[1], "TLRB",0, "C", fill)
-        self.cell(col_widths[2]+col_widths[3]+col_widths[4], 6, "", "TLRB",0, "C",fill)
+        self.cell(col_widths[2]+col_widths[3]+col_widths[4]+col_widths[5], 6, "", "TLRB",0, "C",fill)
         self.cell(col_widths[5], 6, totales[2]+" m3", "TLRB",0, "C", fill)
         self.cell(col_widths[6], 6, totales[3]+" mt", "TLRB",0, "C", fill)
         self.cell(col_widths[7], 6, totales[4]+" mt", "TLRB",0, "C", fill)

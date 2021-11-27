@@ -116,7 +116,7 @@ class CustomUserCreationForm(UserCreationForm):
 class BultoPackingListForm(forms.ModelForm):
     class Meta:
         model = Bulto
-        fields = ['orden_venta','tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto','activo']
+        fields = ['orden_venta','tipo_bulto','largo','ancho','alto','volumen','peso_bruto','peso_neto','activo']
         # fields = ['orden_venta','tipo_bulto','largo','ancho','volumen','peso_bruto','peso_neto']
         widgets = {
             'orden_venta':
@@ -143,6 +143,12 @@ class BultoPackingListForm(forms.ModelForm):
                     'class': 'form-control',
                     'type': 'text',
                     'id':'bulto_ancho',
+                },),
+            'alto':
+                forms.TextInput(attrs={
+                    'class': 'form-control',
+                    'type': 'text',
+                    'id':'bulto_alto',
                 },),
             'volumen':
                 forms.TextInput(attrs={

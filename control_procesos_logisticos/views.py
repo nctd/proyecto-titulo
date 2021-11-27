@@ -491,7 +491,7 @@ def indicadores(request):
     return render(request,'indicadores/indicadores.html')
 
 @login_required(login_url='/auth/login_user')
-def reporteGrafico(request):
+def reporteGrafico(request): 
     if request.is_ajax and request.method == 'GET':
         tipo = request.GET.get('tipo',None)
         horizonte = request.GET.get('horizonte',None)
@@ -1018,11 +1018,13 @@ def packingList(request):
         list_tp_bulto = []
         list_largo = []
         list_ancho = []
+        list_alto = []
         list_volumen = []
         list_peso_bruto = []
         list_peso_neto = []
         list_bultos_linea = []
         for value in request.POST:
+            print(value)
             if value.startswith('linea-'):
                 list_lineas.append(value.split('-')[1])
                 list_cantidad.append(value.split('-')[2])
@@ -1037,6 +1039,8 @@ def packingList(request):
                 list_largo.append(request.POST[value])
             if value.startswith('ancho'):
                 list_ancho.append(request.POST[value])
+            if value.startswith('alto'):
+                list_alto.append(request.POST[value])
             if value.startswith('volumen'):
                 list_volumen.append(request.POST[value])
             if value.startswith('peso_bruto'):
@@ -1047,22 +1051,22 @@ def packingList(request):
         lista_bultos = []
         contador = 0
         
-        ## Validar que la linea ya no tenga un PL
-        # for lin in list_lineas:
-        #     bul_existe = Bulto.objects.filter(orden_venta='OV'+request.POST['orden_venta'],activo=0)
-        #     if bul_existe.exists():
-        #         for val in bul_existe:
-        #             print(val)
-        #             print(lin)
-        #             det_bul_existe = DetalleBulto.objects.filter(bulto_id=val, linea=lin)
-        #             print(det_bul_existe)
-        #             if det_bul_existe.exists():
-        #                 data = {
-        #                     'error': True,
-        #                     'detalles': 'Ya existe un Packing List creado para esta orden de venta y línea ('+lin+')',
-        #                     'form_bulto': BultoPackingListForm(),
-        #                     }
-        #                 return render(request,'packing-list/packing-list.html',data)
+        # Validar que la linea ya no tenga un PL
+        for lin in list_lineas:
+            bul_existe = Bulto.objects.filter(orden_venta='OV'+request.POST['orden_venta'],activo=0)
+            if bul_existe.exists():
+                for val in bul_existe:
+                    print(val)
+                    print(lin)
+                    det_bul_existe = DetalleBulto.objects.filter(bulto_id=val, linea=lin)
+                    print(det_bul_existe)
+                    if det_bul_existe.exists():
+                        data = {
+                            'error': True,
+                            'detalles': 'Ya existe un Packing List creado para esta orden de venta y línea ('+lin+')',
+                            'form_bulto': BultoPackingListForm(),
+                            }
+                        return render(request,'packing-list/packing-list.html',data)
                     
                     
         
@@ -1072,6 +1076,7 @@ def packingList(request):
                 'tipo_bulto': val,
                 'largo': list_largo[contador],
                 'ancho': list_ancho[contador],
+                'alto': list_alto[contador],
                 'volumen': list_volumen[contador],
                 'peso_bruto': list_peso_bruto[contador],
                 'peso_neto': list_peso_neto[contador],
@@ -1105,8 +1110,7 @@ def packingList(request):
                 'cantidad': list_cantidad[item],
                 'bulto': bultos_id[int(list_bultos_linea[item])-1]
             }            
-            print(detalle_bulto)
-            print(list_descripcion[item])
+
             item +=1
             form_detalle = DetalleBultoForm(data=detalle_bulto)
             if form_detalle.is_valid():
@@ -1193,7 +1197,8 @@ def packingListGenerarPDF(request):
                             val.articulo,
                             format(value.largo,'.2f')+' mt',
                             format(value.ancho,'.2f')+' mt',
-                            format(value.volumen,'.2f')+' mt',
+                            format(value.alto,'.2f')+' mt',
+                            format(value.volumen,'.2f')+' m3',
                             format(value.peso_bruto,'.2f')+' mt',
                             format(value.peso_neto,'.2f')+' mt',
                         ]
@@ -1217,6 +1222,7 @@ def packingListGenerarPDF(request):
                         val.articulo,
                         format(value.largo,'.2f')+' mt',
                         format(value.ancho,'.2f')+' mt',
+                        format(value.alto,'.2f')+' mt',
                         format(value.volumen,'.2f')+' m3',
                         format(value.peso_bruto,'.2f')+' mt',
                         format(value.peso_neto,'.2f')+' mt',
@@ -1282,7 +1288,7 @@ def packingListGenerarPDF(request):
         pdf.texto(clausula,45,50)    
 
         
-        headers = ['N° de bulto','Cantidad','Detalle','Largo','Ancho','Volumen','Peso bruto','Peso neto']
+        headers = ['Tipo de bulto','Cantidad','Detalle','Largo','Ancho','Alto','Volumen','Peso bruto','Peso neto']
         pdf.tabla_PL(headers,arr_tabla,arr_totales)
         
         date_save = datetime.now().strftime("%Y%m%d-%H%M%S")

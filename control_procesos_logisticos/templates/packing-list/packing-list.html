@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-3">
                                     <div class="mb-3">
                                         <label class="form-label">Tipo de bulto</label>
                                         <!-- <input type="text" class="form-control" name="bulto_input" id="bulto_input"> -->
@@ -77,9 +77,15 @@
                                         {{form_bulto.ancho}}
                                     </div>
                                 </div>
+                                <div class="col-lg-1">
+                                    <div class="mb-3">
+                                        <label class="form-label">Alto (mt)</label>
+                                        {{form_bulto.alto}}
+                                    </div>
+                                </div>
                                 <div class="col-lg-2">
                                     <div class="mb-3">
-                                        <label class="form-label">Volumen (mt)</label>
+                                        <label class="form-label">Volumen (m3)</label>
                                         {{form_bulto.volumen}}
                                     </div>
                                 </div>
@@ -528,6 +534,7 @@
                     document.getElementById('btn-agregar-ov').disabled = true;
                     document.getElementById('bulto_codigo').disabled = true;
                     document.getElementById('bulto_descripcion').disabled = true;
+                    document.getElementById('bulto_volumen').disabled = true;
                     $('#modal-ov-valida').modal('show')
                 },
                 error: function (response) {
@@ -609,15 +616,10 @@
         if ($('#bulto_linea').val() == '' || $('#bulto_codigo').val() == '' || $('#bulto_descripcion').val() == '' || $('#bulto_cantidad').val() == '') {
             $('#content-error-linea').text('Verifique que todos los campos de la línea esten completos ')
             $('#modal-linea-not-found').modal('show')
+
             if ($('#bulto_linea').val() == '') {
                 $('#bulto_linea').addClass('is-invalid');
             }
-            // if ($('#bulto_codigo').val() == '') {
-            //     $('#bulto_codigo').addClass('is-invalid');
-            // }
-            // if ($('#bulto_descripcion').val() == '') {
-            //     $('#bulto_descripcion').addClass('is-invalid');
-            // }
             if ($('#bulto_cantidad').val() == '') {
                 $('#bulto_cantidad').addClass('is-invalid');
             }
@@ -719,6 +721,10 @@
         event.stopPropagation();
         $('#bulto_ancho').removeClass("is-invalid");
     })
+    $("#bulto_alto").on('focus', function (e) {
+        event.stopPropagation();
+        $('#bulto_alto').removeClass("is-invalid");
+    })
     $("#bulto_volumen").on('focus', function (e) {
         event.stopPropagation();
         $('#bulto_volumen').removeClass("is-invalid");
@@ -733,15 +739,9 @@
     })
 </script>
 <script>
-    // $("#btn-finalizar-bulto").on('click', function (e) {
     $("#btn-guardar-pl").on('click', function (e) {
-
-        // const tipo_bulto = document.querySelectorAll("[name*=tipo_bulto]");
-
-        // alert(tipo_bulto)
-
         if (document.getElementById('tipo_bulto').value == '' || document.getElementById('bulto_largo').value == '' ||
-            document.getElementById('bulto_ancho').value == '' || document.getElementById('bulto_volumen').value == '' ||
+            document.getElementById('bulto_ancho').value == '' || document.getElementById('bulto_alto').value == '' || document.getElementById('bulto_volumen').value == '' ||
             document.getElementById('bulto_peso_bruto').value == '' || document.getElementById('bulto_peso_neto').value == '') {
             e.preventDefault()
             if ($('#tipo_bulto').val() == '') {
@@ -753,9 +753,12 @@
             if ($('#bulto_ancho').val() == '') {
                 $('#bulto_ancho').addClass('is-invalid');
             }
-            if ($('#bulto_volumen').val() == '') {
-                $('#bulto_volumen').addClass('is-invalid');
+            if ($('#bulto_alto').val() == '') {
+                $('#bulto_alto').addClass('is-invalid');
             }
+            // if ($('#bulto_volumen').val() == '') {
+            //     $('#bulto_volumen').addClass('is-invalid');
+            // }
             if ($('#bulto_peso_bruto').val() == '') {
                 $('#bulto_peso_bruto').addClass('is-invalid');
             }
@@ -764,6 +767,32 @@
             }
             $("#modal-error-finalizar-bulto").modal('show');
         } else {
+            var peso_bruto = document.getElementById('bulto_peso_bruto').value
+            var peso_neto = document.getElementById('bulto_peso_neto').value
+            if (peso_bruto <= peso_neto) {
+                $('#bulto_peso_bruto').addClass('is-invalid');
+                $('#bulto_peso_neto').addClass('is-invalid');
+                $("#modal-error-lineas-bulto").modal('show');
+                $('#content-error-lineas-bulto').text('El peso bruto no puede ser menor al peso neto')
+                e.preventDefault()
+            }
+
+            const bultos_pesos_bruto = document.querySelectorAll("[id^=peso_bruto]");
+            var peso_valido = true
+            bultos_pesos_bruto.forEach(e => {
+                var bulto_peso_neto = document.getElementById('peso_neto' + e.id.slice(-1)).value
+                if (e.value <= bulto_peso_neto) {
+                    peso_valido = false
+                }
+            });
+
+            if (peso_valido == false) {
+                $("#modal-error-lineas-bulto").modal('show');
+                $('#content-error-lineas-bulto').text('El peso bruto no puede ser menor al peso neto')
+                e.preventDefault()
+            }
+
+
             var lineas = [];
             const tablas = document.querySelectorAll("[id*=tabla-bulto-]");
             var valido = true
@@ -819,9 +848,12 @@
 
 
     var contador = 2
+
     function eliminarBulto(bulto) {
         $('#nuevo-bulto-' + bulto).remove();
     }
+
+
     $("#btn-agregar-bulto").on('click', function (e) {
         var tabla = 'tabla-bulto-' + contador
         const container = document.getElementById("nuevo-bulto")
@@ -852,7 +884,7 @@
             '</div>' +
             '<div class="card-body">' +
             '<div class="row">' +
-            '<div class="col-lg-4">' +
+            '<div class="col-lg-3">' +
             '<div class="mb-3">' +
             '<label class="form-label">Tipo de bulto</label>' +
             // '{{form_bulto.tipo_bulto}}' +
@@ -873,11 +905,17 @@
             `<input type="text" class="form-control" name="ancho${contador}" id="ancho${contador}" required>` +
             '</div>' +
             '</div>' +
+            '<div class="col-lg-1">' +
+            '<div class="mb-3">' +
+            '<label class="form-label">Alto (mt)</label>' +
+            `<input type="text" class="form-control" name="alto${contador}" id="alto${contador}" required>` +
+            '</div>' +
+            '</div>' +
             '<div class="col-lg-2">' +
             '<div class="mb-3">' +
-            '<label class="form-label">Volumen (mt)</label>' +
+            '<label class="form-label">Volumen (m3)</label>' +
             // '{{ form_bulto.volumen }}' +
-            `<input type="text" class="form-control" name="volumen${contador}" id="volumen${contador}" required>` +
+            `<input type="text" class="form-control" name="volumen${contador}" id="volumen${contador}" required disabled>` +
             '</div>' +
             '</div>' +
             '<div class="col-lg-2">' +
@@ -947,6 +985,9 @@
         setInputFilter(document.getElementById(`ancho${contador}`), function (value) {
             return /^-?\d*[.,]?\d*$/.test(value);
         });
+        setInputFilter(document.getElementById(`alto${contador}`), function (value) {
+            return /^-?\d*[.,]?\d*$/.test(value);
+        });
         setInputFilter(document.getElementById(`volumen${contador}`), function (value) {
             return /^-?\d*[.,]?\d*$/.test(value);
         });
@@ -956,6 +997,33 @@
         setInputFilter(document.getElementById(`peso_neto${contador}`), function (value) {
             return /^-?\d*[.,]?\d*$/.test(value);
         });
+
+        const largos = document.querySelectorAll("[id*=largo]");
+        const anchos = document.querySelectorAll("[id*=ancho]");
+        const altos = document.querySelectorAll("[id*=alto]");
+
+        largos.forEach(largo => {
+            largo.addEventListener('change', function () {
+                var alto = document.getElementById('alto' + largo.id.slice(-1)).value
+                var ancho = document.getElementById('ancho' + largo.id.slice(-1)).value
+                document.getElementById('volumen' + largo.id.slice(-1)).value = largo.value * ancho * alto
+            })
+        });
+        anchos.forEach(ancho => {
+            ancho.addEventListener('change', function () {
+                var largo = document.getElementById('largo' + ancho.id.slice(-1)).value
+                var alto = document.getElementById('alto' + ancho.id.slice(-1)).value
+                document.getElementById('volumen' + ancho.id.slice(-1)).value = largo * ancho.value * alto
+            })
+        });
+        altos.forEach(alto => {
+            alto.addEventListener('change', function () {
+                var largo = document.getElementById('largo' + alto.id.slice(-1)).value
+                var ancho = document.getElementById('ancho' + alto.id.slice(-1)).value
+                document.getElementById('volumen' + alto.id.slice(-1)).value = largo * ancho * alto.value
+            })
+        });
+
         contador = contador + 1
     })
 </script>
@@ -963,6 +1031,11 @@
 <script>
     $('#form-pl').submit(function () {
         $("#bulto_ov").removeAttr('disabled');
+        $("#bulto_volumen").removeAttr('disabled');
+        const volumenes = document.querySelectorAll("[id*=volumen]");
+        volumenes.forEach(vol => {
+            $('#' + vol.id).removeAttr('disabled')
+        });
     });
 </script>
 
@@ -990,6 +1063,9 @@
     setInputFilter(document.getElementById("bulto_ancho"), function (value) {
         return /^-?\d*[.,]?\d*$/.test(value);
     });
+    setInputFilter(document.getElementById("bulto_alto"), function (value) {
+        return /^-?\d*[.,]?\d*$/.test(value);
+    });
     setInputFilter(document.getElementById("bulto_volumen"), function (value) {
         return /^-?\d*[.,]?\d*$/.test(value);
     });
@@ -1006,6 +1082,16 @@
         return /^\d*$/.test(value);
     });
 </script>
+
+<script>
+    $('#bulto_largo, #bulto_ancho, #bulto_alto').change(function () {
+        var largo = $('#bulto_largo').val();
+        var ancho = $('#bulto_ancho').val();
+        var alto = $('#bulto_alto').val();
+        document.getElementById('bulto_volumen').value = largo * ancho * alto;
+    });
+</script>
+
 
 {% if guardado %}
 <script type="text/javascript">
