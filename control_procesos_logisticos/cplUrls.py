@@ -1,7 +1,7 @@
 from os import name
 from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, despachoAgendamiento, despachoGenerarPDF, generarReporteCitas, home, lineaObtenerArticuloPL, packingList, \
                                               packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaPL,\
-                                              validarOrdenVenta, visualizarDespachoAgendamiento, visualizarRetiros,generarReporteRetiros,validarLineaPL
+                                              validarOrdenVenta, visualizarDespachoAgendamiento, visualizarRetiros,generarReporteRetiros,validarLineaPL,validarLineaRetiro
 from django.urls import path
 
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path('get/reporte/obtenerfechas', reporteGrafico, name='reporte_grafico'),
     path('agendar-retiro',agendarRetiro,name='agendar_retiro'),
     path('get/agendar/generar-retiro',retiroGenerarPDF,name='generar_pdf_retiro'),
+    path('get/agendar/validar-linea-retiro',validarLineaRetiro,name='validar_linea_retiro'),
     path('get/validar-ov',validarOrdenVenta,name='validar_orden'),
     path('buscar-retiro',visualizarRetiros,name='buscar_retiro'),
     path('get/agendar/buscar-retiro-pdf',buscarRetiroPDF,name='buscar_retiro_pdf'),

@@ -11,7 +11,7 @@ def crearPlanificacion(ov,linea):
 
     if response.json()['resultado'] == 0:
         for value in response.json()['data']:
-            existe = Planificacion.objects.filter(orden_venta_id=value['ov']).exists()
+            existe = Planificacion.objects.filter(llave_busqueda=ov+linea).exists()
             if existe:
                 data = {'error': True,
                         'detalles': 'La orden de venta ya existe en la planificación'}

@@ -774,7 +774,7 @@ def retiroGenerarPDF(request,data_retiro,data_detalle,id_retiro):
     
     # pdf.set_font("Arial", size = 15)
     pdf.image("static/img/logo_pdf.png",160, 6, 33)
-    pdf.titles('CITA NRO '+id_retiro)
+    pdf.titles('CITA N° '+id_retiro)
     
     pdf.linea()
     pdf.texto('Fecha: ',14,10)
@@ -912,11 +912,6 @@ def buscarRetiroPDF(request):
     
 @login_required(login_url='/auth/login_user')    
 def generarReporteRetiros(request):
-
-    # if request.is_ajax and request.method == 'POST':
-    # response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    # response['Content-Disposition'] = 'attachment; filename="test.xlsx"'
-
     fec_desde = datetime.strptime(request.GET.get('fecha_desde',None), "%d/%m/%Y").date()
     fec_hasta = datetime.strptime(request.GET.get('fecha_hasta',None), "%d/%m/%Y").date()
     output = io.BytesIO()
@@ -967,14 +962,28 @@ def anularRetiro(request):
         put = QueryDict(request.body)
         retiro = put.get('retiro')
         linea = put.get('linea')
-        # retiro = Retiro.objects.filter(id_retiro=retiro)
+        
         anular = DetalleRetiro.objects.filter(retiro_id=retiro,linea=linea).update(activo=1)
         #Deberia borrar de las tablas de planificacion
+        orden_venta = DetalleRetiro.objects.filter(retiro_id=retiro,linea=linea).values_list('orden_venta',flat=True).first()
+        Planificacion.objects.filter(llave_busqueda=orden_venta+linea).delete()
+        count_retiro = DetalleRetiro.objects.filter(retiro_id=retiro,activo=0).count()
+        print(count_retiro)
+        if count_retiro == 0:
+            Retiro.objects.filter(id_retiro=retiro).update(activo=1)
         if anular > 0:
             return JsonResponse({'valid': True})
         else:
             return JsonResponse({'valid': False})
         
+def validarLineaRetiro(request):
+    if request.is_ajax and request.method == 'GET':
+        orden_venta = request.GET.get('orden_venta',None)
+        linea = request.GET.get('linea',None)
+        retiro = DetalleRetiro.objects.filter(orden_venta=orden_venta,linea=linea,activo=0)
+        if retiro.exists():
+            return JsonResponse({'valid':False,'detalles': 'Ya existe un retiro asociado a esta orden de venta y línea ('+linea+')'}, status=400)
+        return JsonResponse({'valid':True}, status=200)    
       
 def login_user(request):
     if request.method == 'POST':
