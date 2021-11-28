@@ -172,12 +172,10 @@ class DetalleRetiro(models.Model):
     
 class Cita(models.Model):
     id_cita            = models.AutoField(primary_key=True)
-    num_cita           = models.CharField(max_length=40)
     fecha_cita         = models.DateField()
     hora_cita          = models.CharField(max_length=10)
     operador_logistico = models.CharField(max_length=120)
     cliente = models.CharField(max_length=120)
-    # despacho = models.ForeignKey(Despacho,on_delete=PROTECT)
     activo             = models.BooleanField(default=False)
     fecha_creacion     = models.DateField(auto_now=True)
     
@@ -194,6 +192,7 @@ class DetalleCita(models.Model):
     cantidad = models.IntegerField()
     tipo_embalaje = models.CharField(max_length=120)
     cita = models.ForeignKey(Cita,on_delete=PROTECT)
+    activo = models.BooleanField(default=False)
     
     class Meta:
         verbose_name = 'Detalle_Cita'

@@ -906,9 +906,6 @@ def buscarRetiroPDF(request):
 
         return retiroGenerarPDF(request,data_retiro,data_detalle,request.GET.get('retiro',None))
         
-    #     return JsonResponse({'valid':True},status=200)
-    # else:
-    #     return JsonResponse({'valid':False},status=400)
     
 @login_required(login_url='/auth/login_user')    
 def generarReporteRetiros(request):
@@ -976,6 +973,7 @@ def anularRetiro(request):
         else:
             return JsonResponse({'valid': False})
         
+@login_required(login_url='/auth/login_user') 
 def validarLineaRetiro(request):
     if request.is_ajax and request.method == 'GET':
         orden_venta = request.GET.get('orden_venta',None)
@@ -1033,7 +1031,6 @@ def packingList(request):
         list_peso_neto = []
         list_bultos_linea = []
         for value in request.POST:
-            print(value)
             if value.startswith('linea-'):
                 list_lineas.append(value.split('-')[1])
                 list_cantidad.append(value.split('-')[2])
@@ -1065,8 +1062,6 @@ def packingList(request):
             bul_existe = Bulto.objects.filter(orden_venta='OV'+request.POST['orden_venta'],activo=0)
             if bul_existe.exists():
                 for val in bul_existe:
-                    print(val)
-                    print(lin)
                     det_bul_existe = DetalleBulto.objects.filter(bulto_id=val, linea=lin)
                     print(det_bul_existe)
                     if det_bul_existe.exists():
@@ -1326,7 +1321,6 @@ def despachoAgendamiento(request):
     if request.method == 'POST':
         list_ov = []
         for value in request.POST:
-            print(value) 
             if value.startswith('OV'):
                 list_ov.append(value)
         
@@ -1339,9 +1333,7 @@ def despachoAgendamiento(request):
                 'linea' : ov.split('-')[1]
             })
             if response.json()['resultado'] == 0 and response.status_code == 200:
-                print(request.POST['hora_cita'])
                 data_cita = {
-                    'num_cita': request.POST['num_cita'],
                     'operador_logistico': request.POST['operador_logistico'],
                     'fecha_cita': request.POST['fecha_cita'],
                     'hora_cita': request.POST['hora_cita'],
@@ -1357,7 +1349,6 @@ def despachoAgendamiento(request):
                     data_cita['cliente'] = value['cliente']
                 
                     arr_detalles.append(data_cita_detalle)
-                print(data_cita)
             else:
                 data = {
                     'error': True,
@@ -1414,7 +1405,7 @@ def despachoGenerarPDF(request):
         row_tabla = []
         if cita_existe.exists():
             for value in cita_existe:
-                num_cita = value.num_cita
+                num_cita = str(value.id_cita)
                 operador_logistico = value.operador_logistico
                 fecha = str(value.fecha_cita)
                 hora = value.hora_cita
@@ -1478,10 +1469,10 @@ def visualizarDespachoAgendamiento(request):
                 list_detalles = []
                 for value in citas:
                     if DetalleCita.objects.filter(cita=value.id_cita).exists():
-                        detalles = DetalleCita.objects.filter(cita=value.id_cita)
+                        detalles = DetalleCita.objects.filter(cita=value.id_cita,activo=0)
                         for val in detalles:
                             fila = {
-                                'num_cita': value.num_cita,
+                                'num_cita': value.id_cita,
                                 'operador_logistico': value.operador_logistico,
                                 'fecha_cita': value.fecha_cita,
                                 'hora_cita': value.hora_cita,
@@ -1529,14 +1520,14 @@ def generarReporteCitas(request):
             worksheet.set_column(6,7,20)
             worksheet.write(row_num, col_num, columns[col_num],cell_format)
             
-    filas = Cita.objects.filter(fecha_creacion__range=[fec_desde,fec_hasta])  
+    filas = Cita.objects.filter(fecha_creacion__range=[fec_desde,fec_hasta],activo=0)  
 
     list_detalles = []
     for cita in filas:
         if DetalleCita.objects.filter(cita=cita.id_cita).exists():
             detalles = DetalleCita.objects.filter(cita=cita.id_cita)
             for det in detalles:
-                fila = [cita.num_cita,cita.operador_logistico,
+                fila = [cita.id_cita,cita.operador_logistico,
                         datetime.strptime(str(cita.fecha_cita), '%Y-%m-%d').strftime('%d-%m-%y'),
                         cita.hora_cita,
                         det.orden_venta,det.linea,
@@ -1559,3 +1550,30 @@ def generarReporteCitas(request):
     )
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
     return response
+
+@login_required(login_url='/auth/login_user')
+def validarLineaCita(request):
+    if request.is_ajax and request.method == 'GET':
+        orden_venta = request.GET.get('orden_venta',None)
+        linea = request.GET.get('linea',None)
+        det_cita = DetalleCita.objects.filter(orden_venta=orden_venta, linea=linea, activo=0)
+        if det_cita.exists():
+            return JsonResponse({'valid':False,'detalles': 'Ya existe un despacho agendado para la línea '+'('+linea+')'+ ' de esta orden de venta'}, status=400)
+        return JsonResponse({'valid':True}, status=200)
+    
+@login_required(login_url='/auth/login_user')
+def anularDespacho(request):
+    if request.is_ajax and request.method == 'PUT':
+        put = QueryDict(request.body)
+        cita = put.get('cita')
+        linea = put.get('linea')
+        
+        anular = DetalleCita.objects.filter(cita_id=cita,linea=linea).update(activo=1)
+
+        count_retiro = DetalleCita.objects.filter(cita_id=cita,activo=0).count()
+        if count_retiro == 0:
+            Cita.objects.filter(cita_id=cita).update(activo=1)
+        if anular > 0:
+            return JsonResponse({'valid': True})
+        else:
+            return JsonResponse({'valid': False})

@@ -175,12 +175,6 @@ class CitaForm(forms.ModelForm):
         model = Cita
         fields = '__all__'
         widgets = {
-            'num_cita':
-                forms.TextInput(attrs={
-                    'class': 'form-control',
-                    'type': 'text',
-                    'id':'num_cita',
-                },),      
             'operador_logistico':
                 forms.TextInput(attrs={
                     'class': 'form-control',

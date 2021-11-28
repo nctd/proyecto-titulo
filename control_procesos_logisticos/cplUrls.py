@@ -1,6 +1,6 @@
 from os import name
-from control_procesos_logisticos.views import agendarRetiro, anularRetiro, buscarRetiroPDF, despachoAgendamiento, despachoGenerarPDF, generarReporteCitas, home, lineaObtenerArticuloPL, packingList, \
-                                              packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarOrdenVentaPL,\
+from control_procesos_logisticos.views import agendarRetiro, anularDespacho, anularRetiro, buscarRetiroPDF, despachoAgendamiento, despachoGenerarPDF, generarReporteCitas, home, lineaObtenerArticuloPL, packingList, \
+                                              packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarLineaCita, validarOrdenVentaPL,\
                                               validarOrdenVenta, visualizarDespachoAgendamiento, visualizarRetiros,generarReporteRetiros,validarLineaPL,validarLineaRetiro
 from django.urls import path
 
@@ -28,4 +28,6 @@ urlpatterns = [
     path('buscar-despacho-agendamiento',visualizarDespachoAgendamiento,name='buscar_despacho_agendamiento'),    
     path('get/despacho-agendamiento/pdf-cita',despachoGenerarPDF,name='cita_pdf'),    
     path('get/despacho-agendamiento/reporte-citas',generarReporteCitas,name='reporte_citas'),    
+    path('get/despacho-agendamiento/validar-linea-cita',validarLineaCita,name='validar_linea_cita'),    
+    path('put/despacho-agendamiento/anular-cita',anularDespacho,name='anular_cita'),    
 ]

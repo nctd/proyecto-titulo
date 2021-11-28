@@ -153,7 +153,7 @@
                                                             </a>
                                                             <button class="dropdown-item" id="anular-retiro"
                                                                 type="button"
-                                                                onclick="anularRetiro('{{det.retiro}}','{{det.linea}}')">
+                                                                onclick="anularCita('{{det.cita}}','{{det.linea}}')">
                                                                 Anular
                                                             </button>
                                                         </div>
@@ -372,6 +372,31 @@
     })
 </script>
 
+<script>
+    function anularCita(cita, linea) {
+        // e.preventDefault();
+        $.ajax({
+            type: 'PUT',
+            url: "{% url 'anular_cita' %}",
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+            data: {
+                'cita': cita,
+                'linea': linea
+            },
+            // dataType: 'json',
+            success: function (response) {
+                if (response['valid']) {
+                    $("#modal-retiro-anulado").modal('show');
+                    // location.reload()
+                    $('#bt-retiro-anulado').on('click', function (e) {
+                        location.reload()
+                        return false;
+                    })
+                }
+            }
+        })
+    }
+</script>
 
 
 {% endblock %}
