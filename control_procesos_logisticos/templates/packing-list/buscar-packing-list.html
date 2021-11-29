@@ -7,7 +7,7 @@
         <div class="row align-items-center">
             <div class="col">
                 <h2 class="page-title">
-                    Despacho con agendamiento
+                    Packing List
                 </h2>
             </div>
         </div>
@@ -21,7 +21,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class='card-header'>
-                        <h3 class="card-title">Buscar agendamientos</h3>
+                        <h3 class="card-title">Buscar Packing List</h3>
                     </div>
                     <div class="card-body">
                         <form method="GET">
@@ -108,37 +108,35 @@
                                     <table class="gridjs-table" id="citas-table">
                                         <thead class="gridjs-thead">
                                             <tr class="gridjs-tr">
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">N° DE CITA</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">OPERADOR LOGISTICO
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">ID</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">ORDEN VENTA
                                                 </th>
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">
-                                                    FECHA CITA
+                                                    TIPO BULTO
                                                 </th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">HORA CITA</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">ORDEN DE VENTA</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LÍNEA</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CLIENTE</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CÓDIGO ARTÍCULO
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">LARGO (mt)</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">ANCHO (mt)</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">ALTO (mt) </th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">VOLUMEN (m3)</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">PESO BRUTO (kg)
                                                 </th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">CANTIDAD</th>
-                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">DESCRIPCION</th>
+                                                <th class="gridjs-th gridjs-th-sort gridjs-th-fixed">PESO NETO (kg)</th>
                                                 <th class="gridjs-th gridjs-th-sort gridjs-th-fixed"></th>
                                             </tr>
                                         </thead>
                                         <tbody class="gridjs-tbody" style="text-align: center;">
-                                            {% if detalle_citas %}
-                                            {% for det in detalle_citas %}
+                                            {% if detalle_pl %}
+                                            {% for det in detalle_pl %}
                                             <tr class="gridjs-tr">
-                                                <td class="gridjs-td">{{det.num_cita}}</td>
-                                                <td class="gridjs-td">{{det.operador_logistico}} </td>
-                                                <td class="gridjs-td">{{det.fecha_cita | date:"d-m-Y"}}</td>
-                                                <td class="gridjs-td">{{det.hora_cita}}</td>
-                                                <td class="gridjs-td">{{det.orden_venta}}</td>
-                                                <td class="gridjs-td">{{det.linea}}</td>
-                                                <td class="gridjs-td">{{det.cliente}}</td>
-                                                <td class="gridjs-td">{{det.cod_articulo}}</td>
-                                                <td class="gridjs-td">{{det.cantidad_articulo}}</td>
-                                                <td class="gridjs-td">{{det.descripcion_articulo}}</td>
+                                                <td class="gridjs-td">{{det.id}}</td>
+                                                <td class="gridjs-td">{{det.orden_venta}} </td>
+                                                <td class="gridjs-td">{{det.tipo_bulto}} </td>
+                                                <td class="gridjs-td">{{det.largo|floatformat:2}}</td>
+                                                <td class="gridjs-td">{{det.ancho|floatformat:2}}</td>
+                                                <td class="gridjs-td">{{det.alto|floatformat:2}}</td>
+                                                <td class="gridjs-td">{{det.volumen|floatformat:2}}</td>
+                                                <td class="gridjs-td">{{det.peso_bruto|floatformat:2}}</td>
+                                                <td class="gridjs-td">{{det.peso_neto|floatformat:2}}</td>
                                                 <td class="gridjs-td">
 
 
@@ -148,12 +146,11 @@
                                                             data-bs-toggle="dropdown">Acciones</button>
                                                         <div class="dropdown-menu dropdown-menu-end">
                                                             <a class="dropdown-item" id="generar-pdf" type="button"
-                                                                href="{% url 'cita_pdf' %}?cita={{det.cita}}">
+                                                                href="{% url 'pl_pdf' %}?pl={{det.pl}}">
                                                                 Generar PDF
                                                             </a>
                                                             <button class="dropdown-item" id="anular-retiro"
-                                                                type="button"
-                                                                onclick="anularCita('{{det.cita}}','{{det.linea}}')">
+                                                                type="button" onclick="anularPL('{{det.pl}}')">
                                                                 Anular
                                                             </button>
                                                         </div>
@@ -170,26 +167,7 @@
                                 </form>
                             </div>
                         </div>
-                        <div class="card-footer text-start">
-                            <div class="r-flex">
-                                <a class="btn btn-success ms-auto" id="btn-generar-reporte"
-                                    href="{% url 'reporte_citas' %}?fecha_desde={{fec_inicio}}&fecha_hasta={{fec_hasta}}">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="icon icon-tabler icon-tabler-file-download" width="24" height="24"
-                                        viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                                        stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                                        <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
-                                        <path
-                                            d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z">
-                                        </path>
-                                        <line x1="12" y1="11" x2="12" y2="17"></line>
-                                        <polyline points="9 14 12 17 15 14"></polyline>
-                                    </svg>
-                                    Generar reporte
-                                </a>
-                            </div>
-                        </div>
+                        <!-- reporte -->
                     </div>
                 </div>
             </div>
@@ -232,7 +210,7 @@
     </div>
 </div>
 
-<div class="modal modal-blur fade" id="modal-retiro-anulado" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal modal-blur fade" id="modal-pl-anulado" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
         <div class="modal-content">
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -249,15 +227,15 @@
                     <path d="M9 15l2 2l4 -4" />
                 </svg>
 
-                <h3>Retiro anulado</h3>
-                <div class="text-muted">Se anulo correctamente el retiro</div>
+                <h3>Packing List anulado</h3>
+                <div class="text-muted">Se anuló correctamente el Packing List</div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
                     <div class="row">
 
                         <div class="col"><a href="#" class="btn btn-success w-100" data-bs-dismiss="modal"
-                                id="bt-retiro-anulado">
+                                id="bt-pl-anulado">
                                 OK
                             </a></div>
                     </div>
@@ -282,7 +260,7 @@
                         d="M5 19h14a2 2 0 0 0 1.84 -2.75l-7.1 -12.25a2 2 0 0 0 -3.5 0l-7.1 12.25a2 2 0 0 0 1.75 2.75" />
                 </svg>
                 <h3>Confirmar acción</h3>
-                <div class="text-muted">¿Desea anular el retiro seleccionado?</div>
+                <div class="text-muted">¿Desea anular el Packing List seleccionado?</div>
             </div>
             <div class="modal-footer">
                 <div class="w-100">
@@ -302,8 +280,9 @@
 
 </div>
 
+
 <script>
-    const e = document.getElementById('nav-item-despacho')
+    const e = document.getElementById('nav-item-packing')
     e.classList.add('active')
 
 </script>
@@ -408,9 +387,8 @@
 </script>
 
 <script>
-    function anularCita(cita, linea) {
+    function anularPL(pl) {
         // e.preventDefault();
-
         $("#modal-confirm-anular").modal('show')
         $('#modal-confirm-anular').on('shown.bs.modal', function (e) {
             var btnConfirmar = $(this).find('#btn-confirm-anular');
@@ -418,18 +396,17 @@
             btnConfirmar.off('click').on('click', function () {
                 $.ajax({
                     type: 'PUT',
-                    url: "{% url 'anular_cita' %}",
+                    url: "{% url 'anular_pl' %}",
                     headers: { 'X-CSRFToken': '{{ csrf_token }}' },
                     data: {
-                        'cita': cita,
-                        'linea': linea
+                        'pl': pl,
                     },
                     // dataType: 'json',
                     success: function (response) {
                         if (response['valid']) {
-                            $("#modal-retiro-anulado").modal('show');
+                            $("#modal-pl-anulado").modal('show');
                             // location.reload()
-                            $('#bt-retiro-anulado').on('click', function (e) {
+                            $('#bt-pl-anulado').on('click', function (e) {
                                 location.reload()
                                 return false;
                             })
@@ -439,6 +416,7 @@
             })
 
         })
+
 
 
     }

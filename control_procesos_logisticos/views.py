@@ -981,6 +981,10 @@ def validarLineaRetiro(request):
         retiro = DetalleRetiro.objects.filter(orden_venta=orden_venta,linea=linea,activo=0)
         if retiro.exists():
             return JsonResponse({'valid':False,'detalles': 'Ya existe un retiro asociado a esta orden de venta y línea ('+linea+')'}, status=400)
+        else:
+            cita = DetalleCita.objects.filter(orden_venta=orden_venta, linea=linea, activo=0)
+            if cita.exists():
+                return JsonResponse({'valid':False,'detalles': 'La línea '+'('+linea+')'+ ' se encuentra asignada a un despacho'}, status=400)
         return JsonResponse({'valid':True}, status=200)    
       
 def login_user(request):
@@ -1203,8 +1207,8 @@ def packingListGenerarPDF(request):
                             format(value.ancho,'.2f')+' mt',
                             format(value.alto,'.2f')+' mt',
                             format(value.volumen,'.2f')+' m3',
-                            format(value.peso_bruto,'.2f')+' mt',
-                            format(value.peso_neto,'.2f')+' mt',
+                            format(value.peso_bruto,'.2f')+' kg',
+                            format(value.peso_neto,'.2f')+' kg',
                         ]
                         linea = val.linea
                         arr_tabla.append(row_tabla)
@@ -1218,7 +1222,7 @@ def packingListGenerarPDF(request):
             row_tabla = []
             for value in bulto:
                 orden_venta = value.orden_venta
-                detalles = DetalleBulto.objects.filter(bulto=bultos)
+                detalles = DetalleBulto.objects.filter(bulto=bultos,activo=0)
                 for val in detalles:
                     row_tabla = [
                         value.tipo_bulto,
@@ -1228,8 +1232,8 @@ def packingListGenerarPDF(request):
                         format(value.ancho,'.2f')+' mt',
                         format(value.alto,'.2f')+' mt',
                         format(value.volumen,'.2f')+' m3',
-                        format(value.peso_bruto,'.2f')+' mt',
-                        format(value.peso_neto,'.2f')+' mt',
+                        format(value.peso_bruto,'.2f')+' kg',
+                        format(value.peso_neto,'.2f')+' kg',
                     ]
                     linea = val.linea
                     arr_tabla.append(row_tabla)
@@ -1311,6 +1315,58 @@ def validarLineaPL(request):
             if det_bul_existe.exists():
                 return JsonResponse({'valid':False,'detalles': 'Ya existe un Packing List creado para esta orden de venta y línea ('+linea+')'}, status=400)
         return JsonResponse({'valid':True}, status=200)
+
+@login_required(login_url='/auth/login_user')
+def anularPL(request):
+    if request.is_ajax and request.method == 'PUT':
+        put = QueryDict(request.body)
+        pl = put.get('pl')
+        
+        anular = Bulto.objects.filter(id_bulto=pl).update(activo=1)
+        DetalleBulto.objects.filter(bulto_id=pl).update(activo=1)
+        # count_retiro = DetalleCita.objects.filter(cita_id=cita,activo=0).count()
+        # if count_retiro == 0:
+        #     Cita.objects.filter(cita_id=cita).update(activo=1)
+        if anular > 0:
+            return JsonResponse({'valid': True})
+        else:
+            return JsonResponse({'valid': False})
+
+@login_required(login_url='/auth/login_user')    
+def visualizarPackingList(request):
+    if request.method == 'GET':
+        try:
+            if('fecha-desde' and 'fecha-hasta' in request.GET):
+                val1 = request.GET['fecha-desde']
+                val2 = request.GET['fecha-hasta']
+                fec_desde = datetime.strptime(request.GET['fecha-desde'], "%d/%m/%Y").date()
+                fec_hasta = datetime.strptime(request.GET['fecha-hasta'], "%d/%m/%Y").date()
+                bultos = Bulto.objects.filter(fecha_creacion__range=[fec_desde,fec_hasta],activo=0)  
+                
+                list_detalles = []
+                for value in bultos:
+                    fila = {
+                        'id': value.id_bulto,
+                        'orden_venta': value.orden_venta,
+                        'tipo_bulto': value.tipo_bulto,
+                        'largo': value.largo,
+                        'ancho': value.ancho,
+                        'alto': value.alto,
+                        'volumen': value.volumen,
+                        'peso_bruto': value.peso_bruto,
+                        'peso_neto': value.peso_neto,
+                        'pl': value.id_bulto
+                    }
+                    list_detalles.append(fila)
+                data = {
+                    'detalle_pl': list_detalles,
+                    'fec_inicio': val1,
+                    'fec_hasta': val2
+                }
+                return render(request,'packing-list/buscar-packing-list.html',data)
+        except:
+            return render(request,'packing-list/buscar-packing-list.html') 
+    return render(request,'packing-list/buscar-packing-list.html') 
     
     
 @login_required(login_url='/auth/login_user')    
@@ -1411,7 +1467,7 @@ def despachoGenerarPDF(request):
                 hora = value.hora_cita
                 cliente = value.cliente
                 
-                detalles = DetalleCita.objects.filter(cita=cita)
+                detalles = DetalleCita.objects.filter(cita=cita,activo=0)
                 for val in detalles:
                     row_tabla = [
                         val.orden_venta,
@@ -1493,8 +1549,7 @@ def visualizarDespachoAgendamiento(request):
                 return render(request,'despacho/buscar-despacho.html',data) 
         except:
             return render(request,'despacho/buscar-despacho.html') 
-        
-    
+
     return render(request,'despacho/buscar-despacho.html') 
 
 @login_required(login_url='/auth/login_user')    
@@ -1559,6 +1614,10 @@ def validarLineaCita(request):
         det_cita = DetalleCita.objects.filter(orden_venta=orden_venta, linea=linea, activo=0)
         if det_cita.exists():
             return JsonResponse({'valid':False,'detalles': 'Ya existe un despacho agendado para la línea '+'('+linea+')'+ ' de esta orden de venta'}, status=400)
+        else:
+            retiro = DetalleRetiro.objects.filter(orden_venta=orden_venta, linea=linea, activo=0)
+            if retiro.exists():
+                return JsonResponse({'valid':False,'detalles': 'La línea '+'('+linea+') se encuentra asignada a un retiro'}, status=400)
         return JsonResponse({'valid':True}, status=200)
     
 @login_required(login_url='/auth/login_user')
@@ -1572,7 +1631,7 @@ def anularDespacho(request):
 
         count_retiro = DetalleCita.objects.filter(cita_id=cita,activo=0).count()
         if count_retiro == 0:
-            Cita.objects.filter(cita_id=cita).update(activo=1)
+            Cita.objects.filter(id_cita=cita).update(activo=1)
         if anular > 0:
             return JsonResponse({'valid': True})
         else:

@@ -135,7 +135,7 @@ class DetalleBulto(models.Model):
     cantidad   = models.IntegerField()
     bulto      = models.ForeignKey(Bulto, on_delete=PROTECT)
     fecha_creacion = models.DateField(auto_now=True)
-    # activo = models.BooleanField(default=False)
+    activo = models.BooleanField(default=False)
     
     class Meta:
         verbose_name = 'Detalle_Bulto'

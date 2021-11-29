@@ -1,7 +1,7 @@
 from os import name
-from control_procesos_logisticos.views import agendarRetiro, anularDespacho, anularRetiro, buscarRetiroPDF, despachoAgendamiento, despachoGenerarPDF, generarReporteCitas, home, lineaObtenerArticuloPL, packingList, \
+from control_procesos_logisticos.views import agendarRetiro, anularDespacho, anularPL, anularRetiro, buscarRetiroPDF, despachoAgendamiento, despachoGenerarPDF, generarReporteCitas, home, lineaObtenerArticuloPL, packingList, \
                                               packingListGenerarPDF, planificacion,tracking,indicadores,reporteGrafico,retiroGenerarPDF, validarLineaCita, validarOrdenVentaPL,\
-                                              validarOrdenVenta, visualizarDespachoAgendamiento, visualizarRetiros,generarReporteRetiros,validarLineaPL,validarLineaRetiro
+                                              validarOrdenVenta, visualizarDespachoAgendamiento, visualizarPackingList, visualizarRetiros,generarReporteRetiros,validarLineaPL,validarLineaRetiro
 from django.urls import path
 
 
@@ -24,6 +24,8 @@ urlpatterns = [
     path('get/packing-list/obtener-articulo-pl',lineaObtenerArticuloPL,name='obtener_articulo_pl'),
     path('get/packing-list/pdf-pl',packingListGenerarPDF,name='pl_pdf'),
     path('get/packing-list/validar-linea-pl',validarLineaPL,name='validar_linea_pl'),
+    path('get/packing-list/anular-pl',anularPL,name='anular_pl'),
+    path('buscar-packing-list',visualizarPackingList,name='buscar_packing_list'),
     path('despacho-agendamiento',despachoAgendamiento,name='despacho_agendamiento'),    
     path('buscar-despacho-agendamiento',visualizarDespachoAgendamiento,name='buscar_despacho_agendamiento'),    
     path('get/despacho-agendamiento/pdf-cita',despachoGenerarPDF,name='cita_pdf'),    
