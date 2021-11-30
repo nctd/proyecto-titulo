@@ -40,6 +40,7 @@ def getLineaTipoVenta(tipo_venta):
     cursor.close()
     
     datos_linea = {
+        'tipo': tipo_venta,
         'cant_lineas' : int(cant_lineas.getvalue()),
         'valor' : int(valor.getvalue()),
         'porc_lineas' : int(porc_lineas.getvalue()),
@@ -128,6 +129,7 @@ def getProgresoDiarioTipoVenta(tipo_venta):
     cursor.close()
     
     datos_linea = {
+        'tipo': tipo_venta,
         'cant_lineas' : int(cant_lineas.getvalue()),
         'cant_exito_lineas' : int(cant_exito_lineas.getvalue()),
         'porc_exito_lineas' : int(porc_exito_lineas.getvalue()),
@@ -377,18 +379,27 @@ def indicadores(request):
                 progreso_despachos.append(progreso)     
             
             # Lineas a despachar segun tipo de venta
+            tipos_venta = OrdenVenta.objects.all().values_list('tipo_venta',flat=True).distinct()
+            ventas = []
+            progreso_ventas = []
+            for val in tipos_venta:
+                venta = getLineaTipoVenta(val)
+                prog_venta = getProgresoDiarioTipoVenta(val)
+                ventas.append(venta)
+                progreso_ventas.append(prog_venta)
+                print(venta)
             # 1STOCK_R
-            datos_stock_r = getLineaTipoVenta('1STOCK_R')
-            # 1STOCK
-            datos_stock =  getLineaTipoVenta('1STOCK')
-            # 2CALZADO
-            datos_calzado =  getLineaTipoVenta('2CALZADO')       
-            # 2LIQUIDA
-            datos_liquida =  getLineaTipoVenta('2LIQUIDA')
-            # 2PROYECT
-            datos_proyect = getLineaTipoVenta('2PROYECT')
-            # OS
-            datos_os = getLineaTipoVenta('OS')
+            # datos_stock_r = getLineaTipoVenta('1STOCK_R')
+            # # 1STOCK
+            # datos_stock =  getLineaTipoVenta('1STOCK')
+            # # 2CALZADO
+            # datos_calzado =  getLineaTipoVenta('2CALZADO')       
+            # # 2LIQUIDA
+            # datos_liquida =  getLineaTipoVenta('2LIQUIDA')
+            # # 2PROYECT
+            # datos_proyect = getLineaTipoVenta('2PROYECT')
+            # # OS
+            # datos_os = getLineaTipoVenta('OS')
 
 
             # Estado de carga por tarea
@@ -432,17 +443,17 @@ def indicadores(request):
             
             # Progreso diario de despachos - Tipo de venta
             # 1STOCK_R
-            progreso_stock_r = getProgresoDiarioTipoVenta('1STOCK_R')
-            # 1STOCK
-            progreso_stock =  getProgresoDiarioTipoVenta('1STOCK')
-            # 2CALZADO
-            progreso_calzado =  getProgresoDiarioTipoVenta('2CALZADO')       
-            # 2LIQUIDA
-            progreso_liquida =  getProgresoDiarioTipoVenta('2LIQUIDA')
-            # 2PROYECT
-            progreso_proyect = getProgresoDiarioTipoVenta('2PROYECT')
-            # OS
-            progreso_os = getProgresoDiarioTipoVenta('OS')
+            # progreso_stock_r = getProgresoDiarioTipoVenta('1STOCK_R')
+            # # 1STOCK
+            # progreso_stock =  getProgresoDiarioTipoVenta('1STOCK')
+            # # 2CALZADO
+            # progreso_calzado =  getProgresoDiarioTipoVenta('2CALZADO')       
+            # # 2LIQUIDA
+            # progreso_liquida =  getProgresoDiarioTipoVenta('2LIQUIDA')
+            # # 2PROYECT
+            # progreso_proyect = getProgresoDiarioTipoVenta('2PROYECT')
+            # # OS
+            # progreso_os = getProgresoDiarioTipoVenta('OS')
             
             data = {
                 # Estado de carga por tarea
@@ -459,24 +470,27 @@ def indicadores(request):
                 'datos_despacho': despachos,
                 
                 # Tipo de venta
-                'datos_stock' : datos_stock,
-                'datos_stock_r' : datos_stock_r,
-                'datos_calzado' : datos_calzado,
-                'datos_liquida' : datos_liquida,
-                'datos_proyect' : datos_proyect,
-                'datos_os' : datos_os,
+                'datos_venta': ventas,
+                # 'datos_stock' : datos_stock,
+                # 'datos_stock_r' : datos_stock_r,
+                # 'datos_calzado' : datos_calzado,
+                # 'datos_liquida' : datos_liquida,
+                # 'datos_proyect' : datos_proyect,
+                # 'datos_os' : datos_os,
 
                 # Progreso diario - Tipo de despacho
                 'datos_progreso': progreso_despachos,
 
                 # Progreso diario - Tipo de venta
+                'datos_progreso_venta': progreso_ventas,
                 'progreso_total' : progreso_total,
-                'progreso_stock_r' : progreso_stock_r,
-                'progreso_stock' : progreso_stock,
-                'progreso_calzado' : progreso_calzado,
-                'progreso_liquida' : progreso_liquida,
-                'progreso_proyect' : progreso_proyect,
-                'progreso_os' : progreso_os,
+                
+                # 'progreso_stock_r' : progreso_stock_r,
+                # 'progreso_stock' : progreso_stock,
+                # 'progreso_calzado' : progreso_calzado,
+                # 'progreso_liquida' : progreso_liquida,
+                # 'progreso_proyect' : progreso_proyect,
+                # 'progreso_os' : progreso_os,
             }
  
             return render(request,'indicadores/indicadores.html',data)
@@ -652,7 +666,7 @@ def reporteGrafico(request):
                 
             return JsonResponse({
                 'valid':False,
-                'lista_fechas': 'No hay fechas',
+                'lista_fechas': 'No se encontraron datos en el rango de tiempo seleccionado',
                 },
                 status = 200)
             

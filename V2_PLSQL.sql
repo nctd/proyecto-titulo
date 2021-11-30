@@ -208,100 +208,28 @@ END;
 
 -- Procedimiento para guardar el progreso diario por tipo de venta
 CREATE OR REPLACE PROCEDURE SP_GUARDAR_PROGRESO_TIPO_VENTA IS
-    v_cant_despacho_1 NUMBER;
-    v_cant_despacho_2 NUMBER;
-    v_cant_despacho_3 NUMBER;
-    v_cant_despacho_4 NUMBER;
-    v_cant_despacho_5 NUMBER;
-    v_cant_despacho_6 NUMBER;
-    v_cant_exitosos_1 NUMBER;
-    v_cant_exitosos_2 NUMBER;
-    v_cant_exitosos_3 NUMBER;
-    v_cant_exitosos_4 NUMBER;
-    v_cant_exitosos_5 NUMBER;
-    v_cant_exitosos_6 NUMBER;
-    v_porc_1 NUMBER;
-    v_porc_2 NUMBER;
-    v_porc_3 NUMBER;
-    v_porc_4 NUMBER;
-    v_porc_5 NUMBER;
-    v_porc_6 NUMBER;
-    
-    v_existe_stock_r NUMBER;
-    v_existe_stock NUMBER;
-    v_existe_calzado NUMBER;
-    v_existe_liquid NUMBER;
-    v_existe_proyecto NUMBER;
-    v_existe_os NUMBER;
+    v_cant_despacho NUMBER;
+    v_cant_exitosos NUMBER;
+    v_porc NUMBER;
+    v_existe NUMBER;
+
+    CURSOR cur_ventas IS
+        SELECT DISTINCT tipo_venta
+        FROM orden_venta;
+
 BEGIN
-
-    SELECT COUNT(fecha)
-    INTO v_existe_stock_r
-    FROM indicador_tipo_venta
-    WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = '1STOCK_R';
-    
-    IF v_existe_stock_r = 0 THEN
-        SP_OBTENER_PROGRESO_DIARIO_VENTA('1STOCK_R',v_cant_despacho_1,v_cant_exitosos_1,v_porc_1);
-        INSERT INTO INDICADOR_TIPO_VENTA
-        VALUES(ISEQ$$_109737.NEXTVAL,'1STOCK_R',v_cant_despacho_1,v_cant_exitosos_1,v_porc_1,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
-        --ELSE
-            --RAISE EXCEPTION 
-    END IF;
+    FOR reg_venta IN cur_ventas LOOP
+        SELECT COUNT(fecha)
+        INTO v_existe
+        FROM indicador_tipo_venta
+        WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = reg_venta.tipo_venta;
         
-    SELECT COUNT(fecha)
-    INTO v_existe_stock
-    FROM indicador_tipo_venta
-    WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = '1STOCK';
-    
-    IF v_existe_stock = 0 THEN
-        SP_OBTENER_PROGRESO_DIARIO_VENTA('1STOCK',v_cant_despacho_2,v_cant_exitosos_2,v_porc_2);
-        INSERT INTO INDICADOR_TIPO_VENTA
-        VALUES(ISEQ$$_109737.NEXTVAL,'1STOCK',v_cant_despacho_2,v_cant_exitosos_2,v_porc_2,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
-    END IF;
-    
-    SELECT COUNT(fecha)
-    INTO v_existe_calzado
-    FROM indicador_tipo_venta
-    WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = '2CALZADO';
-    
-    IF v_existe_calzado = 0 THEN
-        SP_OBTENER_PROGRESO_DIARIO_VENTA('2CALZADO',v_cant_despacho_3,v_cant_exitosos_3,v_porc_3);
-        INSERT INTO INDICADOR_TIPO_VENTA
-        VALUES(ISEQ$$_109737.NEXTVAL,'2CALZADO',v_cant_despacho_3,v_cant_exitosos_3,v_porc_3,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
-    END IF;
-        
-    SELECT COUNT(fecha)
-    INTO v_existe_liquid
-    FROM indicador_tipo_venta
-    WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = '2LIQUID';
-    
-    IF v_existe_liquid = 0 THEN
-        SP_OBTENER_PROGRESO_DIARIO_VENTA('2LIQUID',v_cant_despacho_4,v_cant_exitosos_4,v_porc_4);
-        INSERT INTO INDICADOR_TIPO_VENTA
-        VALUES(ISEQ$$_109737.NEXTVAL,'2LIQUID',v_cant_despacho_4,v_cant_exitosos_4,v_porc_4,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
-    END IF;
-
-    SELECT COUNT(fecha)
-    INTO v_existe_proyecto
-    FROM indicador_tipo_venta
-    WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = '2PROYECTO';
-    
-    IF v_existe_proyecto = 0 THEN
-        SP_OBTENER_PROGRESO_DIARIO_VENTA('2PROYECTO',v_cant_despacho_5,v_cant_exitosos_5,v_porc_5);
-        INSERT INTO INDICADOR_TIPO_VENTA
-        VALUES(ISEQ$$_109737.NEXTVAL,'2PROYECTO',v_cant_despacho_5,v_cant_exitosos_5,v_porc_5,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
-    END IF;
-    
-    SELECT COUNT(fecha)
-    INTO v_existe_os
-    FROM indicador_tipo_venta
-    WHERE TO_CHAR(fecha,'DD/MM/YY') = TO_CHAR(SYSDATE,'DD/MM/YY') AND UPPER(tipo_venta) = 'OS';
-    
-    IF v_existe_proyecto = 0 THEN
-        SP_OBTENER_PROGRESO_DIARIO_VENTA('OS',v_cant_despacho_6,v_cant_exitosos_6,v_porc_6);
-        INSERT INTO INDICADOR_TIPO_VENTA
-        VALUES(ISEQ$$_109737.NEXTVAL,'OS',v_cant_despacho_6,v_cant_exitosos_6,v_porc_6,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
-    END IF;
+        IF v_existe = 0 THEN
+            SP_OBTENER_PROGRESO_DIARIO_VENTA(reg_venta.tipo_venta,v_cant_despacho,v_cant_exitosos,v_porc);
+            INSERT INTO INDICADOR_TIPO_VENTA
+            VALUES(ISEQ$$_116469.NEXTVAL,reg_venta.tipo_venta,v_cant_despacho,v_cant_exitosos,v_porc,TO_CHAR(SYSDATE,'DD/MM/YY'),0);
+        END IF;
+    END LOOP;
 END;
 
 

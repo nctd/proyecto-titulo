@@ -133,12 +133,13 @@
                             <div class="card-header">
                                 <h3 class="card-title">Lineas a despachar según tipo de venta</h3>
                             </div>
-
+                            {% if datos_venta %}
+                            {% for venta in datos_venta %}
                             <div class="col-sm-6 col-lg-6">
                                 <div class="card bg-lime-lt">
                                     <div class="card-body p-2">
                                         <div class="text-dark text-center">
-                                            <h3>1STOCK_R</h3>
+                                            <h3>{{venta.tipo}}</h3>
                                             <div class="card-body">
                                                 <div class="row">
                                                     <div class="col-sm-6">
@@ -148,28 +149,28 @@
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_stock_r.cant_lineas}}</p>
+                                                            {{venta.cant_lineas}}</p>
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_stock_r.porc_lineas}}%
+                                                            {{venta.porc_lineas}}%
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6">
                                                         <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            venta
+                                                            despacho
                                                             (CLP)
                                                         </p>
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_stock_r.valor}}</p>
+                                                            ${{venta.valor}}</p>
                                                     </div>
                                                     <div class="col-sm-3">
                                                         <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_stock_r.porc_valor}}%
+                                                            {{venta.porc_valor}}%
                                                         </p>
                                                     </div>
                                                 </div>
@@ -178,230 +179,22 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-lime-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>1STOCK</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_stock.cant_lineas}}
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_stock.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            venta
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_stock.valor}}
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_stock.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="page-body">
+                                <div class="container-xl d-flex flex-column justify-content-center">
+                                    <div class="empty">
+                                        <div class="empty-img"><img src="{% static 'img/no-data.svg' %}" height="128"
+                                                alt="">
                                         </div>
+                                        <p class="empty-title">No se encontraron resultados</p>
+                                        <p class="empty-subtitle text-muted">
+                                            No hay datos disponibles para desplegar los indicadores de rendimiento
+                                        </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-lime-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>2CALZADO</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_calzado.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_calzado.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            venta
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_calzado.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_calzado.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-lime-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>2LIQUIDA</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_liquida.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_liquida.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            venta
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_liquida.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_liquida.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-lime-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>2PROYECT</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_proyect.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_proyect.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            venta
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_proyect.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_proyect.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-lg-6">
-                                <div class="card bg-lime-lt">
-                                    <div class="card-body p-2">
-                                        <div class="text-dark text-center">
-                                            <h3>OS</h3>
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Cantidad de
-                                                            lineas
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            {{datos_os.cant_lineas}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_os.porc_lineas}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p class="float-lg-start" style="font-size: 1rem;">Ingresos por
-                                                            venta
-                                                            (CLP)
-                                                        </p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end" style="font-size: 1rem;">
-                                                            ${{datos_os.valor}}</p>
-                                                    </div>
-                                                    <div class="col-sm-3">
-                                                        <p class="float-lg-end text-green" style="font-size: 1rem;">
-                                                            {{datos_os.porc_valor}}%
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            {% endif %}
                         </div>
 
 
@@ -922,95 +715,30 @@
                 '{% endif %}' +
                 '</div >' +
                 '</div >' +
-
                 '</div >' +
                 '</div >' +
 
+                '{% if datos_progreso_venta %}' +
+                '{% for venta in datos_progreso_venta %}' +
+                // `${contador += 1}` +
                 '<div class="form-group mb-4 row">' +
                 '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">1STOCK_R</label>' +
+                '<label class="form-label col-form-label">{{venta.tipo}}</label>' +
                 '<div class="progress">' +
-                '{% if progreso_stock_r.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_stock_r.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_stock_r.cant_exito_lineas}}/{{progreso_stock_r.cant_lineas}} ({{progreso_stock_r.porc_exito_lineas}}%)</span>' +
+                '{% if venta.cant_exito_lineas >= 1 %}' +
+                '<div class="progress-bar bg-teal" style="width: {{venta.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                '<span class="text-dark text-h3">{{venta.cant_exito_lineas}}/{{venta.cant_lineas}} ({{venta.porc_exito_lineas}}%)</span>' +
                 '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_stock_r.cant_exito_lineas}}/{{progreso_stock_r.cant_lineas}} ({{progreso_stock_r.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">1STOCK</label>' +
-                '<div class="progress">' +
-                '{% if progreso_stock.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_stock.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_stock.cant_exito_lineas}}/{{progreso_stock.cant_lineas}} ({{progreso_stock.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_stock.cant_exito_lineas}}/{{progreso_stock.cant_lineas}} ({{progreso_stock.porc_exito_lineas}}%)</span>' +
+                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria-valuemin="0" aria-valuemax="100">' +
+                '<span class="text-dark text-h3">{{venta.cant_exito_lineas}}/{{venta.cant_lineas}} ({{venta.porc_exito_lineas}}%)</span>' +
                 '{% endif %}' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '<div class="form-group mb-4 row">' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">2CALZADO</label>' +
-                '<div class="progress">' +
-                '{% if progreso_calzado.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_calzado.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_calzado.cant_exito_lineas}}/{{progreso_calzado.cant_lineas}} ({{progreso_calzado.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_calzado.cant_exito_lineas}}/{{progreso_calzado.cant_lineas}} ({{progreso_calzado.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
                 '</div>' +
-                '</div>' +
-                '</div >' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">2LIQUID</label>' +
-                '<div class="progress">' +
-                '{% if progreso_liquida.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_liquida.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_liquida.cant_exito_lineas}}/{{progreso_liquida.cant_lineas}} ({{progreso_liquida.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_liquida.cant_exito_lineas}}/{{progreso_liquida.cant_lineas}} ({{progreso_liquida.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div >' +
-                '</div >' +
-                '</div>' +
-                '<div class="form-group mb-4 row">' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">2PROYECT</label>' +
-                '<div class="progress">' +
-                '{% if progreso_proyect.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_proyect.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_proyect.cant_exito_lineas}}/{{progreso_proyect.cant_lineas}} ({{progreso_proyect.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_proyect.cant_exito_lineas}}/{{progreso_proyect.cant_lineas}} ({{progreso_proyect.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div>' +
-                '<div class="col-6 col-sm-3">' +
-                '<label class="form-label col-form-label">OS</label>' +
-                '<div class="progress">' +
-                '{% if progreso_os.cant_exito_lineas >= 1 %}' +
-                '<div class="progress-bar bg-teal" style="width: {{progreso_os.porc_exito_lineas}}%" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_os.cant_exito_lineas}}/{{progreso_os.cant_lineas}} ({{progreso_os.porc_exito_lineas}}%)</span>' +
-                '{% else %}' +
-                '<div class="progress-bar" style="width:100%; background-color: #e6e8e9" role="progressbar" aria-valuenow="38" aria - valuemin="0" aria - valuemax="100">' +
-                '<span class="text-dark text-h3">{{progreso_os.cant_exito_lineas}}/{{progreso_os.cant_lineas}} ({{progreso_os.porc_exito_lineas}}%)</span>' +
-                '{% endif %}' +
-                '</div>' +
-                '</div>' +
-                '</div >' +
-                '</div >'
+                '{% endfor %}' +
+                '{% endif %}'
 
         }
     })
